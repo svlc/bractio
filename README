@@ -1,0 +1,41 @@
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++ Replay-Actions-Per-Minute Library			+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+PURPOSE:
+Library inspects WarCraft III replay and obtains
+all usefull info -- game release version,
+replay length, list of players (TODO), winners (TODO),
+APM (Actions Per Minute) (TODO), ...
+---------------------------------------------------------
+VERSION:
+Very early version, lot of things are to be done.
+---------------------------------------------------------
+USAGE:
+After "make" command (zlib is required), library gets
+compiled with "src/main.c" source file. The binary
+should show up in "bin" directory. To see usage, run
+the program with no arguments. Sample replays to test
+the library can be found in "samples" directory.
+---------------------------------------------------------
+INNARDS:
+Replay header gets parsed, then, based on header info,
+several encoded data blocks are loaded and decoded by
+zlib library. That is all the library does right now.
+---------------------------------------------------------
+LICENSE:
+GPLv2
+---------------------------------------------------------
+THANKS:
++http://zlib.net
++http://w3g.deepnode.de/files/w3g_format.txt
++http://w3g.deepnode.de/files/w3g_actions.txt
+---------------------------------------------------------
+FACTS:
++library is very C99 dependent
++indent style: "1TBS"
++development is carried out on GNU/Linux
+---------------------------------------------------------
+EXAMPLES:
+http://www.wcg.com/6th/replay/replay.asp
+---------------------------------------------------------
