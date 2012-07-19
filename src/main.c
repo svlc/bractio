@@ -29,26 +29,37 @@ int main(int argc, char **argv)
 
         int ret;
 
-        sup_t *sup = apm_wc3_init(argv[1]);
-        if(NULL == sup) {
+        apm_t *apm = apm_wc3_init(argv[1]);
+        if(NULL == apm) {
                 return EXIT_FAILURE;
         }
 
         /* parse replay values into memory */
-        ret = apm_wc3_process(sup, APM_REQ_HEADER | APM_REQ_APM);
+        ret = apm_wc3_process(apm, APM_REQ_HEADER | APM_REQ_INFO | APM_REQ_APM);
         if(0 != ret) {
-                apm_wc3_deinit(sup);
+                apm_wc3_deinit(apm);
                 return EXIT_FAILURE;
         }
 
         /* WAR3 (WarCraft III -- The Reign Of Chaos) */
         /* W3XP (WarCraft III expansion set -- The Frozen Throne) */
-        printf("Release version: %s\n", apm_wc3_get_release(sup));
+        printf("Release version: %s\n", apm_wc3_get_release(apm));
 
-        printf("Length in ms: %u\n", apm_wc3_get_length(sup));
+        printf("Patch version: %u\n", apm_wc3_get_patch_version(apm));
+
+        printf("Length in ms: %u\n", apm_wc3_get_length(apm));
+
+	printf("Map path: %s\n", apm_wc3_get_map_path(apm));
+
+	printf("Number of positions on map: %u\n",
+	       apm_wc3_get_map_position_cnt(apm));
+
+	printf("Hostname: %s\n", apm_wc3_get_hostname(apm));
+
+	printf("Game speed level: %u\n", apm_wc3_get_game_speed(apm));
 
         /* to not cause memory leaks */
-        apm_wc3_deinit(sup);
+        apm_wc3_deinit(apm);
 
         return EXIT_SUCCESS;
 }

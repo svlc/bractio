@@ -2,6 +2,7 @@
  *@file decode.c
  *@brief
  *@athor
+ *@copyright
  *@attention REFACTORIZATION NEEDED
  */
 
@@ -13,6 +14,7 @@
 #include <zlib.h>
 
 #include "apm.h"
+#include "debug.h"
 
 
 int _decode(blk_t *blk, strm_t *strm)
@@ -36,14 +38,14 @@ int _decode(blk_t *blk, strm_t *strm)
         }
 
         /* inform about size of chunk we want decode */
-        z_strm.avail_in = blk->encod_size;
+        z_strm.avail_in = blk->ecd_size;
         /* give over the pointer to encoded buffer */
-        z_strm.next_in = blk->encod_strm;
+        z_strm.next_in = (unsigned char *)blk->ecd_strm;
 
 
-        z_strm.avail_out = blk->decod_size;
+        z_strm.avail_out = blk->dcd_size;
 
-        z_strm.next_out = strm->arr + strm->cnt;
+        z_strm.next_out = (unsigned char *)strm->arr + strm->cnt;
 
 
         /* from "next_in" to "next_out" */
@@ -73,7 +75,46 @@ int _decode(blk_t *blk, strm_t *strm)
 
         inflateEnd(&z_strm);
 
-        strm->cnt += blk->decod_size;
+        strm->cnt += blk->dcd_size;
         /* all OK */
         return 0;
 }
+
+/**
+ *@brief
+ */
+void _decode_opts_map_creator_str(char *ecd_str_pos, char *dcd_str_pos)
+{
+
+	assert(NULL != ecd_str_pos);
+	assert(NULL != dcd_str_pos);
+
+	unsigned char key;
+	unsigned char bit = 0;
+
+	/* iterate until '\0' is found */
+	while(*ecd_str_pos) {
+
+		/* if this is key-bit */
+		if(0 == bit) {
+			/* save it */
+			key = *ecd_str_pos;
+
+			/* 0000 0010 */
+			bit = (1 << 1);
+		} else {
+			*dcd_str_pos = *ecd_str_pos;
+			if(0 == (key & bit)) {
+				--*dcd_str_pos;
+			}
+
+			++dcd_str_pos;
+			/* left shift until bit value overwflows to 0 */
+			bit <<= 1;
+		}
+		++ecd_str_pos;
+	}
+	/* make it string */
+	*dcd_str_pos = '\0';
+}
+

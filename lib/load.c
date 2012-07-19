@@ -2,6 +2,7 @@
  *@file load.c
  *@brief
  *@athor Slavomir Vlcek
+ *@copyright GPLv2
  */
 
 #include <stdio.h>              /* fread(3) */
@@ -19,31 +20,24 @@
 #include "decode.h"
 #include "verify.h"
 #include "str.h"
-
-
-typedef struct aux_t {
-
-        void *const ptr;
-        const int size;
-} aux_t;
+#include "stream.h"
 
 
 /**
  *@brief Loads sub header (v0) data from file into memory
  */
-static int _read_sub_header_v0(sup_t *sup)
+static int _read_sub_header_v0(apm_t *apm)
 {
 
 #define SUB_HEADER_MEMBERS_CNT  6
 
         /* auxiliary pointers */
-        sub_hder_t *sub_hder = &sup->sub_hder;
-        char *const buff = sup->core.buff;
+        sub_hder_t *sub_hder = &apm->sub_hder;
+        char *const buff = apm->core.buff;
 
 
         /* read 0x10 bytes */
-        VGUARD(0x10 != fread(buff, 1, 0x10, sup->core.fp),
-               1, "Subheader could not be read." );
+        GUARD(0x10 != fread(buff, 1, 0x10, apm->core.fp), 1);
 
 
         /* v0 has different size of "patch_ver" */
@@ -58,7 +52,7 @@ static int _read_sub_header_v0(sup_t *sup)
 
                 { &unknown,                     sizeof(unknown) },
                 { &patch_ver,                   sizeof(patch_ver) },
-                { &sub_hder->built_no,          sizeof(sub_hder->built_no) },
+                { &sub_hder->build_no,          sizeof(sub_hder->build_no) },
                 { &sub_hder->player_mode,       sizeof(sub_hder->player_mode) },
                 { &sub_hder->rep_len_ms,        sizeof(sub_hder->rep_len_ms) },
                 { &sub_hder->hder_CRC32,        sizeof(sub_hder->hder_CRC32) }
@@ -68,7 +62,7 @@ static int _read_sub_header_v0(sup_t *sup)
         for(int idx = 0, offs = 0;  idx < SUB_HEADER_MEMBERS_CNT;  ++idx) {
 
                 /* copy data from buffer */
-                memcpy(aux_arr[idx].ptr, buff + offs, aux_arr[idx].size);
+                memcpy(aux_arr[idx].dest, buff + offs, aux_arr[idx].size);
 
                 /* shift buffer offset */
                 offs += aux_arr[idx].size;
@@ -85,17 +79,16 @@ static int _read_sub_header_v0(sup_t *sup)
 /**
  *@brief
  */
-static int _read_sub_header_v1(sup_t *sup)
+static int _read_sub_header_v1(apm_t *apm)
 {
 
         /* auxiliary pointers */
-        sub_hder_t *sub_hder = &sup->sub_hder;
-        char *const buff = sup->core.buff;
+        sub_hder_t *sub_hder = &apm->sub_hder;
+        char *const buff = apm->core.buff;
 
 
         /* read 0x14 bytes */
-        VGUARD(0x14 != fread(buff, 1, 0x14, sup->core.fp),
-               1, "Subheader could not be read." );
+        GUARD(0x14 != fread(buff, 1, 0x14, apm->core.fp), 1);
 
 
         /* auxiliary struct array */
@@ -103,7 +96,7 @@ static int _read_sub_header_v1(sup_t *sup)
 
                 { sub_hder->rls,                4 },
                 { &sub_hder->patch_ver,         sizeof(sub_hder->patch_ver) },
-                { &sub_hder->built_no,          sizeof(sub_hder->built_no) },
+                { &sub_hder->build_no,          sizeof(sub_hder->build_no) },
                 { &sub_hder->player_mode,       sizeof(sub_hder->player_mode) },
                 { &sub_hder->rep_len_ms,        sizeof(sub_hder->rep_len_ms) },
                 { &sub_hder->hder_CRC32,        sizeof(sub_hder->hder_CRC32) }
@@ -114,7 +107,7 @@ static int _read_sub_header_v1(sup_t *sup)
         for(int idx = 0, offs = 0;  idx < SUB_HEADER_MEMBERS_CNT;  ++idx) {
 
                 /* copy data from buffer */
-                memcpy(aux_arr[idx].ptr, buff + offs, aux_arr[idx].size);
+                memcpy(aux_arr[idx].dest, buff + offs, aux_arr[idx].size);
 
                 /* shift buffer offset */
                 offs += aux_arr[idx].size;
@@ -136,42 +129,36 @@ static int _read_sub_header_v1(sup_t *sup)
 /**
  *@brief Loads main header data from file into memory
  */
-static int _read_main_header(sup_t *sup)
+static int _read_main_header(apm_t *apm)
 {
 
 #define MAIN_HEADER_MEMBERS_CNT 6
 
 
         /* auxiliary pointers */
-        main_hder_t *main_hder = &sup->main_hder;
-        char *const buff = sup->core.buff;
+        main_hder_t *main_hder = &apm->main_hder;
+        char *const buff = apm->core.buff;
 
 
         /* read 0x30 bytes */
-        VGUARD(0x30 != fread(buff, 1, 0x30, sup->core.fp),
-               1, "Main header could not be read.");
+        GUARD(0x30 != fread(buff, 1, 0x30, apm->core.fp), 1);
 
 
         /* auxiliary struct array */
         aux_t aux_arr[ MAIN_HEADER_MEMBERS_CNT ] = {
 
-                { main_hder->wc3_str,
-                  28 },
+                { main_hder->wc3_str, 28 },
 
-                { &main_hder->fir_blk,
-                  sizeof(main_hder->fir_blk) },
+                { &main_hder->fir_blk, sizeof(main_hder->fir_blk) },
 
                 { &main_hder->total_file_size,
                   sizeof(main_hder->total_file_size) },
 
-                { &main_hder->hder_ver,
-                  sizeof(main_hder->hder_ver) },
+                { &main_hder->hder_ver, sizeof(main_hder->hder_ver) },
 
-                { &main_hder->decod_data_size,
-                  sizeof(main_hder->decod_data_size) },
+                { &main_hder->dcd_data_size, sizeof(main_hder->dcd_data_size) },
 
-                { &main_hder->encod_blk_cnt,
-                  sizeof(main_hder->encod_blk_cnt) }
+                { &main_hder->ecd_blk_cnt, sizeof(main_hder->ecd_blk_cnt) }
         };
 
 
@@ -179,7 +166,7 @@ static int _read_main_header(sup_t *sup)
         for(int idx = 0, offs = 0;  idx < MAIN_HEADER_MEMBERS_CNT;  ++idx) {
 
                 /* copy data from buffer */
-                memcpy(aux_arr[idx].ptr, buff + offs, aux_arr[idx].size);
+                memcpy(aux_arr[idx].dest, buff + offs, aux_arr[idx].size);
 
                 /* shift buffer offset */
                 offs += aux_arr[idx].size;
@@ -194,32 +181,32 @@ static int _read_main_header(sup_t *sup)
 /**
  *@brief Reads main header and subheader
  *
- *@param "sup" Superior data struct that contains main_hder_t, sub_hder_t
+ *@param "apm" data struct that contains main_hder_t, sub_hder_t
  */
-static int _read_header(sup_t *sup)
+static int _read_header(apm_t *apm)
 {
 
         int ret;
 
-        ret = _read_main_header(sup);
+        ret = _read_main_header(apm);
         GUARD(0 != ret, ret);
 
 
         /* if header is of version "0" */
-        if(0x00 == sup->main_hder.hder_ver) {
-                ret = _read_sub_header_v0(sup);
+        if(0x00 == apm->main_hder.hder_ver) {
+                ret = _read_sub_header_v0(apm);
                 GUARD(0 != ret, ret);
 
         }
         /* if header is of version "1" */
-        else if(0x01 == sup->main_hder.hder_ver) {
+        else if(0x01 == apm->main_hder.hder_ver) {
 
-                ret =_read_sub_header_v1(sup);
+                ret =_read_sub_header_v1(apm);
                 GUARD(0 != ret, ret);
 
         } else {
                 /* replay is corrupted or something */
-                VGUARD(true, 1, "Subheader's version is unvalid.");
+		return 1;
         }
         /* all OK */
         return 0;
@@ -229,13 +216,12 @@ static int _read_header(sup_t *sup)
 /**
  *@brief
  */
-static int _load_block_data(core_t *core, blk_t *blk)
+static int _read_block_data(core_t *core, blk_t *blk)
 {
 
         /* load encoded chunk from file into block */
-        VGUARD(blk->encod_size != fread(blk->encod_strm, 1,
-                                        blk->encod_size, core->fp),
-               1, "data block could not be read.");
+        GUARD(blk->ecd_size != fread(blk->ecd_strm, 1,
+				     blk->ecd_size, core->fp), 1);
 
         /* all OK */
         return 0;
@@ -245,21 +231,20 @@ static int _load_block_data(core_t *core, blk_t *blk)
 /**
  *@brief
  */
-static int _load_block_header(core_t *core, blk_t *blk)
+static int _read_block_header(core_t *core, blk_t *blk)
 {
 
 #define BLOCK_MEMBERS_CNT       3
 
 
         /* read 0x08 bytes */
-        VGUARD(0x08 != fread(core->buff, 1, 0x08, core->fp),
-               1, "data block header could not be read.");
+        GUARD(0x08 != fread(core->buff, 1, 0x08, core->fp), 1);
 
 
         aux_t aux_arr[ BLOCK_MEMBERS_CNT ] = {
 
-                { &blk->encod_size,     sizeof(blk->encod_size) },
-                { &blk->decod_size,     sizeof(blk->decod_size) },
+                { &blk->ecd_size,     sizeof(blk->ecd_size) },
+                { &blk->dcd_size,     sizeof(blk->dcd_size) },
                 { &blk->unknown,        sizeof(blk->unknown) }
         };
 
@@ -268,7 +253,7 @@ static int _load_block_header(core_t *core, blk_t *blk)
         for(int idx = 0, offs = 0;  idx < BLOCK_MEMBERS_CNT;  ++idx) {
 
                 /* copy data from buffer */
-                memcpy(aux_arr[idx].ptr, core->buff + offs, aux_arr[idx].size);
+                memcpy(aux_arr[idx].dest, core->buff + offs, aux_arr[idx].size);
 
                 /* shift buffer offset */
                 offs += aux_arr[idx].size;
@@ -283,26 +268,26 @@ static int _load_block_header(core_t *core, blk_t *blk)
 /**
  *@brief
  */
-static int _load_data_blocks(sup_t *sup)
+static int _read_data_blocks(apm_t *apm)
 {
 
-        int ret = _init_block_table(sup);
+        int ret = _init_block_table(apm);
         GUARD(0 != ret, ret);
 
 
-        for(unsigned idx = 0;  idx < sup->main_hder.encod_blk_cnt;  ++idx) {
+        for(unsigned idx = 0;  idx < apm->main_hder.ecd_blk_cnt;  ++idx) {
 
-                ret = _load_block_header(&sup->core, &sup->blk_tab.arr[idx]);
+                ret = _read_block_header(&apm->core, &apm->blk_tab.arr[idx]);
                 GUARD(0 != ret, ret);
 
                 /* init block based on its header data */
-                ret = _init_block(&sup->blk_tab.arr[idx]);
+                ret = _init_block(&apm->blk_tab.arr[idx]);
                 GUARD(0 != ret, ret);
 
-                /* another block's "encod_strm" was successfully allocated */
-                ++sup->blk_tab.cnt;
+                /* another block's "ecd_strm" was successfully allocated */
+                ++apm->blk_tab.cnt;
 
-                ret = _load_block_data(&sup->core, &sup->blk_tab.arr[idx]);
+                ret = _read_block_data(&apm->core, &apm->blk_tab.arr[idx]);
                 GUARD(0 != ret, ret);
 
         }
@@ -314,32 +299,32 @@ static int _load_data_blocks(sup_t *sup)
 /**
  *@brief
  */
-static int _load_replay(sup_t *sup)
+static int _read_replay(apm_t *apm)
 {
 
         int ret;
 
-        if(sup->core.req & APM_REQ_HEADER) {
+        if(apm->core.req & APM_REQ_HEADER) {
 
-                ret = _read_header(sup);
+                ret = _read_header(apm);
                 GUARD(0 != ret, ret);
         }
 
 
-        if(sup->core.req & APM_REQ_APM) {
+        if(apm->core.req & APM_REQ_APM) {
 
-                ret = _load_data_blocks(sup);
+                ret = _read_data_blocks(apm);
                 GUARD(0 != ret, ret);
 
-                fclose(sup->core.fp);
-                sup->core.fp = NULL;
+                fclose(apm->core.fp);
+                apm->core.fp = NULL;
 
                 /* initialized stream for decoded data */
-                _init_stream(sup);
+                _init_stream(apm);
 
-                for(unsigned i = 0;  i < sup->blk_tab.cnt;  ++i) {
+                for(unsigned i = 0;  i < apm->blk_tab.cnt;  ++i) {
 
-                        ret = _decode(&sup->blk_tab.arr[i], &sup->strm);
+                        ret = _decode(&apm->blk_tab.arr[i], &apm->strm);
                         GUARD(0 != ret, ret);
                 }
         }
@@ -351,7 +336,7 @@ static int _load_replay(sup_t *sup)
 /**
  *@brief
  */
-int apm_wc3_process(sup_t *sup, const request_t req)
+int apm_wc3_process(apm_t *apm, const request_t req)
 {
 
         int ret;
@@ -360,18 +345,21 @@ int apm_wc3_process(sup_t *sup, const request_t req)
         GUARD(0 != ret, ret);
 
         /* back-up request bitmap */
-        sup->core.req = req;
+        apm->core.req = req;
 
-        ret = _load_replay(sup);
+        ret = _read_replay(apm);
         GUARD(0 != ret, ret);
 
 
-        /* if(sup->core.req & APM_REQ_APM) { */
-                
-        /*      TODO(); */
-        /* } */
+        if(apm->core.req & APM_REQ_INFO) {
 
+		ret = _init_info(apm);
+	        GUARD(0 != ret, ret);
 
+		ret = _process_info(apm);
+	        GUARD(0 != ret, ret);
+
+        }
         /* all OK */
         return 0;
 }

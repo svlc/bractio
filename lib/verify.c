@@ -2,6 +2,7 @@
  *@file verify.c
  *@brief
  *@athor Slavomir Vlcek
+ *@copyright GPLv2
  */
 
 #include <stdio.h>
@@ -18,8 +19,7 @@ int _verify_request(const request_t req)
 {
 
         /* if APM_REQ_HEADER bit is not set */
-        VGUARD(0 == (req & APM_REQ_HEADER),
-               1, "APM_REQ_HEADER must always be requested.");
+        GUARD(0 == (req & APM_REQ_HEADER), 1);
                 
         /* all OK */
         return 0;

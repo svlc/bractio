@@ -2,6 +2,7 @@
  *@file debug.h
  *@brief
  *@athor Slavomir Vlcek
+ *@copyright GPLv2
  */
 
 #ifndef APM_DEBUG_H
@@ -36,6 +37,24 @@
         if((COND)) {                            \
                 return RET;                     \
         }
+
+/**
+ *@note CONV is unused
+ */
+#define MALLOC(PTR, CONV, SIZE, ACTION)		\
+	PTR = malloc(SIZE);			\
+	if(NULL == PTR) {			\
+		ACTION;				\
+	}					\
+
+/**
+ *@note CONV is unused
+ */
+#define CALLOC(PTR, CONV, SIZE, ACTION)		\
+	PTR = calloc(1, SIZE);			\
+	if(NULL == PTR) {			\
+		ACTION;				\
+	}					\
 
 
 #endif /* APM_DEBUG_H */

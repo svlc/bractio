@@ -1,7 +1,9 @@
 
++add header dependencies to Makefile (high priority)
 +condider if pthreads are worth implementing
 (this would mean wrappers for non-unix systems)
 +zlib could decode all blocks at once
-+parsed values could be verified (if requested)
++read values could be verified (if requested)
 (at first check benevolence of WarCraft III app)
 +GNU gettext lib
++add global errno-like variable
