@@ -9,26 +9,32 @@
 #define APM_INIT_DEINIT_H
 
 
-extern int _init_stream(apm_t *apm);
+extern int strm_prep(strm_t *strm, const size_t len);
+extern void strm_empty(strm_t *strm);
+extern size_t strm_len(const sgmt_tbl_t *tbl);
 
-extern int _init_block_table(apm_t *apm);
+extern void sgmt_free_fn(void *p);
+extern int sgmt_data_prep(char **ecd_data, unsigned data_size);
+extern void sgmt_zero(sgmt_t *sgmt);
 
-extern int _init_block(blk_t *blk);
+extern int join_scrn_blk_alloc(join_scrn_blk_t **blk);
 
-extern int _prolong_player_table(player_tab_t *player_tab);
+extern void joiner_free_fn(void *p);
+extern int joiner_cmp_fn(void *p1, void *p2);
+extern void joiner_zero(joiner_t *joiner);
 
-/* extern void _init_player_record(player_rec_t *player_rec); */
+extern void msgbox_free_fn(void *p);
 
-extern int _init_player_table(apm_t *apm);
+extern int host_blk_alloc(host_blk_t **blk);
 
-extern int _init_slot_table(apm_t *apm, const int cnt);
+extern int rfnd_alloc(rfnd_t **rfnd);
 
-extern int _init_game_start_rec(apm_t *apm);
+extern void prsn_free_fn(void *p);
+void prsn_zero(prsn_t *p);
 
-extern int _init_info(apm_t *apm);
+extern int body_alloc(body_t **body);
 
-extern apm_t *apm_wc3_init(const char *path);
-
+extern void *apm_wc3_init(void);
 extern void apm_wc3_deinit(apm_t *apm);
 
 

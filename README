@@ -1,41 +1,52 @@
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-+ Replay-Actions-Per-Minute Library			+
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++ Replay-Actions-Per-Minute Library (librapm)		   		       +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 PURPOSE:
-Library inspects WarCraft III replay and obtains
-all usefull info -- game release version,
-replay length, list of players (TODO), winners (TODO),
-APM (Actions Per Minute) (TODO), ...
----------------------------------------------------------
+Library inspects WarCraft III replay file and obtains all usefull info -- e.g.
+game release version, replay length, game joiners, APM (Actions Per Minute)
+for every player, ...
+--------------------------------------------------------------------------------
 VERSION:
-Very early version, lot of things are to be done.
----------------------------------------------------------
+Alfa -- library is planned to have stable API in ~ 07/2013.
+--------------------------------------------------------------------------------
+BUG REPORTING:
+It is meaningless to report any bugs right now, however some advice about
+library design and similar stuff are definitely welcomed.
+--------------------------------------------------------------------------------
 USAGE:
-After "make" command (zlib is required), library gets
-compiled with "src/main.c" source file. The binary
-should show up in "bin" directory. To see usage, run
-the program with no arguments. Sample replays to test
-the library can be found in "samples" directory.
----------------------------------------------------------
-INNARDS:
-Replay header gets parsed, then, based on header info,
-several encoded data blocks are loaded and decoded by
-zlib library. That is all the library does right now.
----------------------------------------------------------
+After "make" command (zlib is required), library gets compiled with "src/main.c"
+source file. The binary should show up in "bin" directory. To see usage, run the
+program with "-h" option. Sample replays to demonstrate the library can be found
+in "samples" directory.
+--------------------------------------------------------------------------------
+SAMPLES:
+More replay samples can be found e.g. at:
+http://www.wcg.com/6th/replay/replay.asp
+--------------------------------------------------------------------------------
 LICENSE:
 GPLv2
----------------------------------------------------------
+--------------------------------------------------------------------------------
 THANKS:
 +http://zlib.net
 +http://w3g.deepnode.de/files/w3g_format.txt
 +http://w3g.deepnode.de/files/w3g_actions.txt
----------------------------------------------------------
+--------------------------------------------------------------------------------
 FACTS:
-+library is very C99 dependent
-+indent style: "1TBS"
 +development is carried out on GNU/Linux
----------------------------------------------------------
-EXAMPLES:
-http://www.wcg.com/6th/replay/replay.asp
----------------------------------------------------------
+--------------------------------------------------------------------------------
+DESIGN DECISIONS:
++global errno-like variable is deliberately not used (because of possible
+usage of pthreads at library user's side)
++signal handling is up to the lib user, lib does not have any because its
+functions return quickly enough
+--------------------------------------------------------------------------------
+CODING STANDARDS:
++use "1TBS" indent style (do not forget to cover body of "control flow"
+keywords (e.g. for, while, if, ...) with curly brackets)
++have literal value on the left side of 'is-equal' comparison
++never put "return" statement at the end of void function
++try to keep width of every line at 80 characters
++never, under any circumstances, use C99 comments
++try to limit number of "return" statements within function (good for debugging)
+--------------------------------------------------------------------------------

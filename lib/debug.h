@@ -1,60 +1,62 @@
 /**
- *@file debug.h
- *@brief
- *@athor Slavomir Vlcek
- *@copyright GPLv2
+ * @file debug.h
+ * @brief
+ * @athor Slavomir Vlcek
+ * @copyright GPLv2
  */
 
 #ifndef APM_DEBUG_H
 #define APM_DEBUG_H
 
 
-/*
- * VGUARD() uses variadic macros:
- * http://gcc.gnu.org/onlinedocs/cpp/Variadic-Macros.html
- */
-
-/* returns string according to "errno" value */
-#define ECHO_ERRNO() (errno ? strerror(errno) : "" )
-
-/* VERBOSE GUARD
- * @brief if given "COND" is true:
- * error info and reason is printed,
- * "errno" variable is reset,
- * "RET" is returned */
-#define VGUARD(COND, RET, ...)                                          \
-        if((COND)) {                                                    \
-                fprintf(stderr, "ERROR in %s, %s(),\nerrno: \"%s\", ",  \
-                        __FILE__, __func__, ECHO_ERRNO());              \
-                fprintf(stderr, ##__VA_ARGS__);                         \
-                errno = 0;                                              \
-                return RET;                                             \
-        }
+/* verbose guard, adds {file,function,...} info */
+#define VGUARD(COND, ACTION)						\
+	if ((COND)) {							\
+		fprintf(stderr, "%s, %s\n", __FILE__, __func__);	\
+		ACTION;							\
+	}
 
 
 /* return "RET" if given "COND" is true */
-#define GUARD(COND, RET)                        \
-        if((COND)) {                            \
-                return RET;                     \
-        }
+#define GUARD(COND, ACTION)			\
+	if ((COND)) {				\
+		ACTION;				\
+	}
+
 
 /**
- *@note CONV is unused
+ * @brief 
  */
 #define MALLOC(PTR, CONV, SIZE, ACTION)		\
-	PTR = malloc(SIZE);			\
-	if(NULL == PTR) {			\
-		ACTION;				\
-	}					\
+	do {					\
+		PTR = CONV malloc(SIZE);	\
+		if (NULL == PTR) {		\
+			ACTION;			\
+		}				\
+	} while (0)				\
+
 
 /**
- *@note CONV is unused
+ * @brief
  */
 #define CALLOC(PTR, CONV, SIZE, ACTION)		\
-	PTR = calloc(1, SIZE);			\
-	if(NULL == PTR) {			\
-		ACTION;				\
-	}					\
+	do {					\
+		PTR = CONV calloc(1, SIZE);	\
+		if (NULL == PTR) {		\
+			ACTION;			\
+		}				\
+	} while (0)				\
 
+
+/**
+ * @brief 
+ */
+#define REALLOC(NEWP, OLDP, CONV, SIZE, ACTION)		\
+	do {						\
+		NEWP = CONV realloc(OLDP, SIZE);	\
+		if (NULL == NEWP) {			\
+			ACTION;				\
+		}					\
+	} while (0)					\
 
 #endif /* APM_DEBUG_H */

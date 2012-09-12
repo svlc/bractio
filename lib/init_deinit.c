@@ -1,340 +1,386 @@
 /**
- *@file init_deinit.c
- *@brief
- *@athor Slavomir Vlcek
- *@copyright GPLv2
+ * @file init_deinit.c
+ * @brief
+ * @athor Slavomir Vlcek
+ * @copyright GPLv2
  */
 
-#include <stdio.h>              /* fread(3) */
-#include <stdlib.h>             /* NULL, {m,c}alloc(3), free(3) */
-#include <errno.h>              /* errno */
-#include <string.h>             /* strerror(3) */
+#include <stdio.h>		/* fread(3) */
+#include <stdlib.h>		/* NULL, {m,c}alloc(3), free(3) */
+#include <errno.h>		/* errno */
+#include <string.h>		/* strerror(3) */
 #include <stdbool.h>
 #include <assert.h>
 
-#include "apm.h"
-#include "debug.h"              /* GUARD(), ... */
+#include "rapm.h"
+#include "debug.h"		/* GUARD(), ... */
+#include "list.h"
 
 
 
 /**
- *@brief Inits memory and variables for decoded data stream
+ * @brief Inits memory and variables for decoded data stream
  *
- *@todo Consider whether we should compute the total stream length here
- *or use "apm->main_hder.dcd_data_size" instead (but remember
- *that "dcd_data_size" has no zero padding in the last block)
+ * @todo Consider whether we should compute the total stream length here
+ * or use "apm->main_hder.dcd_data_size" instead (but remember
+ * that "dcd_data_size" has no zero padding in the last block)
  */
-int _init_stream(apm_t *apm)
+int strm_prep(strm_t *strm, const size_t len)
 {
-        
-        assert(NULL == apm->strm.arr);
-        assert(0 == apm->strm.len);
-        assert(0 == apm->strm.cnt);
+	assert(NULL == strm->arr);
+	assert(0 == strm->len);
+	assert(0 == strm->cnt);
 
-        int strm_len = 0;
+	/* allocate needed memory */
+	MALLOC(strm->arr, (char *), len, return 1);
 
-        /* compute total stream length */
-        for(unsigned i = 0;  i < apm->blk_tab.cnt;  ++i) {
-
-                strm_len += apm->blk_tab.arr[i].dcd_size;
-        }
-
-        /* allocate needed memory */
-        MALLOC(apm->strm.arr, --, strm_len, return 1);
-
-        apm->strm.len = strm_len;
+	strm->len = len;
 
 	/* set position to array start */
-	apm->strm.pos = apm->strm.arr;
+	strm->pos = strm->arr;
 
 	/* set pointer to first 'out of range' char */
-	apm->strm.limit = apm->strm.arr + strm_len;
-
-        /* all OK */
-        return 0;
-}
-
-/**
- *@brief Allocates memory for blk_tab_t array, sets variables
- *
- *@param apm
- *
- *@attention Block count gets inited to "0" in apm_wc3_init()
- *@attention It is essential (see apm_wc3_deinit()) to set
- *all "enc_strm" pointers to NULL (by calloc())
- */
-int _init_block_table(apm_t *apm)
-{
-
-        /* allocate zeroed memory */
-	CALLOC(apm->blk_tab.arr, --,
-	       apm->main_hder.ecd_blk_cnt * sizeof(blk_t), return 1);
-
-        /* set the right array length */
-        apm->blk_tab.len = apm->main_hder.ecd_blk_cnt;
-
-        /* all OK */
-        return 0;
-}
-
-/**
- *@brief
- */
-int _init_block(blk_t *blk)
-{
-	MALLOC(blk->ecd_strm, --, blk->ecd_size, return 1);
-
-        /* all OK */
-        return 0;
-}
-
-
-/**
- *@brief
- */
-int _prolong_player_table(player_tab_t *player_tab)
-{
-
-	/* temporary length */
-	int tmp_len = 2 * player_tab->len;
-	player_rec_t **tmp_arr = NULL;
-
-	MALLOC(tmp_arr, --, tmp_len * sizeof(player_rec_t), return 1);
-
-	/* copy valid pointers */
-	memcpy(tmp_arr, player_tab->arr, player_tab->len);
-
-	/* free old pointer array */
-	free(player_tab->arr);
-
-	/* assign new array pointer */
-	player_tab->arr = tmp_arr;
-
-	/* update length */
-	player_tab->len = tmp_len;
-
-	/* all OK */
-	return 0;
-}
-
-/**
- *@brief
- */
-int _init_player_table(apm_t *apm)
-{
-#define MAX_PLAYER_SLOT_CNT 12
-
-	assert(NULL == apm->info->player_tab.arr);
-	assert(0 == apm->info->player_tab.len);
-	assert(0 == apm->info->player_tab.cnt);
-
-
-	MALLOC(apm->info->player_tab.arr, --,
-	       MAX_PLAYER_SLOT_CNT * sizeof(int **), return 1);
-
-	/* note down the array length */
-	apm->info->player_tab.len = MAX_PLAYER_SLOT_CNT;
+	strm->lim = strm->arr + len;
 
 	return 0;
-
-
 }
 
 
 /**
- *@brief
+ * @brief 
  */
-int _init_slot_table(apm_t *apm, const int len)
+static void strm_zero(strm_t *strm)
 {
+	memset(strm, 0, sizeof(strm_t));
+}
 
-	assert(NULL == apm->info->game_start_rec->slot_tab.arr);
-	assert(0 == apm->info->game_start_rec->slot_tab.cnt);
-	assert(0 == apm->info->game_start_rec->slot_tab.len);
 
-	/* if "cnt" is unreasonable */
-	if(len < 1 || len > MAX_PLAYER_SLOT_CNT) {
-		return 1;
+/**
+ * @brief 
+ */
+void strm_empty(strm_t *strm)
+{
+	free(strm->arr);
+
+	strm_zero(strm);
+}
+
+
+/**
+ * @brief Compute stream length, including trailing zeroes.
+ */
+size_t strm_len(const sgmt_tbl_t *tbl)
+{
+	size_t strm_len = 0;
+
+	/* compute total stream length */
+	for (size_t idx = 0;  idx < tbl->cnt;  ++idx) {
+		strm_len += (*(sgmt_t *)tbl->arr[idx]).dcd_size;
 	}
 
+	return strm_len;
+}
 
-	MALLOC(apm->info->game_start_rec->slot_tab.arr, --,
-	       len * sizeof(slot_rec_t), return 1);
 
-	apm->info->game_start_rec->slot_tab.len = len;
-	apm->info->game_start_rec->slot_tab.cnt = 0;
+/**
+ * @brief 
+ */
+void sgmt_free_fn(void *p)
+{
+	free(((sgmt_t *)p)->ecd_data);
+
+	free(p);
+}
+
+
+/**
+ * @brief Allocate memory chunk for segment.
+ */
+int sgmt_data_prep(char **ecd_data, unsigned data_size)
+{
+	assert(NULL == *ecd_data);
+
+	MALLOC(*ecd_data, (char *), data_size, return 1);
+
+	return 0;
+}
+
+
+/**
+ * @brief
+ */
+void sgmt_zero(sgmt_t *sgmt)
+{
+	memset(sgmt, 0, sizeof(sgmt_t));
+}
+
+
+/**
+ * @brief
+ */
+int join_scrn_blk_alloc(join_scrn_blk_t **blk)
+{
+	assert(NULL == *blk);
+
+	MALLOC(*blk, (join_scrn_blk_t *), sizeof(join_scrn_blk_t), return 1);
+
+	tbl_prep(&(*blk)->slot_tbl, 0, free);
+
+	return 0;
+}
+
+
+/**
+ * @brief
+ */
+static void join_scrn_blk_dealloc(join_scrn_blk_t **blk)
+{
+	assert(*blk);
+
+	tbl_empty(&(*blk)->slot_tbl);
+
+	free(*blk);
+
+	*blk = NULL;
+}
+
+
+/**
+ * @brief 
+ */
+void joiner_free_fn(void *p)
+{
+	free(((joiner_t *)p)->name);
+
+	free(p);
+}
+
+
+/**
+ * @brief 
+ */
+int joiner_cmp_fn(void *p1, void *p2)
+{
+	return (int)(((joiner_t *)p1)->id) - (int)(((joiner_t *)p2)->id);
+}
+
+
+/**
+ * @brief 
+ */
+void joiner_zero(joiner_t *joiner)
+{
+	memset(joiner, 0, sizeof(joiner_t));
+}
+
+
+/**
+ * @brief 
+ */
+void msgbox_free_fn(void *p)
+{
+	free(((msgbox_t *)p)->msg);
+
+	free(p);
+}
+
+
+/**
+ * @brief Allocate "host_blk_t" structure.
+ */
+int host_blk_alloc(host_blk_t **blk)
+{
+	assert(NULL == *blk);
+
+	MALLOC(*blk, (host_blk_t *), sizeof(host_blk_t), return 1);
+
+	memset(*blk, 0, sizeof(host_blk_t));
+
+	/* set indication this person is game host */
+	(*blk)->prsn.host = true;
+
+	return 0;
+}
+
+
+/**
+ * @brief 
+ */
+static void host_blk_dealloc(host_blk_t **blk)
+{
+	assert(*blk);
+
+	free((*blk)->prsn.name);
+	free((*blk)->game_name);
+	free((*blk)->map_path);
+	free((*blk)->game_creator);
+
+	free(*blk);
+	*blk = NULL;
+}
+
+
+/**
+ * @brief Prepare "extra" structure.
+ */
+static void extra_prep(extra_t *extra)
+{
+	tbl_zero(&extra->joiner_tbl);
+
+	extra->chat_ls = NULL;
+	extra->action_ls = NULL;
+}
+
+
+/**
+ * @brief Allocate rfnd_t structures.
+ */
+int rfnd_alloc(rfnd_t **rfnd)
+{
+	assert(NULL == *rfnd);
+
+	MALLOC(*rfnd, (rfnd_t *), sizeof(rfnd_t), return 1);
+	(*rfnd)->host_blk = NULL;
+
+	host_blk_alloc(&(*rfnd)->host_blk);
 
 	
-	return 0;
-#undef MAX_PLAYER_SLOT_CNT
-}
 
+	(*rfnd)->join_scrn_blk = NULL;
+	(*rfnd)->prsn_tbl = NULL;
 
-/**
- *@brief
- */
-int _init_game_start_rec(apm_t *apm)
-{
-
-	assert(NULL == apm->info->game_start_rec);
-
-	MALLOC(apm->info->game_start_rec, --,
-	       sizeof(game_start_rec_t), return 1);
-
-	apm->info->game_start_rec->slot_tab.arr = NULL;
-	apm->info->game_start_rec->slot_tab.len = 0;
-	apm->info->game_start_rec->slot_tab.cnt = 0;
+	extra_prep(&(*rfnd)->extra);
 
 	return 0;
 }
 
 
 /**
- *@brief Allocates array of pointers
+ * @brief Function to be passed to tbl_prep().
  */
-int _init_info(apm_t *apm)
+void prsn_free_fn(void *p)
 {
+	free(((prsn_t *)p)->name);
 
-	MALLOC(apm->info, --, sizeof(info_t), return 1);
-
-	apm->info->player_tab.arr = NULL;
-	apm->info->player_tab.len = 0;
-	apm->info->player_tab.cnt = 0;
-
-	apm->info->game_name = NULL;
-	apm->info->map_path = NULL;
-	apm->info->game_creator = NULL;
-
-	apm->info->game_start_rec = NULL;
-
-        /* all OK */
-        return 0;
+	free(p);
 }
 
 
 /**
- *@brief Allocates memory and tries to open given file
+ * @brief Zero person item.
  */
-apm_t *apm_wc3_init(const char *path)
+void prsn_zero(prsn_t *p)
+{
+	memset(p, 0, sizeof(prsn_t));
+}
+
+
+/**
+ * @brief Allocate body structures.
+ */
+int body_alloc(body_t **body)
+{
+	assert(NULL == *body);
+
+	MALLOC(*body, (body_t *), sizeof(body_t), return 1);
+	
+	/* zero sgmt_tbl_t */
+	tbl_zero(&(*body)->sgmt_tbl);
+
+	/* zero strm_t */
+	memset(&(*body)->strm, 0, sizeof(strm_t));
+
+	return 0;
+}
+
+
+/**
+ * @brief Allocate the most essential structures.
+ *
+ * @return opaque pointer, NULL on failure
+ */
+void *apm_wc3_init(void)
 {
 /* bigger size boosts nothing */
-#define BUFF_SIZE       128
+#define BUFF_SIZE	128
 
-        apm_t *apm;
-	MALLOC(apm, --, sizeof(apm_t), return NULL);
+	int ret;
+	apm_t *apm;
+	MALLOC(apm, (apm_t *), sizeof(apm_t), return NULL);
 
-        /* allocate "BUFF_SIZE" bytes for buffer */
-	MALLOC(apm->core.buff, --, BUFF_SIZE, free(apm); return NULL);
+	/* allocate "BUFF_SIZE" bytes for buffer */
+	ret = buff_prep(&apm->core.buff, BUFF_SIZE);
+	GUARD(0 != ret, free(apm); return NULL);
 
-        apm->core.buff_len = BUFF_SIZE;
+	/* init file pointer */
+	apm->core.fp = NULL;
 
-        /* init blk_tab_t */
-        apm->blk_tab.arr = NULL;
-        apm->blk_tab.len = 0;
-        apm->blk_tab.cnt = 0;
+	apm->body = NULL;
+	apm->rfnd = NULL;
 
-        /* init strm_t */
-        apm->strm.arr = NULL;
-        apm->strm.len = 0;
-        apm->strm.cnt = 0;
-
-	/* will be allocated later */
-	apm->info = NULL;
-
-        /* only windows OS requires "b" flag for binary files */
-        apm->core.fp = fopen(path, "rb");
-        /* check if file opening was successful */
-        if(NULL == apm->core.fp) {
-
-                free(apm->core.buff);
-                free(apm);
-		return NULL;
-        }
-
-        return apm;
+	return (void *)apm;
 #undef BUFF_SIZE
 }
 
 
 /**
- *@brief 
- */
-static void _deinit_info(info_t *info)
-{
-
-	if(NULL == info) {
-		return;
-	}
-
-	while(info->player_tab.cnt) {
-
-		--info->player_tab.cnt;
-
-		free(info->player_tab.arr[info->player_tab.cnt]->player_name);
-
-		free(info->player_tab.arr[info->player_tab.cnt]);
-	}
-
-	free(info->player_tab.arr);
-
-	free(info->game_name);
-
-	free(info->map_path);
-
-	free(info->game_creator);
-
-	if(info->game_start_rec) {
-
-		free(info->game_start_rec->slot_tab.arr);
-
-		free(info->game_start_rec);
-	}
-
-	free(info);
-
-}
-
-
-/**
- *@brief Closes the file, frees all resources
+ * @brief Close the file, free all resources.
  *
- *@attention whole "apm_t" structure will be freed
- *so it is meaningless to reset all variables but "apm" to "0"
+ * @note whole "apm_t" structure will be freed
+ * so it is meaningless to reset any variables to NULL
  */
 void apm_wc3_deinit(apm_t *apm)
 {
-
-        /* if fp is valid (fclose(NULL) is deadly) */
-        if(apm->core.fp) {
-                fclose(apm->core.fp);
-        }
-
-        /* auxiliary pointer */
-        blk_tab_t *blk_tab = &apm->blk_tab;
-
-        /* go through all initialized blk_tab records */
-        while(blk_tab->cnt) {
-
-                --blk_tab->cnt;
-
-                /* some block streams may be NULL */
-                free(blk_tab->arr[ blk_tab->cnt ].ecd_strm);
-        }
-
-        /* possibly free block table array */
-        free(blk_tab->arr);
-
-        /* possibly free decoded stream array */
-        free(apm->strm.arr);
+	/* auxiliary pointers */
+	rfnd_t *rfnd = apm->rfnd;
+	extra_t *extra = &rfnd->extra;
 
 
-        /* free buffer */
-        free(apm->core.buff);
-
-	if(apm->info) {
-		_deinit_info(apm->info);
+	if (NULL == apm) {
+		return;
 	}
 
-        free(apm);
-        apm = NULL;
+	/* if fp is valid (fclose(NULL) is deadly) */
+	if (apm->core.fp) {
+		fclose(apm->core.fp);
+	}
 
+	if (apm->core.buff.arr) {
+		buff_empty(&apm->core.buff);
+	}
+
+	if (apm->body) {
+		tbl_empty(&apm->body->sgmt_tbl);
+
+		if (apm->body->strm.arr) {
+			strm_empty(&apm->body->strm);
+		}
+		free(apm->body);
+	}
+
+	if (rfnd) {
+		if (rfnd->host_blk) {
+			host_blk_dealloc(&rfnd->host_blk);
+		}
+
+		if (rfnd->join_scrn_blk) {
+			join_scrn_blk_dealloc(&rfnd->join_scrn_blk);
+		}
+
+		if (rfnd->prsn_tbl) {
+			tbl_dealloc(&rfnd->prsn_tbl);
+		}
+
+		tbl_empty(&extra->joiner_tbl);
+		if (extra->chat_ls) {
+			list_dealloc(&extra->chat_ls);
+		}
+		if (extra->action_ls) {
+			list_dealloc(&extra->action_ls);
+		}
+
+		free(rfnd);
+	}
+
+	free(apm);
 }

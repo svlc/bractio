@@ -1,9 +1,13 @@
-
-+add header dependencies to Makefile (high priority)
-+condider if pthreads are worth implementing
-(this would mean wrappers for non-unix systems)
-+zlib could decode all blocks at once
-+read values could be verified (if requested)
-(at first check benevolence of WarCraft III app)
-+GNU gettext lib
-+add global errno-like variable
++implement good API, let just necessary stuff in API header
++change library so that it is dynamically linked
++improve return error codes and error info reporting
++try to find some official tournament replays and update the code accordingly
++checking of range (see "check.c") is done just for a few variables
++some CPP directives should be better at some special place
++try to optimize zlib usage
+--------------------------------------------------------------------------------
++write some general test scripts as well as some syntax-checking scripts
+(to reveal 8-space-sequence, ...)
+--------------------------------------------------------------------------------
++language bindings
++GNU gettext

@@ -13,77 +13,93 @@
 
 #include <zlib.h>
 
-#include "apm.h"
+#include "rapm.h"
 #include "debug.h"
 
 
-int _decode(blk_t *blk, strm_t *strm)
+/**
+ * @brief
+ */
+int decode_sgmts(sgmt_tbl_t *tbl, strm_t *strm)
 {
+	assert(tbl->cnt == tbl->len);
+	assert(0 == strm->cnt);
+	assert(strm->arr == strm->pos);
 
-        int ret;
-        z_stream z_strm;
+	int ret;
+	z_stream z_strm;
 
-        z_strm.zalloc = Z_NULL;
-        z_strm.zfree = Z_NULL;
-        z_strm.opaque = Z_NULL;
+	/* NULL is voluntary */
+	sgmt_t *sgmt = NULL;
 
+	for (size_t idx = 0;  idx < tbl->cnt;  ++idx) {
 
-        z_strm.avail_in = 0;
-        z_strm.next_in = Z_NULL;
-
-        /* init z_strm */
-        ret = inflateInit(&z_strm);
-        if(Z_OK != ret) {
-                return ret;
-        }
-
-        /* inform about size of chunk we want decode */
-        z_strm.avail_in = blk->ecd_size;
-        /* give over the pointer to encoded buffer */
-        z_strm.next_in = (unsigned char *)blk->ecd_strm;
+		z_strm.zalloc = Z_NULL;
+		z_strm.zfree = Z_NULL;
+		z_strm.opaque = Z_NULL;
 
 
-        z_strm.avail_out = blk->dcd_size;
+		z_strm.avail_in = 0;
+		z_strm.next_in = Z_NULL;
 
-        z_strm.next_out = (unsigned char *)strm->arr + strm->cnt;
-
-
-        /* from "next_in" to "next_out" */
-        ret = inflate(&z_strm, Z_NO_FLUSH);
-
-        /* should never happen */
-        assert(ret != Z_STREAM_ERROR);
-
-        /* we always know the decoded stream size,
-         * so this should always be "0" or decoded
-         * stream size info from replay block header was wrong */
-        assert(0 == z_strm.avail_out);
-        assert(Z_STREAM_END != ret);
+		/* init z_strm */
+		ret = inflateInit(&z_strm);
+		if (Z_OK != ret) {
+			return ret;
+		}
 
 
-        switch(ret) {
+		sgmt = (sgmt_t *)tbl->arr[idx];
 
-        case Z_NEED_DICT:
-                ret = Z_DATA_ERROR;
+		/* inform about size of chunk we want decode */
+		z_strm.avail_in = sgmt->ecd_size;
+		/* give over the pointer to encoded buffer */
+		z_strm.next_in = (unsigned char *)sgmt->ecd_data;
 
-        case Z_DATA_ERROR:      /* if stream is corrupt/unrecognized by zlib */
 
-        case Z_MEM_ERROR:       /* if not enough memory */
-                inflateEnd(&z_strm);
-                return 1;
-        }
+		z_strm.avail_out = sgmt->dcd_size;
 
-        inflateEnd(&z_strm);
+		z_strm.next_out = (unsigned char *)strm->arr + strm->cnt;
 
-        strm->cnt += blk->dcd_size;
-        /* all OK */
-        return 0;
+
+		/* from "next_in" to "next_out" */
+		ret = inflate(&z_strm, Z_NO_FLUSH);
+
+		/* should never happen */
+		assert(ret != Z_STREAM_ERROR);
+
+		/* we always know the decoded stream size,
+		 * so this should always be "0" or decoded
+		 * stream size info from replay block header was wrong */
+		assert(0 == z_strm.avail_out);
+		assert(Z_STREAM_END != ret);
+
+
+		switch (ret) {
+
+		case Z_NEED_DICT:
+			ret = Z_DATA_ERROR;
+
+			/* if stream is corrupt/unrecognized by zlib */
+		case Z_DATA_ERROR:
+			/* if not enough memory */
+		case Z_MEM_ERROR:
+			inflateEnd(&z_strm);
+			return 1;
+		}
+
+		strm->cnt += sgmt->dcd_size;
+
+		inflateEnd(&z_strm);
+	}
+
+	return 0;
 }
 
 /**
  *@brief
  */
-void _decode_opts_map_creator_str(char *ecd_str_pos, char *dcd_str_pos)
+void decode_opts_map_creator_str(char *ecd_str_pos, char *dcd_str_pos)
 {
 
 	assert(NULL != ecd_str_pos);
@@ -93,10 +109,10 @@ void _decode_opts_map_creator_str(char *ecd_str_pos, char *dcd_str_pos)
 	unsigned char bit = 0;
 
 	/* iterate until '\0' is found */
-	while(*ecd_str_pos) {
+	while (*ecd_str_pos) {
 
 		/* if this is key-bit */
-		if(0 == bit) {
+		if (0 == bit) {
 			/* save it */
 			key = *ecd_str_pos;
 
@@ -104,7 +120,7 @@ void _decode_opts_map_creator_str(char *ecd_str_pos, char *dcd_str_pos)
 			bit = (1 << 1);
 		} else {
 			*dcd_str_pos = *ecd_str_pos;
-			if(0 == (key & bit)) {
+			if (0 == (key & bit)) {
 				--*dcd_str_pos;
 			}
 
