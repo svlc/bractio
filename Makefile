@@ -7,8 +7,9 @@ SHELL = /bin/sh
 CC = gcc
 AR = ar
 
-
-CFLAGS =-pedantic -Wall -Werror -Wextra -ggdb -D_XOPEN_SOURCE# -DNDEBUG
+# OPTCFLAGS is to be passed to make command to add some extra flags
+CFLAGS =-pedantic -Wall -Werror -Wextra -ggdb -D_XOPEN_SOURCE\
+$(OPTCFLAGS)# -DNDEBUG
 
 
 # these options are mandatory, do not let the 'make user' suppress them
@@ -51,10 +52,10 @@ $(LTARG): build $(LOBJ)
 
 # define new rule with higher priority compared to implicit %.c rule
 
-# @note "obj" must be "order-only prerequisite", otherwise "obj"
+# "obj" must be "order-only prerequisite", otherwise "obj"
 # causes all source files to be recompiled over and over again
 
-# @note this way every source file depends on all header files
+# This way every source file depends on all header files
 # (there is more proper, but quite annoying solution:
 # gnu.org/software/make/manual/html_node/Automatic-Prerequisites.html)
 obj/%.o: lib/%.c $(LHDR) | obj
@@ -62,7 +63,7 @@ obj/%.o: lib/%.c $(LHDR) | obj
 
 
 # directory creation, these rules have no prerequisites
-obj       : ; -@mkdir obj
+obj       : ; @mkdir obj
 bin       : ; @mkdir bin
 build     : ; @mkdir build
 $(DISTDIR): ; @mkdir $(DISTDIR)
@@ -76,8 +77,8 @@ dist: $(DISTDIR)
 
 .PHONY: clean
 clean :
-	rm -f lib/*~
 	rm -rf obj/ bin/ build/
 	rm -f src/main.o
-	rm -rf $(DISTDIR).tar.gz
-
+	rm -f $(DISTDIR).tar.gz
+	# delete all regular files ending in "~"
+	find . -name "*~" -type f -print0 | xargs -0 /bin/rm -f
