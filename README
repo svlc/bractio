@@ -5,14 +5,14 @@
 PURPOSE:
 Library inspects WarCraft III replay file and obtains all usefull info -- e.g.
 game release version, replay length, game joiners, APM (Actions Per Minute)
-for every player, ...
+of every player, ...
 --------------------------------------------------------------------------------
 VERSION:
 Alfa -- library is planned to have stable API in ~ 07/2013.
 --------------------------------------------------------------------------------
 BUG REPORTING:
 It is meaningless to report any bugs right now, however some advice about
-library design and similar stuff are definitely welcomed.
+library design and similar stuff is welcome.
 --------------------------------------------------------------------------------
 USAGE:
 After "make" command (zlib is required), library gets compiled with "src/main.c"

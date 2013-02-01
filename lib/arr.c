@@ -19,7 +19,6 @@
 
 /**
  * @brief Add some data to some index.
- * @warning User of function must ensure staying within array range
  * 
  * @param arr array
  * @param idx index
@@ -35,14 +34,16 @@ void arr_add_item(arr_t *arr, size_t idx, void *data)
 
 /**
  * @brief Get the pointer to item.
- * @warning User of function must ensure staying within array range
  *
  * @param arr array
  * @param idx index <0, arr->cnt)
+ * @return NULL if idx is unused or out of range
  */
 void *arr_get_item(arr_t *arr, size_t idx)
 {
-	assert(idx < arr->cnt);
+	if (idx >= arr->cnt) {
+		return NULL;
+	}
 
 	return (char *)arr->ptr + (idx * arr->item_size);
 }
@@ -64,6 +65,7 @@ void arr_zero(arr_t *arr)
 
 /**
  * @brief Prepare array of some length.
+ * @note Calloc(3) is required since NULL is flag for "unused index".
  *
  * @param arr array
  * @param cnt required number of items

@@ -481,8 +481,6 @@ int save_chatmsg_blk(strm_t *strm, chat_ls_t *chat_ls, mmt_t *curr_mmt)
 }
 
 
-
-
 /**
  * @brief
  */

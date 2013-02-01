@@ -38,7 +38,6 @@ int decode_sgmts(sgmt_tbl_t *tbl, strm_t *strm)
 		z_strm.zfree = Z_NULL;
 		z_strm.opaque = Z_NULL;
 
-
 		z_strm.avail_in = 0;
 		z_strm.next_in = Z_NULL;
 
@@ -47,15 +46,12 @@ int decode_sgmts(sgmt_tbl_t *tbl, strm_t *strm)
 		if (Z_OK != ret) {
 			return ret;
 		}
-
-
 		sgmt = (sgmt_t *)tbl->arr[idx];
 
 		/* inform about size of chunk we want decode */
 		z_strm.avail_in = sgmt->ecd_size;
 		/* give over the pointer to encoded buffer */
 		z_strm.next_in = (unsigned char *)sgmt->ecd_data;
-
 
 		z_strm.avail_out = sgmt->dcd_size;
 
@@ -68,9 +64,11 @@ int decode_sgmts(sgmt_tbl_t *tbl, strm_t *strm)
 		/* should never happen */
 		assert(ret != Z_STREAM_ERROR);
 
-		/* we always know the decoded stream size,
+		/*
+		 * we always know the decoded stream size,
 		 * so this should always be "0" or decoded
-		 * stream size info from replay block header was wrong */
+		 * stream size info from replay block header was wrong
+		 */
 		assert(0 == z_strm.avail_out);
 		assert(Z_STREAM_END != ret);
 
@@ -96,17 +94,16 @@ int decode_sgmts(sgmt_tbl_t *tbl, strm_t *strm)
 	return 0;
 }
 
+
 /**
  *@brief
  */
 void decode_opts_map_creator_str(char *ecd_str_pos, char *dcd_str_pos)
 {
-
 	assert(NULL != ecd_str_pos);
 	assert(NULL != dcd_str_pos);
 
-	unsigned char key;
-	unsigned char bit = 0;
+	unsigned char key, bit = 0;
 
 	/* iterate until '\0' is found */
 	while (*ecd_str_pos) {
@@ -123,7 +120,6 @@ void decode_opts_map_creator_str(char *ecd_str_pos, char *dcd_str_pos)
 			if (0 == (key & bit)) {
 				--*dcd_str_pos;
 			}
-
 			++dcd_str_pos;
 			/* left shift until bit value overwflows to 0 */
 			bit <<= 1;
@@ -133,4 +129,3 @@ void decode_opts_map_creator_str(char *ecd_str_pos, char *dcd_str_pos)
 	/* make it string */
 	*dcd_str_pos = '\0';
 }
-

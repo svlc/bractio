@@ -44,7 +44,6 @@ static item_t *_list_alloc_item(void *data)
  */
 int list_add_item(list_t *ls, void *data)
 {
-
 	item_t *item = _list_alloc_item(data);
 	if (NULL == item) {
 		return 1;
@@ -103,7 +102,6 @@ void list_prep(list_t *ls, list_free_data_fn_t fn)
  */
 void list_empty(list_t *ls)
 {
-
 	item_t *aux = ls->head;
 	item_t *tmp;
 
