@@ -48,7 +48,7 @@ void usage(char *prog_name)
 
 
 /**
- * @brief Get statically allocated string that hold printable mmt.
+ * @brief Get statically allocated string to hold printable mmt.
  */
 char *get_mmt_str(mmt_t *mmt)
 {
@@ -221,7 +221,7 @@ int proc_args(int argc, char **argv, req_t *req, char **path)
 			abort();
 		}
 
-	/* the only argument was '-h' for help */
+	/* if the only argument was '-h' for help */
 	if (help) {
 		if (2 == argc) {
 			return -1;
