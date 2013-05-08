@@ -125,22 +125,23 @@ static int inspect_item_size(char *start, const char *lim, aux_t *item)
 	 * so we have to compute the length at first
 	 */
 	if (0 == item->size) {
-
 		ret = safe_str_len(start, lim);
 		GUARD(-1 == ret, return 1);
 
-		MALLOC(*((char **)item->dest), (char *), ret + 1,
-		       return APM_E_NO_MEM);
-
+		*((char **)item->dest) = (char *)malloc(ret + 1);
+		if (!*((char **)item->dest)) {
+			ret = APM_E_NO_MEM;
+			goto out;
+		}
 		item->dest = *((char **)item->dest);
-
 		/* now we know the size of string */
 		item->size = ret + 1;
 	} else {
 		GUARD(pos_gt_lim(start + item->size, lim), return 1);
 	}
-
-	return 0;
+	ret = 0;
+out:
+	return ret;
 }
 
 

@@ -65,19 +65,26 @@ void export_prsn_to_joiner(prsn_t *prsn, joiner_t *joiner)
  */
 int complete_joiner(joiner_t *j)
 {
-	int len, ret;
+	int len;
+	int ret;
 
 	/* "+ 1" because of '\0' */
 	len = (int)strlen("unknown_??") + 1;
 
-	MALLOC(j->name, (char *), len, return APM_E_NO_MEM);
+	j->name = (char *)malloc(len);
+	if (!j->name) {
+		ret = APM_E_NO_MEM;
+		goto out;
+	}
 
 	ret = snprintf(j->name, len, "unknown_%d", j->id);
 	/* if "id" has more then 2 digits */
 	if (ret > (len - 1)) {
 		return 1;
 	}
-	return 0;
+	ret = 0;
+out:
+	return ret;
 }
 
 
@@ -153,9 +160,10 @@ int form_joiner_tbl(prsn_tbl_t *prsn_tbl, prsn_t *host,
 
 			/* if slot is used */
 			if (0x02 == (*slot)->slot_status) {
-
-				MALLOC(j_item, (joiner_t *), sizeof(joiner_t),
-				       return 1);
+				j_item = (joiner_t *)malloc(sizeof(*j_item));
+				if (!j_item) {
+					return 1;
+				}
 				joiner_zero(j_item);
 
 				export_slot_to_joiner(*slot, j_item);
@@ -329,8 +337,11 @@ int save_slot_seq(strm_t *strm, slot_tbl_t *slot_tbl,
 	}
 	
 	while (cnt--) {
-		MALLOC(slot, (slot_t *), sizeof(slot_t), return APM_E_NO_MEM);
-
+		slot = (slot_t *)malloc(sizeof(*slot));
+		if (!slot) {
+			ret = APM_E_NO_MEM;
+			goto error;
+		}
 		ret = save_slot(strm, slot, valid_memb_cnt);
 		GUARD(0 != ret, goto error);
 
@@ -452,9 +463,13 @@ int save_countdown_blk(strm_t *strm)
 int save_chatmsg_blk(strm_t *strm, chat_ls_t *chat_ls, mmt_t *curr_mmt)
 {
 	int ret;
-
 	msgbox_t *msgbox;
-	MALLOC(msgbox, (msgbox_t *), sizeof(msgbox_t), return 1);
+
+	msgbox = (msgbox_t *)malloc(sizeof(*msgbox));
+	if (!msgbox) {
+		ret = 1;
+		goto out;
+	}
 
 	unsigned rest_size;
 
@@ -476,8 +491,9 @@ int save_chatmsg_blk(strm_t *strm, chat_ls_t *chat_ls, mmt_t *curr_mmt)
 
 	ret = list_add_item(chat_ls, msgbox);
 	GUARD(0 != ret, free(msgbox); return 1);
-
-	return 0;
+	ret = 0;
+out:
+	return ret;
 }
 
 
@@ -909,10 +925,11 @@ int save_host_blk(strm_t *strm, host_blk_t *host_blk)
 	ret = safe_mem_read(&strm->pos, strm->lim, aux_arr + 1, 1);
 	GUARD(0 != ret, return ret);
 
-
-	MALLOC(dcd_str, (char *), aux_arr[1].size,
-	       ret = APM_E_NO_MEM; goto cleanup);
-
+	dcd_str = (char *)malloc(aux_arr[1].size);
+	if (!dcd_str) {
+		ret = APM_E_NO_MEM;
+		goto cleanup;
+	}
 	decode_opts_map_creator_str(ecd_str, dcd_str);
 
 	/* current position */
@@ -1124,7 +1141,11 @@ int save_static_blk(strm_t *strm, rfnd_t *rfnd,
 		break;
 
 	case 0x16:
-		MALLOC(prsn, (prsn_t *), sizeof(prsn_t), return APM_E_NO_MEM);
+		prsn = (prsn_t *)malloc(sizeof(*prsn));
+		if (!prsn) {
+			ret = APM_E_NO_MEM;
+			break;
+		}
 		prsn_zero(prsn);
 
 		ret = save_guest_blk(strm, prsn);
@@ -1144,7 +1165,6 @@ int save_static_blk(strm_t *strm, rfnd_t *rfnd,
 		ret = 1;
 		break;
 	}
-
 	return ret;
 }
 

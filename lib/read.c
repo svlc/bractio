@@ -265,28 +265,29 @@ int read_rep_body(sgmt_tbl_t *sgmt_tbl, buff_t *buff, FILE *fp)
 	int ret;
 	sgmt_t *sgmt;
 
-
 	for (size_t idx = 0;  idx < sgmt_tbl->len;  ++idx) {
-
 		/* allocate segment structure */
-		MALLOC(sgmt, (sgmt_t *), sizeof(sgmt_t), return APM_E_NO_MEM);
+		sgmt = (sgmt_t *)malloc(sizeof(*sgmt));
+		if (!sgmt) {
+			ret = APM_E_NO_MEM;
+			goto out;
+		}
 		sgmt_zero(sgmt);
 
 		ret = read_sgmt_hdr(sgmt, buff, fp);
-		GUARD(0 != ret, goto cleanup);
+		GUARD(0 != ret, goto out);
 
 		ret = sgmt_data_prep(&sgmt->ecd_data, sgmt->ecd_size);
-		GUARD(0 != ret, goto cleanup);		
+		GUARD(0 != ret, goto out);		
 
 		ret = read_sgmt_body(sgmt, fp);
-		GUARD(0 != ret, goto cleanup);
+		GUARD(0 != ret, goto out);
 
 		ret = tbl_add_item(sgmt_tbl, sgmt);
-		GUARD(0 != ret, goto cleanup);
+		GUARD(0 != ret, goto out);
 	}
-
 	return 0;
-cleanup:
+out:
 	free(sgmt);
 	return ret;
 }

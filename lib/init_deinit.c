@@ -32,8 +32,10 @@ int strm_prep(strm_t *strm, const size_t len)
 	assert(0 == strm->cnt);
 
 	/* allocate needed memory */
-	MALLOC(strm->arr, (char *), len, return 1);
-
+	strm->arr = (char *)malloc(len);
+	if (!strm->arr) {
+		return 1;
+	}
 	strm->len = len;
 
 	/* set position to array start */
@@ -100,8 +102,10 @@ int sgmt_data_prep(char **ecd_data, unsigned data_size)
 {
 	assert(NULL == *ecd_data);
 
-	MALLOC(*ecd_data, (char *), data_size, return 1);
-
+	*ecd_data = (char *)malloc(data_size);
+	if (!*ecd_data) {
+		return 1;
+	}
 	return 0;
 }
 
@@ -122,8 +126,10 @@ int join_scrn_blk_alloc(join_scrn_blk_t **blk)
 {
 	assert(NULL == *blk);
 
-	MALLOC(*blk, (join_scrn_blk_t *), sizeof(join_scrn_blk_t), return 1);
-
+	*blk = (join_scrn_blk_t *)malloc(sizeof(**blk));
+	if (!*blk) {
+		return 1;
+	}
 	tbl_prep(&(*blk)->slot_tbl, 0, free);
 
 	return 0;
@@ -192,8 +198,10 @@ int host_blk_alloc(host_blk_t **blk)
 {
 	assert(NULL == *blk);
 
-	MALLOC(*blk, (host_blk_t *), sizeof(host_blk_t), return 1);
-
+	*blk = (host_blk_t *)malloc(sizeof(**blk));
+	if (!*blk) {
+		return 1;
+	}
 	memset(*blk, 0, sizeof(host_blk_t));
 
 	/* set indication this person is game host */
@@ -239,7 +247,10 @@ int rfnd_alloc(rfnd_t **rfnd)
 {
 	assert(NULL == *rfnd);
 
-	MALLOC(*rfnd, (rfnd_t *), sizeof(rfnd_t), return 1);
+	*rfnd = (rfnd_t *)malloc(sizeof(**rfnd));
+	if (!*rfnd) {
+		return 1;
+	}
 	(*rfnd)->host_blk = NULL;
 
 	host_blk_alloc(&(*rfnd)->host_blk);
@@ -282,8 +293,10 @@ int body_alloc(body_t **body)
 {
 	assert(NULL == *body);
 
-	MALLOC(*body, (body_t *), sizeof(body_t), return 1);
-	
+	*body = (body_t *)malloc(sizeof(**body));
+	if (!*body) {
+		return 1;
+	}	
 	/* zero sgmt_tbl_t */
 	tbl_zero(&(*body)->sgmt_tbl);
 
@@ -306,8 +319,11 @@ void *apm_wc3_init(void)
 
 	int ret;
 	apm_t *apm;
-	MALLOC(apm, (apm_t *), sizeof(apm_t), return NULL);
 
+	apm = (apm_t *)malloc(sizeof(*apm));
+	if (!apm) {
+		return NULL;
+	}
 	/* allocate "BUFF_SIZE" bytes for buffer */
 	ret = buff_prep(&apm->core.buff, BUFF_SIZE);
 	GUARD(0 != ret, free(apm); return NULL);

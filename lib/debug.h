@@ -23,19 +23,6 @@
 		ACTION;				\
 	}
 
-
-/**
- * @brief 
- */
-#define MALLOC(PTR, CONV, SIZE, ACTION)		\
-	do {					\
-		PTR = CONV malloc(SIZE);	\
-		if (NULL == PTR) {		\
-			ACTION;			\
-		}				\
-	} while (0)				\
-
-
 /**
  * @brief
  */

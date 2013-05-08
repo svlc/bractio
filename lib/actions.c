@@ -14,24 +14,28 @@
 
 #include "actions.h"
 
-
 /**
  * @brief
  */
 int add_action(action_ls_t *ls, joiner_t *joiner, mmt_t *mmt)
 {
 	int ret;
-
 	action_t *action;
-	MALLOC(action, (action_t *), sizeof(action_t), return -1);
 
+	action = (action_t *)malloc(sizeof(*action));
+	if (!action) {
+		ret = -1;
+		goto out;
+	}
 	action->joiner = joiner;
 	action->mmt = *mmt;
 
 	ret = list_add_item(ls, action);
-	GUARD(0 != ret, return -1);
-
-	return 0;
+	if (0 != ret) {
+		ret = -1;
+	}
+out:
+	return ret;
 }
 
 
@@ -169,12 +173,13 @@ int action_ability_0_ge_113(ad_t *ad)
 {
 	int ret;
 	int len = 14;
+	action_t *action;
 
 	++ad->curr_joiner->apm;
-
-	action_t *action;
-	MALLOC(action, (action_t *), sizeof(action_t), return -1);
-
+	action = (action_t *)malloc(sizeof(*action));
+	if (!action) {
+		return -1;
+	}
 	action->joiner = ad->curr_joiner;
 	action->mmt = *ad->mmt;
 
@@ -231,15 +236,15 @@ int action_ability_1_ge_107_lt_113(ad_t *ad)
 int action_ability_1_ge_113(ad_t *ad)
 {
 	int ret;
-
 	int len = 22;
+	action_t *action;
 
 	ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
 	++ad->curr_joiner->apm;
-
-	action_t *action;
-	MALLOC(action, (action_t *), sizeof(action_t), return -1);
-
+	action = (action_t *)malloc(sizeof(*action));
+	if (!action) {
+		return -1;
+	}
 	action->joiner = ad->curr_joiner;
 	action->mmt = *ad->mmt;
 
