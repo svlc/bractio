@@ -23,27 +23,4 @@
 		ACTION;				\
 	}
 
-/**
- * @brief
- */
-#define CALLOC(PTR, CONV, SIZE, ACTION)		\
-	do {					\
-		PTR = CONV calloc(1, SIZE);	\
-		if (NULL == PTR) {		\
-			ACTION;			\
-		}				\
-	} while (0)				\
-
-
-/**
- * @brief 
- */
-#define REALLOC(NEWP, OLDP, CONV, SIZE, ACTION)		\
-	do {						\
-		NEWP = CONV realloc(OLDP, SIZE);	\
-		if (NULL == NEWP) {			\
-			ACTION;				\
-		}					\
-	} while (0)					\
-
 #endif /* APM_DEBUG_H */
