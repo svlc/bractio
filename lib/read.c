@@ -60,10 +60,14 @@ static int read_rep_sub_hdr_v0(sub_hdr_t *sub_hdr, buff_t *buff, FILE *fp)
 	};
 
 	ret = safe_mem_read(&buff->pos, buff->lim, aux_arr, SUB_HDR_MEMB_CNT);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 	ret = check_rep_sub_hdr(sub_hdr, NULL);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 	return 0;
 }
@@ -98,10 +102,14 @@ static int read_rep_sub_hdr_v1(sub_hdr_t *sub_hdr, buff_t *buff, FILE *fp)
 	};
 
 	ret = safe_mem_read(&buff->pos, buff->lim, aux_arr, SUB_HDR_MEMB_CNT);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 	ret = check_rep_sub_hdr(sub_hdr, rls_seq);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 	if (0 == memcmp("WAR3", rls_seq, RLS_SEQ_LEN)) {
 		sub_hdr->rls = 0;
@@ -153,10 +161,14 @@ int read_rep_main_hdr(main_hdr_t *m_hdr, buff_t *buff, FILE *fp)
 	};
 
 	ret = safe_mem_read(&buff->pos, buff->lim, aux_arr, MAIN_HDR_MEMB_CNT);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 	ret = check_rep_main_hdr(magic_id, m_hdr);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 	return 0;
 #undef MAIN_HDR_MEMB_CNT
@@ -179,15 +191,21 @@ int read_rep_hdr(main_hdr_t *main_hdr, sub_hdr_t *sub_hdr,
 	int ret;
 
 	ret = read_rep_main_hdr(main_hdr, buff, fp);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 	if (0x00 == main_hdr->sub_hdr_ver) {
 		ret = read_rep_sub_hdr_v0(sub_hdr, buff, fp);
-		GUARD(0 != ret, return ret);
+		if (0 != ret) {
+			return ret;
+		}
 	}
 	else if (0x01 == main_hdr->sub_hdr_ver) {
 		ret = read_rep_sub_hdr_v1(sub_hdr, buff, fp);
-		GUARD(0 != ret, return ret);
+		if (0 != ret) {
+			return ret;
+		}
 	}
 	/*
 	 * else branch is meaningless -- sub_hdr_ver was checked,
@@ -206,7 +224,9 @@ int read_sgmt_body(sgmt_t *sgmt, FILE *fp)
 
 	/* save encoded chunk from file into memory */
 	ret = fread(sgmt->ecd_data, 1, sgmt->ecd_size, fp);
-	GUARD(ret != sgmt->ecd_size, return APM_E_FILE_READING);
+	if (ret != sgmt->ecd_size) {
+		return APM_E_FILE_READING;
+	}
 
 	return 0;
 }
@@ -230,7 +250,9 @@ int read_sgmt_hdr(sgmt_t *sgmt, buff_t *buff, FILE *fp)
 
 	buff_pos_reset(buff);
 
-	GUARD(0x08 != fread(buff->pos, 1, 0x08, fp), return 1);
+	if (0x08 != fread(buff->pos, 1, 0x08, fp)) {
+		return 1;
+	}
 
 
 	aux_t aux_arr[SGMT_MEMB_CNT] = {
@@ -241,8 +263,9 @@ int read_sgmt_hdr(sgmt_t *sgmt, buff_t *buff, FILE *fp)
 	};
 
 	ret = safe_mem_read(&buff->pos, buff->lim, aux_arr, SGMT_MEMB_CNT);
-	GUARD(0 != ret, return ret);
-
+	if (0 != ret) {
+		return ret;
+	}
 	return 0;
 
 #undef SGMT_MEMB_CNT
@@ -275,16 +298,24 @@ int read_rep_body(sgmt_tbl_t *sgmt_tbl, buff_t *buff, FILE *fp)
 		sgmt_zero(sgmt);
 
 		ret = read_sgmt_hdr(sgmt, buff, fp);
-		GUARD(0 != ret, goto out);
+		if (0 != ret) {
+			goto out;
+		}
 
 		ret = sgmt_data_prep(&sgmt->ecd_data, sgmt->ecd_size);
-		GUARD(0 != ret, goto out);		
+		if (0 != ret) {
+			goto out;
+		}
 
 		ret = read_sgmt_body(sgmt, fp);
-		GUARD(0 != ret, goto out);
+		if (0 != ret) {
+			goto out;
+		}
 
 		ret = tbl_add_item(sgmt_tbl, sgmt);
-		GUARD(0 != ret, goto out);
+		if (0 != ret) {
+			goto out;
+		}
 	}
 	return 0;
 out:

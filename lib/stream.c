@@ -168,7 +168,10 @@ int form_joiner_tbl(prsn_tbl_t *prsn_tbl, prsn_t *host,
 
 				export_slot_to_joiner(*slot, j_item);
 				ret = tbl_add_item(joiner_tbl, j_item);
-				GUARD(0 != ret, free(j_item); return ret);
+				if (0 != ret) {
+					free(j_item);
+					return ret;
+				}
 			}
 			++slot;
 		}
@@ -185,7 +188,9 @@ int form_joiner_tbl(prsn_tbl_t *prsn_tbl, prsn_t *host,
 				} else {
 					/* supply missing joiner_t data */
 					ret = complete_joiner(*joiner);
-					GUARD(0 != ret, return ret);
+					if (0 != ret) {
+						return ret;
+					}
 				}
 			} else {
 				export_prsn_to_joiner(prsn, *joiner);
@@ -228,17 +233,22 @@ int save_prsn_rec(prsn_t *prsn, strm_t *strm)
 
 
 	ret = safe_mem_read(&strm->pos, strm->lim, aux_arr, 3);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 	if (0x01 == rest_size) {
 		/* '\0' expected, no further person data */
 		ret = safe_pos_fw(&strm->pos, strm->lim, 1);
-		GUARD(0 != ret, return ret);
+		if (0 != ret) {
+			return ret;
+		}
 	} else if (0x08 == rest_size) {
 
 		ret = safe_mem_read(&strm->pos, strm->lim, aux_arr + 3, 2);
-		GUARD(0 != ret, return ret);
-
+		if (0 != ret) {
+			return ret;
+		}
 	} /* must be invalid */
 	else {
 		return 1;
@@ -311,8 +321,9 @@ static int save_slot(strm_t *strm, slot_t *slot,
 	};
 
 	ret = safe_mem_read(&strm->pos, strm->lim, aux_arr, valid_memb_cnt);
-	GUARD(0 != ret, return ret);
-
+	if (0 != ret) {
+		return ret;
+	}
 	return 0;
 }
 
@@ -343,10 +354,13 @@ int save_slot_seq(strm_t *strm, slot_tbl_t *slot_tbl,
 			goto error;
 		}
 		ret = save_slot(strm, slot, valid_memb_cnt);
-		GUARD(0 != ret, goto error);
-
+		if (0 != ret) {
+			goto error;
+		}
 		ret = tbl_add_item(slot_tbl, slot);
-		GUARD(0 != ret, goto error);
+		if (0 != ret) {
+			goto error;
+		}
 	}
 
 	return 0;
@@ -365,7 +379,9 @@ int save_guest_blk(strm_t *strm, prsn_t *prsn)
 	int ret;
 
 	ret =  save_prsn_rec(prsn, strm);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 	
 	return 0;
 }
@@ -379,7 +395,9 @@ int save_0x1A_blk(strm_t *strm)
 	int ret;
 
 	ret = safe_pos_fw(&strm->pos, strm->lim, 4);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 	return 0;
 }
@@ -393,7 +411,9 @@ int save_0x1B_blk(strm_t *strm)
 	int ret;
 
 	ret = safe_pos_fw(&strm->pos, strm->lim, 4);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 	return 0;
 }
@@ -407,7 +427,9 @@ int save_0x1C_blk(strm_t *strm)
 	int ret;
 
 	ret = safe_pos_fw(&strm->pos, strm->lim, 4);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 	return 0;
 }
@@ -421,7 +443,9 @@ int save_0x22_blk(strm_t *strm)
 	int ret;
 
 	ret = safe_pos_fw(&strm->pos, strm->lim, 5);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 	return 0;
 }
@@ -437,7 +461,9 @@ int save_0x23_blk(strm_t *strm)
 	int ret;
 
 	ret = safe_pos_fw(&strm->pos, strm->lim, 10);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 	return 0;
 }
@@ -451,7 +477,9 @@ int save_countdown_blk(strm_t *strm)
 	int ret;
 
 	ret = safe_pos_fw(&strm->pos, strm->lim, 8);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 	return 0;
 }
@@ -483,14 +511,19 @@ int save_chatmsg_blk(strm_t *strm, chat_ls_t *chat_ls, mmt_t *curr_mmt)
 	};
 
 	ret = safe_mem_read(&strm->pos, strm->lim, aux_arr, 5);
-	GUARD(0 != ret, return 0);
+	if (0 != ret) {
+		return 0;
+	}
 
 	msgbox->mmt = *curr_mmt;
 
 	msgbox->no = chat_ls->cnt;
 
 	ret = list_add_item(chat_ls, msgbox);
-	GUARD(0 != ret, free(msgbox); return 1);
+	if (0 != ret) {
+		free(msgbox);
+		return 1;
+	}
 	ret = 0;
 out:
 	return ret;
@@ -773,7 +806,9 @@ int process_action_field(strm_t *strm, action_ls_t *ls, arr_t *fn_arr,
 	while (len > 0) {
 
 		ret = safe_mem_read(&strm->pos, strm->lim, &aux, 1);
-		GUARD(0 != ret, return ret);
+		if (0 != ret) {
+			return ret;
+		}
 
 		if (action_id < 1  ||  action_id >= fn_arr->cnt) {
 			return -1;
@@ -819,7 +854,9 @@ int save_time_blk(strm_t *strm, action_ls_t *ls, arr_t *fn_arr,
 	};
 
 	ret = safe_mem_read(&strm->pos, strm->lim, aux_arr, 2);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 	if (!state->paused) {
 		moment_inc(mmt, time_inc);
@@ -839,14 +876,19 @@ int save_time_blk(strm_t *strm, action_ls_t *ls, arr_t *fn_arr,
 	while (rest_size > 0) {
 
 		ret = safe_mem_read(&strm->pos, strm->lim, aux_arr2, 2);
-		GUARD(0 != ret, return 1);
+		if (0 != ret) {
+			return 1;
+		}
 
 		joiner_t *joiner = seek_joiner(joiner_tbl, id);
-		GUARD(NULL == joiner, return -1);
-
+		if (NULL == joiner) {
+			return -1;
+		}
 		ret = process_action_field(strm, ls, fn_arr, joiner,
 					   state, mmt, len);
-		GUARD(0 != ret, return 1);
+		if (0 != ret) {
+			return 1;
+		}
 		
 		rest_size -= len + 3;
 	}
@@ -880,13 +922,19 @@ int save_join_scrn_blk(strm_t *strm, join_scrn_blk_t *blk,
 	
 
 	ret = safe_mem_read(&strm->pos, strm->lim, aux_arr, 2);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 	ret = save_slot_seq(strm, &blk->slot_tbl, blk->slot_cnt, build);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 	ret = safe_mem_read(&strm->pos, strm->lim, aux_arr + 2, 3);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 	return 0;
 }
@@ -912,18 +960,26 @@ int save_host_blk(strm_t *strm, host_blk_t *host_blk)
 	};
 
 	ret = save_prsn_rec(&host_blk->prsn, strm);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 
 	ret = safe_mem_read(&strm->pos, strm->lim, aux_arr, 1);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 	/* extra nullbyte after game_name string */
 	ret = safe_pos_fw(&strm->pos, strm->lim, 1);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 	ret = safe_mem_read(&strm->pos, strm->lim, aux_arr + 1, 1);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 	dcd_str = (char *)malloc(aux_arr[1].size);
 	if (!dcd_str) {
@@ -937,18 +993,26 @@ int save_host_blk(strm_t *strm, host_blk_t *host_blk)
 	char *dcd_str_lim = dcd_str + aux_arr[1].size;
 
 	ret = save_game_opts(&host_blk->game_opts, &dcd_str_pos);
-	GUARD(0 != ret, goto cleanup);
+	if (0 != ret) {
+		goto cleanup;
+	}
 
 
 	ret = safe_mem_read(&dcd_str_pos, dcd_str_lim, aux_arr + 2, 2);
-	GUARD(0 != ret, goto cleanup);
+	if (0 != ret) {
+		goto cleanup;
+	}
 
 	ret = safe_mem_read(&strm->pos, strm->lim, aux_arr + 4, 1);
-	GUARD(0 != ret, goto cleanup);
+	if (0 != ret) {
+		goto cleanup;
+	}
 
 	/* skip gametype (4 bytes) and languageID (4 bytes) */
 	ret = safe_pos_fw(&strm->pos, strm->lim, 8);
-	GUARD(0 != ret, goto cleanup);
+	if (0 != ret) {
+		goto cleanup;
+	}
 
 cleanup:
 	free(ecd_str);
@@ -974,13 +1038,19 @@ int save_leave_blk(strm_t *strm, joiner_tbl_t *joiner_tbl,
 	};
 
 	ret = safe_pos_fw(&strm->pos, strm->lim, 4);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 	ret = safe_mem_read(&strm->pos, strm->lim, aux, 1);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 	ret = safe_pos_fw(&strm->pos, strm->lim, 8);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 	joiner = seek_joiner(joiner_tbl, id);
 	if (NULL == joiner) {
@@ -1005,7 +1075,9 @@ int get_blk_id(strm_t *strm, unsigned *id)
 	aux_t aux = { id, APM_UINT, 1 };
 
 	ret = safe_mem_read(&strm->pos, strm->lim, &aux, 1);
-	GUARD(0 != ret, return 1);
+	if (0 != ret) {
+		return 1;
+	}
 
 	return 0;
 }
@@ -1025,10 +1097,14 @@ int save_dyn_blk_seq(strm_t *strm, action_ls_t *action_ls, chat_ls_t *chat_ls,
 
 	arr_t *fn_arr = NULL;
 	ret = arr_alloc(&fn_arr);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 	ret = arr_prep(fn_arr, 0x76, sizeof(fnbox_t));
-	GUARD(0 != ret, goto cleanup);
+	if (0 != ret) {
+		goto cleanup;
+	}
 
 	prep_action_ptrs(fn_arr, build);
 
@@ -1042,11 +1118,15 @@ int save_dyn_blk_seq(strm_t *strm, action_ls_t *action_ls, chat_ls_t *chat_ls,
 	while (1) {
 
 		ret = get_blk_id(strm, &blk_id);
-		GUARD(0 != ret, break);
+		if (0 != ret) {
+			break;
+		}
 
 		if (0x17 == blk_id) {
 			ret = save_leave_blk(strm, joiner_tbl, &mmt, &last);
-			GUARD(0 != ret, break);
+			if (0 != ret) {
+				break;
+			}
 			/*
 			 * if pos stopped exactly behind last valid
 			 * stream character and last block was "leave_blk"
@@ -1065,32 +1145,46 @@ int save_dyn_blk_seq(strm_t *strm, action_ls_t *action_ls, chat_ls_t *chat_ls,
 				break;
 			}
 			ret = save_chatmsg_blk(strm, chat_ls, &mmt);
-			GUARD(0 != ret, break);
+			if (0 != ret) {
+				break;
+			}
 
 		} else if (0x22 == blk_id) {
 			ret = save_0x22_blk(strm);
-			GUARD(0 != ret, break);
+			if (0 != ret) {
+				break;
+			}
 
 		} else if (0x23 == blk_id) {
 			ret = save_0x23_blk(strm);
-			GUARD(0 != ret, break);
+			if (0 != ret) {
+				break;
+			}
 
 		} else if (0x1A == blk_id) {
 			ret = save_0x1A_blk(strm);
-			GUARD(0 != ret, break);
+			if (0 != ret) {
+				break;
+			}
 
 		} else if (0x1B == blk_id) {
 			ret = save_0x1B_blk(strm);
-			GUARD(0 != ret, break);
+			if (0 != ret) {
+				break;
+			}
 
 		} else if (0x1C == blk_id) {
 			ret = save_0x1C_blk(strm);
-			GUARD(0 != ret, break);
+			if (0 != ret) {
+				break;
+			}
 
 		} else if (0x1E == blk_id) {
 			ret = save_time_blk(strm, action_ls, fn_arr,
 					    joiner_tbl, &state, &mmt);
-			GUARD(0 != ret, break);
+			if (0 != ret) {
+				break;
+			}
 
 		} else if (0x1F == blk_id) {
 			if (build < 4531) {
@@ -1100,7 +1194,9 @@ int save_dyn_blk_seq(strm_t *strm, action_ls_t *action_ls, chat_ls_t *chat_ls,
 			}
 			ret = save_time_blk(strm, action_ls, fn_arr,
 					    joiner_tbl, &state, &mmt);
-			GUARD(0 != ret, break);
+			if (0 != ret) {
+				break;
+			}
 
 		} else if (0x2F == blk_id) {
 			if (build < 6031) {
@@ -1110,7 +1206,9 @@ int save_dyn_blk_seq(strm_t *strm, action_ls_t *action_ls, chat_ls_t *chat_ls,
 			}
 
 			ret = save_countdown_blk(strm);
-			GUARD(0 != ret, break);
+			if (0 != ret) {
+				break;
+			}
 		} else {
 			ret = 1;
 			break;
@@ -1149,10 +1247,14 @@ int save_static_blk(strm_t *strm, rfnd_t *rfnd,
 		prsn_zero(prsn);
 
 		ret = save_guest_blk(strm, prsn);
-		GUARD(0 != ret, free(prsn); break);
+		if (0 != ret) {
+			free(prsn); break;
+		}
 
 		ret = tbl_add_item(rfnd->prsn_tbl, prsn);
-		GUARD(0 != ret, free(prsn); break);
+		if (0 != ret) {
+			free(prsn); break;
+		}
 
 		ret = safe_pos_fw(&strm->pos, strm->lim, 4);
 		break;
@@ -1192,12 +1294,16 @@ int save_static_blk_seq(strm_t *strm, rfnd_t *rfnd, const unsigned build,
 
 		/* read block id */
 		ret = get_blk_id(strm, &blk_id);
-		GUARD(0 != ret, return ret);
+		if (0 != ret) {
+			return ret;
+		}
 
 		if (blk_id == blk_nfo->id) {
 
 			ret = save_static_blk(strm, rfnd, build, blk_id);
-			GUARD(0 != ret, return ret);
+			if (0 != ret) {
+				return ret;
+			}
 
 			if (!blk_nfo->repeat) {
 				++blk_nfo;
@@ -1256,7 +1362,9 @@ int process_stream(strm_t *strm, rfnd_t *rfnd, const unsigned build)
 	aux_t aux = { &unknown, APM_ULONG, 4 };
 
 	ret = safe_mem_read(&strm->pos, strm->lim, &aux, 1);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 	blk_nfo_t nfo_seq[] = {
 		{ .id =	 0x00, .repeat = false, .mandatory = true  },
@@ -1267,36 +1375,50 @@ int process_stream(strm_t *strm, rfnd_t *rfnd, const unsigned build)
 
 	/* allocate prsn_tbl_t structures */
 	ret = tbl_alloc(&rfnd->prsn_tbl);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 	ret = tbl_prep(rfnd->prsn_tbl, 10, prsn_free_fn);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 	ret = join_scrn_blk_alloc(&rfnd->join_scrn_blk);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 
 	/* read all blocks that typically occurs only at the stream beginning */
 	ret = save_static_blk_seq(strm, rfnd, build, nfo_seq, 3);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 	/* prepare joiner table */
 	ret = tbl_prep(&extra->joiner_tbl, rfnd->host_blk->player_cnt,
 		       joiner_free_fn);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 
 	ret = form_joiner_tbl(rfnd->prsn_tbl, &rfnd->host_blk->prsn,
 			      &rfnd->join_scrn_blk->slot_tbl,
 			      &extra->joiner_tbl);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 	/* sort joiner table */
 	tbl_sort(&extra->joiner_tbl, joiner_cmp_fn);
 
 	/* allocate chat list structures */
 	ret = list_alloc(&extra->chat_ls);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 	/* prepare chat list */
 	list_prep(extra->chat_ls, msgbox_free_fn);
@@ -1309,7 +1431,9 @@ int process_stream(strm_t *strm, rfnd_t *rfnd, const unsigned build)
 	/* read sequence of various blocks */
 	ret = save_dyn_blk_seq(strm, extra->action_ls, extra->chat_ls,
 			       &extra->joiner_tbl, build);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 	return 0;
 }

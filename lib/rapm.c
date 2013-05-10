@@ -32,17 +32,23 @@ int apm_wc3_operate(apm_t *apm, apm_wc3_attr_t *attr)
 	int ret;
 
 	ret = check_task(attr->task);
-	GUARD(0 != ret, return APM_E_TASK);
+	if (0 != ret) {
+		return APM_E_TASK;
+	}
 
 	apm->core.task = attr->task;
 
 	/* open passed file ("b" flag is there just for win OS family) */
 	apm->core.fp = fopen(attr->path, "rb");
-	GUARD(NULL == apm->core.fp, return APM_E_FILE_OPENING);
+	if (NULL == apm->core.fp) {
+		return APM_E_FILE_OPENING;
+	}
 
 	ret = read_rep_hdr(&apm->main_hdr, &apm->sub_hdr,
 			   &apm->core.buff, apm->core.fp);
-	GUARD(0 != ret, return ret);
+	if (0 != ret) {
+		return ret;
+	}
 
 
 	if (attr->task & APM_TASK_ADDTL) {
@@ -52,11 +58,15 @@ int apm_wc3_operate(apm_t *apm, apm_wc3_attr_t *attr)
 		/* prepare segment table */
 		ret = tbl_prep(&apm->body->sgmt_tbl, apm->main_hdr.ecd_sgmt_cnt,
 			       sgmt_free_fn);
-		GUARD(0 != ret, return ret);
+		if (0 != ret) {
+			return ret;
+		}
 
 		ret = read_rep_body(&apm->body->sgmt_tbl, &apm->core.buff,
 				    apm->core.fp);
-		GUARD(0 != ret, return ret);
+		if (0 != ret) {
+			return ret;
+		}
 
 		/* close file */
 		fclose(apm->core.fp);
@@ -65,11 +75,15 @@ int apm_wc3_operate(apm_t *apm, apm_wc3_attr_t *attr)
 		/* prepare stream for decoded data */
 		ret = strm_prep(&apm->body->strm,
 				strm_len(&apm->body->sgmt_tbl));
-		GUARD(0 != ret, return ret);
+		if (0 != ret) {
+			return ret;
+		}
 
 		/* decode all segments using zlib */
 		ret = decode_sgmts(&apm->body->sgmt_tbl, &apm->body->strm);
-		GUARD(0 != ret, return ret);
+		if (0 != ret) {
+			return ret;
+		}
 
 		/* free segment table resources */
 		tbl_empty(&apm->body->sgmt_tbl);
@@ -81,12 +95,16 @@ int apm_wc3_operate(apm_t *apm, apm_wc3_attr_t *attr)
 
 		/* allocate rfnd_t structure */
 		ret = rfnd_alloc(&apm->rfnd);
-		GUARD(0 != ret, return ret);
+		if (0 != ret) {
+			return ret;
+		}
 
 
 		ret = process_stream(&apm->body->strm, apm->rfnd,
 				     apm->sub_hdr.build);
-		GUARD(0 != ret, return ret);
+		if (0 != ret) {
+			return ret;
+		}
 
 		/* free resources */
 		strm_empty(&apm->body->strm);
@@ -239,7 +257,9 @@ msgbox_t *apm_wc3_getmsg(apm_t *apm, const unsigned no)
 	chat_ls_t *chat_ls = apm->rfnd->extra.chat_ls;
 
 	ret = seek_ls_item(chat_ls, no);
-	GUARD(0 != ret, return NULL);
+	if (0 != ret) {
+		return NULL;
+	}
 
 	return chat_ls->curr->data;
 }

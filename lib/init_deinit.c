@@ -13,7 +13,6 @@
 #include <assert.h>
 
 #include "rapm.h"
-#include "debug.h"		/* GUARD(), ... */
 #include "list.h"
 
 
@@ -326,7 +325,10 @@ void *apm_wc3_init(void)
 	}
 	/* allocate "BUFF_SIZE" bytes for buffer */
 	ret = buff_prep(&apm->core.buff, BUFF_SIZE);
-	GUARD(0 != ret, free(apm); return NULL);
+	if (0 != ret) {
+		free(apm);
+		return NULL;
+	}
 
 	/* init file pointer */
 	apm->core.fp = NULL;

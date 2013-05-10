@@ -8,7 +8,6 @@
 #include <stdlib.h>
 
 #include "rapm.h"
-#include "debug.h"
 #include "str.h"
 #include "check.h"
 
@@ -68,8 +67,9 @@ int action_set_speed(ad_t *ad)
 {
 	int ret;
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, 1);
-	GUARD(0 != ret, return -1);
-
+	if (0 != ret) {
+		return -1;
+	}
 	return 1;
 }
 
@@ -109,8 +109,9 @@ int action_save(ad_t *ad)
 	aux_t aux = { &str, APM_UCHAR, 0 };
 
 	ret = safe_mem_read(&ad->strm->pos, ad->strm->lim, &aux, 1);
-	GUARD(0 != ret, return -1);
-
+	if(0 != ret) {
+		return -1;
+	}
 	return aux.size;
 }
 
@@ -122,8 +123,9 @@ int action_saving_done(ad_t *ad)
 {
 	int ret;
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, 4);
-	GUARD(0 != ret, return -1);
-
+	if(0 != ret) {
+		return -1;
+	}
 	return 4;
 }
 
@@ -141,8 +143,9 @@ int action_ability_0_lt_107(ad_t *ad)
 	++ad->curr_joiner->apm;
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, len);
-	GUARD(0 != ret, return -1);
-
+	if(0 != ret) {
+		return -1;
+	}
 	return len;
 }
 
@@ -160,8 +163,9 @@ int action_ability_0_ge_107_lt_113(ad_t *ad)
 	ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, len);
-	GUARD(0 != ret, return -1);
-
+	if(0 != ret) {
+		return -1;
+	}
 	return len;
 }
 
@@ -184,11 +188,13 @@ int action_ability_0_ge_113(ad_t *ad)
 	action->mmt = *ad->mmt;
 
 	ret = list_add_item(ad->action_ls, action);
-	GUARD(0 != ret, return -1);
-
+	if(0 != ret) {
+		return -1;
+	}
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, len);
-	GUARD(0 != ret, return -1);
-
+	if(0 != ret) {
+		return -1;
+	}
 	return len;
 }
 
@@ -207,8 +213,9 @@ int action_ability_1_lt_107(ad_t *ad)
 	ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, len);
-	GUARD(0 != ret, return -1);
-
+	if(0 != ret) {
+		return -1;
+	}
 	return len;
 }
 
@@ -226,7 +233,9 @@ int action_ability_1_ge_107_lt_113(ad_t *ad)
 	++ad->curr_joiner->apm;
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, len);
-	GUARD(0 != ret, return -1);
+	if(0 != ret) {
+		return -1;
+	}
 	return len;
 }
 
@@ -249,10 +258,13 @@ int action_ability_1_ge_113(ad_t *ad)
 	action->mmt = *ad->mmt;
 
 	ret = list_add_item(ad->action_ls, action);
-	GUARD(0 != ret, return -1);
-
+	if(0 != ret) {
+		return -1;
+	}
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, len);
-	GUARD(0 != ret, return -1);
+	if(0 != ret) {
+		return -1;
+	}
 	return len;
 }
 
@@ -271,7 +283,9 @@ int action_ability_2_lt_107(ad_t *ad)
 	++ad->curr_joiner->apm;
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, len);
-	GUARD(0 != ret, return -1);
+	if(0 != ret) {
+		return -1;
+	}
 	return len;
 }
 
@@ -290,7 +304,9 @@ int action_ability_2_ge_107_lt_113(ad_t *ad)
 
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, len);
-	GUARD(0 != ret, return -1);
+	if(0 != ret) {
+		return -1;
+	}
 	return len;
 }
 
@@ -308,8 +324,9 @@ int action_ability_2_ge_113(ad_t *ad)
 	ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, len);
-	GUARD(0 != ret, return -1);
-
+	if(0 != ret) {
+		return -1;
+	}
 	return len;
 }
 
@@ -329,7 +346,9 @@ int action_move_item_lt_107(ad_t *ad)
 	ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, len);
-	GUARD(0 != ret, return -1);
+	if(0 != ret) {
+		return -1;
+	}
 	return len;
 }
 
@@ -348,7 +367,9 @@ int action_move_item_ge_107_lt_113(ad_t *ad)
 	ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, len);
-	GUARD(0 != ret, return -1);
+	if(0 != ret) {
+		return -1;
+	}
 	return len;
 }
 
@@ -367,7 +388,9 @@ int action_move_item_ge_113(ad_t *ad)
 	ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, len);
-	GUARD(0 != ret, return -1);
+	if(0 != ret) {
+		return -1;
+	}
 	return len;
 }
 
@@ -387,7 +410,9 @@ int action_choose_ability_lt_107(ad_t *ad)
 	ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, len);
-	GUARD(0 != ret, return -1);
+	if(0 != ret) {
+		return -1;
+	}
 	return len;
 }
 
@@ -406,7 +431,9 @@ int action_choose_ability_ge_107_lt_113(ad_t *ad)
 	ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, len);
-	GUARD(0 != ret, return -1);
+	if(0 != ret) {
+		return -1;
+	}
 	return len;
 }
 
@@ -424,7 +451,9 @@ int action_choose_ability_ge_113(ad_t *ad)
 	ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, len);
-	GUARD(0 != ret, return -1);
+	if(0 != ret) {
+		return -1;
+	}
 	return len;
 }
 
@@ -446,10 +475,13 @@ int action_change_selection(ad_t *ad)
 	};
 
 	ret = safe_mem_read(&ad->strm->pos, ad->strm->lim, aux_arr, 2);
-	GUARD(0 != ret, return -1);
-
+	if(0 != ret) {
+		return -1;
+	}
 	ret = check_action_change_selection(mode);
-	GUARD(0 != ret, return ret);
+	if(0 != ret) {
+		return ret;
+	}
 
 	/* if "select" */
 	if (0x01 == mode) {
@@ -476,8 +508,9 @@ int action_change_selection(ad_t *ad)
 	unsigned shift = cnt * 8;
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, shift);
-	GUARD(0 != ret, return -1);
-
+	if(0 != ret) {
+		return -1;
+	}
 	return 3 + shift;
 }
 
@@ -500,13 +533,16 @@ int action_assign_group_hotkey(ad_t *ad)
 	};
 
 	ret = safe_mem_read(&ad->strm->pos, ad->strm->lim, aux_arr, 2);
-	GUARD(0 != ret, return -1);
+	if(0 != ret) {
+		return -1;
+	}
 
 	unsigned shift = cnt * 8;
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, shift);
-	GUARD(0 != ret, return -1);
-
+	if(0 != ret) {
+		return -1;
+	}
 	++ad->curr_joiner->apm;
 
 	ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
@@ -523,8 +559,9 @@ int action_select_group_hotkey(ad_t *ad)
 	int ret;
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, 2);
-	GUARD(0 != ret, return -1);
-
+	if(0 != ret) {
+		return -1;
+	}
 	++ad->curr_joiner->apm;
 	ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
 
@@ -544,8 +581,9 @@ int action_select_subgroup_lt_114b(ad_t *ad)
 	aux_t aux = { &subgrp_no, APM_UINT, 1 };
 
 	ret = safe_mem_read(&ad->strm->pos, ad->strm->lim, &aux, 1);
-	GUARD(0 != ret, return -1);
-
+	if(0 != ret) {
+		return -1;
+	}
 	if (0x00 != subgrp_no  &&  0xFF != subgrp_no) {
 		++ad->curr_joiner->apm;
 		ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
@@ -565,8 +603,9 @@ int action_select_subgroup_ge_114b(ad_t *ad)
 	int ret;
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, 12);
-	GUARD(0 != ret, return -1);
-
+	if(0 != ret) {
+		return -1;
+	}
 	return 12;
 }
 
@@ -589,8 +628,9 @@ int action_0x1A_0x1B_unknown(ad_t *ad)
 	int ret;
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, 9);
-	GUARD(0 != ret, return -1);
-
+	if(0 != ret) {
+		return -1;
+	}
 	return 9;
 }
 
@@ -604,8 +644,9 @@ int action_select_ground_item(ad_t *ad)
 	int ret;
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, 9);
-	GUARD(0 != ret, return -1);
-
+	if(0 != ret) {
+		return -1;
+	}
 	++ad->curr_joiner->apm;
 	ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
 
@@ -622,8 +663,9 @@ int action_cancel_hero_revival(ad_t *ad)
 	int ret;
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, 8);
-	GUARD(0 != ret, return -1);
-
+	if(0 != ret) {
+		return -1;
+	}
 	++ad->curr_joiner->apm;
 	ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
 
@@ -639,8 +681,9 @@ int action_reduce_building_queue(ad_t *ad)
 	int ret;
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, 5);
-	GUARD(0 != ret, return -1);
-
+	if(0 != ret) {
+		return -1;
+	}
 	++ad->curr_joiner->apm;
 	ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
 
@@ -666,8 +709,9 @@ int action_0x21_unknown(ad_t *ad)
 	int ret;
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, 9);
-	GUARD(0 != ret, return -1);
-
+	if(0 != ret) {
+		return -1;
+	}
 	return 9;
 }
 
@@ -730,8 +774,9 @@ int action_cheat_KeyserSoze(ad_t *ad)
 	int ret;
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, 5);
-	GUARD(0 != ret, return -1);
-
+	if(0 != ret) {
+		return -1;
+	}
 	return 5;
 }
 
@@ -744,8 +789,9 @@ int action_cheat_LeafitToMe(ad_t *ad)
 	int ret;
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, 5);
-	GUARD(0 != ret, return -1);
-
+	if(0 != ret) {
+		return -1;
+	}
 	return 5;
 }
 
@@ -798,8 +844,9 @@ int action_cheat_GreedIsGood(ad_t *ad)
 	int ret;
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, 5);
-	GUARD(0 != ret, return -1);
-
+	if(0 != ret) {
+		return -1;
+	}
 	return 5;
 }
 
@@ -812,8 +859,9 @@ int action_cheat_DayLightSavings(ad_t *ad)
 	int ret;
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, 4);
-	GUARD(0 != ret, return -1);
-
+	if(0 != ret) {
+		return -1;
+	}
 	return 4;
 }
 
@@ -866,9 +914,10 @@ int action_change_ally_opts(ad_t *ad)
 	int ret;
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, 5);
-	GUARD(0 != ret, return -1);
-
-	return 5 ;
+	if(0 != ret) {
+		return -1;
+	}
+	return 5;
 }
 
 
@@ -880,8 +929,9 @@ int action_transfer_resources(ad_t *ad)
 	int ret;
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, 9);
-	GUARD(0 != ret, return -1);
-
+	if(0 != ret) {
+		return -1;
+	}
 	return 9;
 }
 
@@ -898,11 +948,13 @@ int action_map_trigger_chat_command(ad_t *ad)
 	aux_t aux = { (void *)&str, APM_UCHAR, 0 };
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, 8);
-	GUARD(0 != ret, return -1);
-
+	if(0 != ret) {
+		return -1;
+	}
 	ret = safe_mem_read(&ad->strm->pos, ad->strm->lim, &aux, 1);
-	GUARD(0 != ret, return -1);
-
+	if(0 != ret) {
+		return -1;
+	}
 	return 8 + aux.size;
 }
 
@@ -916,8 +968,9 @@ int action_esc_keystroke(ad_t *ad)
 
 	++ad->curr_joiner->apm;
 	ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
-	GUARD(0 != ret, return -1);
-
+	if(0 != ret) {
+		return -1;
+	}
 	return 0;
 }
 
@@ -930,8 +983,9 @@ int action_scenario_trigger(ad_t *ad)
 	int ret;
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, 12);
-	GUARD(0 != ret, return -1);
-
+	if(0 != ret) {
+		return -1;
+	}
 	return 12;
 }
 
@@ -945,8 +999,9 @@ int action_hero_skill_submenu(ad_t *ad)
 
 	++ad->curr_joiner->apm;
 	ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
-	GUARD(0 != ret, return -1);
-
+	if(0 != ret) {
+		return -1;
+	}
 	return 0;
 }
 
@@ -969,8 +1024,9 @@ int action_minimap_signal(ad_t *ad)
 	int ret;
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, 12);
-	GUARD(0 != ret, return -1);
-
+	if(0 != ret) {
+		return -1;
+	}
 	return 12;
 }
 
@@ -983,8 +1039,9 @@ int action_continue_game_0(ad_t *ad)
 	int ret;
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, 16);
-	GUARD(0 != ret, return -1);
-
+	if(0 != ret) {
+		return -1;
+	}
 	return 16;
 }
 
@@ -997,8 +1054,9 @@ int action_continue_game_1(ad_t *ad)
 	int ret;
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, 16);
-	GUARD(0 != ret, return -1);
-
+	if(0 != ret) {
+		return -1;
+	}
 	return 16;
 }
 
@@ -1011,7 +1069,8 @@ int action_0x75_unknown(ad_t *ad)
 	int ret;
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, 1);
-	GUARD(0 != ret, return -1);
-
+	if(0 != ret) {
+		return -1;
+	}
 	return 1;
 }

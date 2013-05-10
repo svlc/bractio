@@ -6,9 +6,7 @@
  */
 
 #include <string.h>
-
 #include "rapm.h"
-#include "debug.h"
 
 #include "check.h"
 
@@ -99,16 +97,18 @@ static int range_sub_hdr_ver(const unsigned sub_hdr_ver)
  */
 int check_rep_main_hdr(char *magic_id, main_hdr_t *m_hdr)
 {
-	GUARD(0 != range_magic_id(magic_id), return APM_E_RANGE);
+	if (0 != range_magic_id(magic_id))
+		return APM_E_RANGE;
 
-	GUARD(0 != range_sub_hdr_ver(m_hdr->sub_hdr_ver), return APM_E_RANGE);
+	if (0 != range_sub_hdr_ver(m_hdr->sub_hdr_ver))
+		return APM_E_RANGE;
 
 	/*
 	 * this is done later than sub_hdr_ver because
 	 * we need to pass variable "sub_hdr_ver" already checked
 	 */
-	GUARD(0 != range_strm_offset(m_hdr->sub_hdr_ver, m_hdr->strm_offset),
-		return APM_E_RANGE);
+	if (0 != range_strm_offset(m_hdr->sub_hdr_ver, m_hdr->strm_offset))
+		return APM_E_RANGE;
 
 	return 0;
 }
@@ -164,10 +164,13 @@ static int range_player_mode(unsigned player_mode)
 int check_rep_sub_hdr(sub_hdr_t *s_hdr, char *rls_seq)
 {
 	if (rls_seq) {
-		GUARD(range_rls(rls_seq), return APM_E_RANGE);
+		if (range_rls(rls_seq))
+			return APM_E_RANGE;
 	}
-	GUARD(0 != range_patch_ver(s_hdr->patch_ver), return APM_E_RANGE);
-	GUARD(0 != range_player_mode(s_hdr->player_mode), return APM_E_RANGE);
+	if (0 != range_patch_ver(s_hdr->patch_ver))
+		return APM_E_RANGE;
+	if (0 != range_player_mode(s_hdr->player_mode))
+		return APM_E_RANGE;
 
 	return 0;
 }

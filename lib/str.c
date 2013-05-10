@@ -60,8 +60,10 @@ static int safe_str_len(const char *start, const char *lim)
 	unsigned cnt = 0;
 
 	while (1) {
-		GUARD(pos_gt_lim(start + 1, lim), return -1);
-
+		if (pos_gt_lim(start + 1, lim)) {
+			cnt = -1;
+			break;
+		}
 		/* iterate until '\0' is found */
 		if (0 == *start) {
 			break;
@@ -126,8 +128,10 @@ static int inspect_item_size(char *start, const char *lim, aux_t *item)
 	 */
 	if (0 == item->size) {
 		ret = safe_str_len(start, lim);
-		GUARD(-1 == ret, return 1);
-
+		if (-1 == ret) {
+			ret = 1;
+			goto out;
+		}
 		*((char **)item->dest) = (char *)malloc(ret + 1);
 		if (!*((char **)item->dest)) {
 			ret = APM_E_NO_MEM;
@@ -137,7 +141,10 @@ static int inspect_item_size(char *start, const char *lim, aux_t *item)
 		/* now we know the size of string */
 		item->size = ret + 1;
 	} else {
-		GUARD(pos_gt_lim(start + item->size, lim), return 1);
+		if (pos_gt_lim(start + item->size, lim)) {
+			ret = 1;
+			goto out;
+		}
 	}
 	ret = 0;
 out:
@@ -162,8 +169,9 @@ int safe_mem_read(char **pos, const char *lim, aux_t *aux_arr, const size_t cnt)
 	for (size_t idx = 0;  idx < cnt;  ++idx) {
 
 		ret = inspect_item_size(*pos, lim, &aux_arr[idx]);
-		GUARD(0 != ret, return ret);
-
+		if (0 != ret) {
+			return ret;
+		}
 		if (APM_UCHAR == aux_arr[idx].type) {
 			memcpy(aux_arr[idx].dest, *pos, aux_arr[idx].size);
 		}

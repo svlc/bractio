@@ -16,11 +16,4 @@
 		ACTION;							\
 	}
 
-
-/* return "RET" if given "COND" is true */
-#define GUARD(COND, ACTION)			\
-	if ((COND)) {				\
-		ACTION;				\
-	}
-
 #endif /* APM_DEBUG_H */
