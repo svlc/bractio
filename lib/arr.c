@@ -25,7 +25,6 @@
 void arr_add_item(struct arr *arr, size_t idx, void *data)
 {
 	assert(idx < arr->cnt);
-
 	memcpy((char *)arr->ptr + (idx * arr->item_size), data, arr->item_size);
 }
 
@@ -41,7 +40,6 @@ void *arr_get_item(struct arr *arr, size_t idx)
 	if (idx >= arr->cnt) {
 		return NULL;
 	}
-
 	return (char *)arr->ptr + (idx * arr->item_size);
 }
 
@@ -81,7 +79,6 @@ int arr_prep(struct arr *arr, size_t cnt, size_t item_size)
 	}
 	arr->cnt = cnt;
 	arr->item_size = item_size;
-
 	return 0;
 }
 
@@ -93,7 +90,6 @@ int arr_prep(struct arr *arr, size_t cnt, size_t item_size)
 void arr_empty(struct arr *arr)
 {
 	free(arr->ptr);
-
 	arr_zero(arr);
 }
 
@@ -111,9 +107,7 @@ int arr_alloc(struct arr **arr)
 	if (NULL == *arr) {
 		return 1;
 	}
-
 	arr_zero(*arr);
-
 	return 0;
 }
 
@@ -129,5 +123,4 @@ void arr_dealloc(struct arr **arr)
 	arr_empty(*arr);
 	free(*arr);
 	*arr = NULL;
-
 }
