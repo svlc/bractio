@@ -16,7 +16,7 @@
 /**
  * @brief
  */
-int add_action(action_ls_t *ls, joiner_t *joiner, mmt_t *mmt)
+int add_action(struct ulist *ls, joiner_t *joiner, mmt_t *mmt)
 {
 	int ret;
 	action_t *action;
@@ -29,7 +29,7 @@ int add_action(action_ls_t *ls, joiner_t *joiner, mmt_t *mmt)
 	action->joiner = joiner;
 	action->mmt = *mmt;
 
-	ret = list_add_item(ls, action);
+	ret = ulist_append(ls, action);
 	if (0 != ret) {
 		ret = -1;
 	}
@@ -177,7 +177,7 @@ int action_ability_0_ge_113(ad_t *ad)
 	action->joiner = ad->curr_joiner;
 	action->mmt = *ad->mmt;
 
-	ret = list_add_item(ad->action_ls, action);
+	ret = ulist_append(ad->action_ls, action);
 	if(0 != ret) {
 		return -1;
 	}
@@ -245,7 +245,7 @@ int action_ability_1_ge_113(ad_t *ad)
 	action->joiner = ad->curr_joiner;
 	action->mmt = *ad->mmt;
 
-	ret = list_add_item(ad->action_ls, action);
+	ret = ulist_append(ad->action_ls, action);
 	if(0 != ret) {
 		return -1;
 	}

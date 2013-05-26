@@ -198,31 +198,6 @@ joiner_t *apm_wc3_getjoiner(apm_t *apm, const unsigned no)
 /**
  * @brief 
  */
-static int seek_ls_item(chat_ls_t *ls, const unsigned no)
-{
-	if (no >= ls->cnt) {
-		return 1;
-	}
-
-	/* if current is unused or points behind wanted message */
-	if (NULL == ls->curr  ||  no > ls->curr_idx) {
-		/* reset current */
-		ls->curr = ls->head;
-		ls->curr_idx = 0;
-	}
-
-	while(ls->curr_idx != no) {
-
-		ls->curr = ls->curr->next;
-		++ls->curr_idx;
-		
-	}
-	return 0;
-}
-
-/**
- * @brief 
- */
 unsigned apm_wc3_getmsgcnt(apm_t *apm)
 {
 	assert(apm->core.task & APM_TASK_ADDTL);
@@ -236,15 +211,5 @@ unsigned apm_wc3_getmsgcnt(apm_t *apm)
 msgbox_t *apm_wc3_getmsg(apm_t *apm, const unsigned no)
 {
 	assert(apm->core.task & APM_TASK_ADDTL);
-
-	int ret;
-	/* auxiliary pointer */
-	chat_ls_t *chat_ls = apm->rfnd->extra.chat_ls;
-
-	ret = seek_ls_item(chat_ls, no);
-	if (0 != ret) {
-		return NULL;
-	}
-
-	return chat_ls->curr->data;
+	return (struct msgbox_t *)ulist_get(apm->rfnd->extra.chat_ls, no);
 }

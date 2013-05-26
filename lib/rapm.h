@@ -12,7 +12,7 @@
 #include <inttypes.h>
 #include <stdbool.h>
 
-#include "list.h"
+#include "ulist.h"
 #include "table.h"
 #include "buffer.h"
 #include "attr.h"
@@ -280,9 +280,6 @@ typedef struct msgbox_t {
 
 } msgbox_t;
 
-typedef list_t chat_ls_t;
-
-
 typedef struct action_t {
 
 	joiner_t *joiner;
@@ -291,9 +288,6 @@ typedef struct action_t {
 
 } action_t;
 
-typedef list_t action_ls_t;
-
-
 /**
  *@brief 
  */
@@ -301,9 +295,9 @@ typedef struct extra_t {
 
 	struct tbl *joiner_tbl;
 
-	chat_ls_t *chat_ls;
+	struct ulist *chat_ls;
 
-	action_ls_t *action_ls;
+	struct ulist *action_ls;
 
 } extra_t;
 

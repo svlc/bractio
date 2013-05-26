@@ -13,7 +13,7 @@
 #include <assert.h>
 
 #include "rapm.h"
-#include "list.h"
+#include "ulist.h"
 
 
 
@@ -371,10 +371,10 @@ void apm_wc3_deinit(apm_t *apm)
 		}
 		tbl_dealloc(extra->joiner_tbl);
 		if (extra->chat_ls) {
-			list_dealloc(&extra->chat_ls);
+			ulist_dealloc(extra->chat_ls);
 		}
 		if (extra->action_ls) {
-			list_dealloc(&extra->action_ls);
+			ulist_dealloc(extra->action_ls);
 		}
 
 		free(rfnd);

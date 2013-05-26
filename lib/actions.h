@@ -23,7 +23,7 @@ typedef struct ad_t {
 
 	strm_t *strm;
 
-	action_ls_t *action_ls;
+	struct ulist *action_ls;
 
 	state_t *state;
 

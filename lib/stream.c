@@ -15,7 +15,7 @@
 #include "str.h"
 #include "init_deinit.h"
 #include "decode.h"
-#include "list.h"
+#include "ulist.h"
 #include "actions.h"
 #include "mmt.h"
 #include "arr.h"
@@ -475,7 +475,7 @@ int save_countdown_blk(strm_t *strm)
 /**
  * @brief ChatMessage block
  */
-int save_chatmsg_blk(strm_t *strm, chat_ls_t *chat_ls, mmt_t *curr_mmt)
+int save_chatmsg_blk(strm_t *strm, struct ulist *chat_ls, mmt_t *curr_mmt)
 {
 	int ret;
 	msgbox_t *msgbox;
@@ -506,7 +506,7 @@ int save_chatmsg_blk(strm_t *strm, chat_ls_t *chat_ls, mmt_t *curr_mmt)
 
 	msgbox->no = chat_ls->cnt;
 
-	ret = list_add_item(chat_ls, msgbox);
+	ret = ulist_append(chat_ls, msgbox);
 	if (0 != ret) {
 		free(msgbox);
 		return 1;
@@ -766,7 +766,7 @@ void prep_action_ptrs(struct arr *fn_arr, const unsigned build)
 /**
  * @brief 
  */
-int process_action_field(strm_t *strm, action_ls_t *ls, struct arr *fn_arr,
+int process_action_field(strm_t *strm, struct ulist *action_ls, struct arr *fn_arr,
 			 joiner_t *joiner, state_t *state, mmt_t *mmt,
 			 unsigned len)
 {
@@ -785,7 +785,7 @@ int process_action_field(strm_t *strm, action_ls_t *ls, struct arr *fn_arr,
 		.state = state,
 		.curr_joiner = joiner,
 		.mmt = mmt,
-		.action_ls = ls,
+		.action_ls = action_ls,
 	};
 
 	while (len > 0) {
@@ -823,7 +823,7 @@ int process_action_field(strm_t *strm, action_ls_t *ls, struct arr *fn_arr,
 /**
  * @brief
  */
-int save_time_blk(strm_t *strm, action_ls_t *ls, struct arr *fn_arr,
+int save_time_blk(strm_t *strm, struct ulist *action_ls, struct arr *fn_arr,
 		  struct tbl *joiner_tbl, state_t *state, mmt_t *mmt)
 {
 	int ret;
@@ -868,7 +868,7 @@ int save_time_blk(strm_t *strm, action_ls_t *ls, struct arr *fn_arr,
 		if (NULL == joiner) {
 			return -1;
 		}
-		ret = process_action_field(strm, ls, fn_arr, joiner,
+		ret = process_action_field(strm, action_ls, fn_arr, joiner,
 					   state, mmt, len);
 		if (0 != ret) {
 			return 1;
@@ -1065,7 +1065,7 @@ int get_blk_id(strm_t *strm, unsigned *id)
 /**
  * @brief
  */
-int save_dyn_blk_seq(strm_t *strm, action_ls_t *action_ls, chat_ls_t *chat_ls,
+int save_dyn_blk_seq(strm_t *strm, struct ulist *action_ls, struct ulist *chat_ls,
 		     struct tbl *joiner_tbl, const unsigned build)
 {
 	int ret;
@@ -1375,19 +1375,16 @@ int process_stream(strm_t *strm, rfnd_t *rfnd, const unsigned build)
 	/* sort joiner table */
 	tbl_sort(extra->joiner_tbl, joiner_cmp_fn);
 
-	/* allocate chat list structures */
-	ret = list_alloc(&extra->chat_ls);
-	if (0 != ret) {
-		return ret;
+	/* allocate chat ulist structures */
+	extra->chat_ls = ulist_alloc(50, msgbox_free_fn);
+	if (!extra->chat_ls) {
+		return -1;
 	}
-
-	/* prepare chat list */
-	list_prep(extra->chat_ls, msgbox_free_fn);
-
-	/* allocate action list structures */
-	list_alloc(&extra->action_ls);
-	list_prep(extra->action_ls, free);
-
+	/* allocate action ulist structures */
+	extra->action_ls = ulist_alloc(50, free);
+	if (!extra->action_ls) {
+		return -1;
+	}
 
 	/* read sequence of various blocks */
 	ret = save_dyn_blk_seq(strm, extra->action_ls, extra->chat_ls,
