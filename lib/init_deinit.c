@@ -67,13 +67,13 @@ void strm_empty(strm_t *strm)
 /**
  * @brief Compute stream length, including trailing zeroes.
  */
-size_t strm_len(const sgmt_tbl_t *tbl)
+size_t strm_len(const struct tbl *sgmt_tbl)
 {
 	size_t strm_len = 0;
 
 	/* compute total stream length */
-	for (size_t idx = 0;  idx < tbl->cnt;  ++idx) {
-		strm_len += (*(sgmt_t *)tbl->arr[idx]).dcd_size;
+	for (size_t idx = 0;  idx < sgmt_tbl->cnt;  ++idx) {
+		strm_len += (*(sgmt_t *)sgmt_tbl->arr[idx]).dcd_size;
 	}
 
 	return strm_len;
@@ -116,15 +116,22 @@ void sgmt_zero(sgmt_t *sgmt)
  */
 int join_scrn_blk_alloc(join_scrn_blk_t **blk)
 {
+	int ret;
 	assert(NULL == *blk);
 
 	*blk = (join_scrn_blk_t *)malloc(sizeof(**blk));
 	if (!*blk) {
-		return 1;
+		ret = -1;
+		goto err;
 	}
-	tbl_prep(&(*blk)->slot_tbl, 0, free);
-
-	return 0;
+	(*blk)->slot_tbl = tbl_alloc(0, free);
+	if (!(*blk)->slot_tbl) {
+		ret = -1;
+		goto err;
+	}
+	ret = 0;
+err:
+	return ret;
 }
 
 /**
@@ -134,10 +141,8 @@ static void join_scrn_blk_dealloc(join_scrn_blk_t **blk)
 {
 	assert(*blk);
 
-	tbl_empty(&(*blk)->slot_tbl);
-
+	tbl_dealloc((*blk)->slot_tbl);
 	free(*blk);
-
 	*blk = NULL;
 }
 
@@ -217,8 +222,7 @@ static void host_blk_dealloc(host_blk_t **blk)
  */
 static void extra_prep(extra_t *extra)
 {
-	tbl_zero(&extra->joiner_tbl);
-
+	extra->joiner_tbl = NULL;
 	extra->chat_ls = NULL;
 	extra->action_ls = NULL;
 }
@@ -276,10 +280,8 @@ int body_alloc(body_t **body)
 	*body = (body_t *)malloc(sizeof(**body));
 	if (!*body) {
 		return 1;
-	}	
-	/* zero sgmt_tbl_t */
-	tbl_zero(&(*body)->sgmt_tbl);
-
+	}
+	(*body)->sgmt_tbl = NULL;
 	/* zero strm_t */
 	memset(&(*body)->strm, 0, sizeof(strm_t));
 
@@ -347,7 +349,7 @@ void apm_wc3_deinit(apm_t *apm)
 	}
 
 	if (apm->body) {
-		tbl_empty(&apm->body->sgmt_tbl);
+		tbl_dealloc(apm->body->sgmt_tbl);
 
 		if (apm->body->strm.arr) {
 			strm_empty(&apm->body->strm);
@@ -365,10 +367,9 @@ void apm_wc3_deinit(apm_t *apm)
 		}
 
 		if (rfnd->prsn_tbl) {
-			tbl_dealloc(&rfnd->prsn_tbl);
+			tbl_dealloc(rfnd->prsn_tbl);
 		}
-
-		tbl_empty(&extra->joiner_tbl);
+		tbl_dealloc(extra->joiner_tbl);
 		if (extra->chat_ls) {
 			list_dealloc(&extra->chat_ls);
 		}

@@ -19,9 +19,9 @@
 /**
  * @brief
  */
-int decode_sgmts(sgmt_tbl_t *tbl, strm_t *strm)
+int decode_sgmts(struct tbl *sgmt_tbl, strm_t *strm)
 {
-	assert(tbl->cnt == tbl->len);
+	assert(sgmt_tbl->cnt == sgmt_tbl->len);
 	assert(0 == strm->cnt);
 	assert(strm->arr == strm->pos);
 
@@ -31,7 +31,7 @@ int decode_sgmts(sgmt_tbl_t *tbl, strm_t *strm)
 	/* NULL is voluntary */
 	sgmt_t *sgmt = NULL;
 
-	for (size_t idx = 0;  idx < tbl->cnt;  ++idx) {
+	for (size_t idx = 0;  idx < sgmt_tbl->cnt;  ++idx) {
 
 		z_strm.zalloc = Z_NULL;
 		z_strm.zfree = Z_NULL;
@@ -45,7 +45,7 @@ int decode_sgmts(sgmt_tbl_t *tbl, strm_t *strm)
 		if (Z_OK != ret) {
 			return ret;
 		}
-		sgmt = (sgmt_t *)tbl->arr[idx];
+		sgmt = (sgmt_t *)sgmt_tbl->arr[idx];
 
 		/* inform about size of chunk we want decode */
 		z_strm.avail_in = sgmt->ecd_size;

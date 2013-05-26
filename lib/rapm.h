@@ -96,10 +96,6 @@ typedef struct sgmt_t {
 
 } sgmt_t;
 
-
-typedef tbl_t sgmt_tbl_t;
-
-
 /**
  * @brief Miscellaneous core data.
  */
@@ -203,10 +199,6 @@ typedef struct slot_t {
 
 } slot_t;
 
-
-typedef tbl_t slot_tbl_t;
-
-
 /**
  *@brief 
  */
@@ -214,7 +206,7 @@ typedef struct join_scrn_blk_t {
 
 	unsigned slot_cnt;
 
-	slot_tbl_t slot_tbl;
+	struct tbl *slot_tbl;
 
 	unsigned long rand_seed;
 
@@ -268,10 +260,6 @@ typedef struct joiner_t {
 
 } joiner_t;
 
-typedef tbl_t joiner_tbl_t;
-
-
-
 /**
  *@brief 
  */
@@ -311,7 +299,7 @@ typedef list_t action_ls_t;
  */
 typedef struct extra_t {
 
-	joiner_tbl_t joiner_tbl;
+	struct tbl *joiner_tbl;
 
 	chat_ls_t *chat_ls;
 
@@ -326,7 +314,7 @@ typedef struct extra_t {
 typedef struct body_t {
 
 	/* table of segments -- encoded data chunks */
-	sgmt_tbl_t sgmt_tbl;
+	struct tbl *sgmt_tbl;
 
 	/* contiguous stream of zlib-decoded segments */
 	strm_t strm;
@@ -354,10 +342,6 @@ typedef struct host_blk_t {
 
 } host_blk_t;
 
-/* make prsn_tbl_t alias to tbl_t */
-typedef tbl_t prsn_tbl_t;
-
-
 /**
  *@brief 
  */
@@ -369,7 +353,7 @@ typedef struct rfnd_t {
 	/* join screen info */
 	join_scrn_blk_t *join_scrn_blk;
 
-	prsn_tbl_t *prsn_tbl;
+	struct tbl *prsn_tbl;
 
 	/* processed data to have it saved in more convinient way */
 	extra_t extra;

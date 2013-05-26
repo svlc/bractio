@@ -274,7 +274,7 @@ int read_sgmt_hdr(sgmt_t *sgmt, buff_t *buff, FILE *fp)
  * @param fp
  * @return 0 on success
  */
-int read_rep_body(sgmt_tbl_t *sgmt_tbl, buff_t *buff, FILE *fp)
+int read_rep_body(struct tbl *sgmt_tbl, buff_t *buff, FILE *fp)
 {
 	assert(0 == sgmt_tbl->cnt);
 	assert(sgmt_tbl->len > 0);
@@ -306,7 +306,7 @@ int read_rep_body(sgmt_tbl_t *sgmt_tbl, buff_t *buff, FILE *fp)
 			goto out;
 		}
 
-		ret = tbl_add_item(sgmt_tbl, sgmt);
+		ret = tbl_push(sgmt_tbl, sgmt);
 		if (0 != ret) {
 			goto out;
 		}

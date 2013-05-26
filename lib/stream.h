@@ -35,6 +35,6 @@ typedef struct fn_box_t {
 
 
 extern int process_stream(strm_t *strm, rfnd_t *rfnd, const unsigned patch_ver);
-extern void eval_apm(joiner_tbl_t *tbl);
+extern void eval_apm(struct tbl *joiner_tbl);
 
 #endif /* APM_STREAM_H */

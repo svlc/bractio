@@ -93,10 +93,10 @@ out:
  *
  * @return NULL on failure
  */
-prsn_t *seek_prsn(prsn_tbl_t *tbl, const unsigned id)
+prsn_t *seek_prsn(struct tbl *prsn_tbl, const unsigned id)
 {
-	prsn_t **prsn = (prsn_t **)tbl->arr;
-	size_t cnt = tbl->cnt;
+	prsn_t **prsn = (prsn_t **)prsn_tbl->arr;
+	size_t cnt = prsn_tbl->cnt;
 
 	while (cnt--) {
 		if (id == (*prsn)->id) {
@@ -112,10 +112,10 @@ prsn_t *seek_prsn(prsn_tbl_t *tbl, const unsigned id)
  *
  * @TODO Do some small data structures update to seek joiner out in O(1).
  */
-joiner_t *seek_joiner(joiner_tbl_t *tbl, unsigned id)
+joiner_t *seek_joiner(struct tbl *joiner_tbl, unsigned id)
 {
-	joiner_t **joiner = (joiner_t **)tbl->arr;
-	size_t cnt = tbl->cnt;
+	joiner_t **joiner = (joiner_t **)joiner_tbl->arr;
+	size_t cnt = joiner_tbl->cnt;
 
 	while (cnt--) {
 		if (id == (*joiner)->id) {
@@ -131,8 +131,8 @@ joiner_t *seek_joiner(joiner_tbl_t *tbl, unsigned id)
  * @note One of joiner/slot table may be empty.
  * @TODO Decompose this function.
  */
-int form_joiner_tbl(prsn_tbl_t *prsn_tbl, prsn_t *host,
-		    slot_tbl_t *slot_tbl, joiner_tbl_t *joiner_tbl)
+int form_joiner_tbl(struct tbl *prsn_tbl, prsn_t *host,
+		    struct tbl *slot_tbl, struct tbl *joiner_tbl)
 {
 	assert(0 == joiner_tbl->cnt);
 
@@ -162,7 +162,7 @@ int form_joiner_tbl(prsn_tbl_t *prsn_tbl, prsn_t *host,
 				joiner_zero(j_item);
 
 				export_slot_to_joiner(*slot, j_item);
-				ret = tbl_add_item(joiner_tbl, j_item);
+				ret = tbl_push(joiner_tbl, j_item);
 				if (0 != ret) {
 					free(j_item);
 					return ret;
@@ -322,7 +322,7 @@ static int save_slot(strm_t *strm, slot_t *slot,
 /**
  * @brief
  */
-int save_slot_seq(strm_t *strm, slot_tbl_t *slot_tbl,
+int save_slot_seq(strm_t *strm, struct tbl *slot_tbl,
 		  unsigned cnt, const unsigned build)
 {
 	int ret;
@@ -348,7 +348,7 @@ int save_slot_seq(strm_t *strm, slot_tbl_t *slot_tbl,
 		if (0 != ret) {
 			goto error;
 		}
-		ret = tbl_add_item(slot_tbl, slot);
+		ret = tbl_push(slot_tbl, slot);
 		if (0 != ret) {
 			goto error;
 		}
@@ -820,7 +820,7 @@ int process_action_field(strm_t *strm, action_ls_t *ls, struct arr *fn_arr,
  * @brief
  */
 int save_time_blk(strm_t *strm, action_ls_t *ls, struct arr *fn_arr,
-		  joiner_tbl_t *joiner_tbl, state_t *state, mmt_t *mmt)
+		  struct tbl *joiner_tbl, state_t *state, mmt_t *mmt)
 {
 	int ret;
 
@@ -905,7 +905,7 @@ int save_join_scrn_blk(strm_t *strm, join_scrn_blk_t *blk,
 		return ret;
 	}
 
-	ret = save_slot_seq(strm, &blk->slot_tbl, blk->slot_cnt, build);
+	ret = save_slot_seq(strm, blk->slot_tbl, blk->slot_cnt, build);
 	if (0 != ret) {
 		return ret;
 	}
@@ -1002,7 +1002,7 @@ cleanup:
 /**
  * @brief
  */
-int save_leave_blk(strm_t *strm, joiner_tbl_t *joiner_tbl,
+int save_leave_blk(strm_t *strm, struct tbl *joiner_tbl,
 		   mmt_t *curr_mmt, joiner_t **last)
 {
 	unsigned id;
@@ -1062,7 +1062,7 @@ int get_blk_id(strm_t *strm, unsigned *id)
  * @brief
  */
 int save_dyn_blk_seq(strm_t *strm, action_ls_t *action_ls, chat_ls_t *chat_ls,
-		     joiner_tbl_t *joiner_tbl, const unsigned build)
+		     struct tbl *joiner_tbl, const unsigned build)
 {
 	int ret;
 	unsigned blk_id;
@@ -1219,7 +1219,7 @@ int save_static_blk(strm_t *strm, rfnd_t *rfnd,
 			free(prsn); break;
 		}
 
-		ret = tbl_add_item(rfnd->prsn_tbl, prsn);
+		ret = tbl_push(rfnd->prsn_tbl, prsn);
 		if (0 != ret) {
 			free(prsn); break;
 		}
@@ -1294,10 +1294,10 @@ int save_static_blk_seq(strm_t *strm, rfnd_t *rfnd, const unsigned build,
  *
  * @param tbl joiner table
  */
-void eval_apm(joiner_tbl_t *tbl)
+void eval_apm(struct tbl *joiner_tbl)
 {
-	size_t cnt = tbl->cnt;
-	joiner_t **joiner = (joiner_t **)tbl->arr;
+	size_t cnt = joiner_tbl->cnt;
+	joiner_t **joiner = (joiner_t **)joiner_tbl->arr;
 
 	while (cnt--)	 {
 		/* if joiner is player */
@@ -1339,14 +1339,9 @@ int process_stream(strm_t *strm, rfnd_t *rfnd, const unsigned build)
 
 
 	/* allocate prsn_tbl_t structures */
-	ret = tbl_alloc(&rfnd->prsn_tbl);
-	if (0 != ret) {
-		return ret;
-	}
-
-	ret = tbl_prep(rfnd->prsn_tbl, 10, prsn_free_fn);
-	if (0 != ret) {
-		return ret;
+	rfnd->prsn_tbl = tbl_alloc(10, prsn_free_fn);
+	if (!rfnd->prsn_tbl) {
+		return -1;
 	}
 
 	ret = join_scrn_blk_alloc(&rfnd->join_scrn_blk);
@@ -1361,23 +1356,20 @@ int process_stream(strm_t *strm, rfnd_t *rfnd, const unsigned build)
 		return ret;
 	}
 
-	/* prepare joiner table */
-	ret = tbl_prep(&extra->joiner_tbl, rfnd->host_blk->player_cnt,
-		       joiner_free_fn);
-	if (0 != ret) {
-		return ret;
+	extra->joiner_tbl = tbl_alloc(rfnd->host_blk->player_cnt, joiner_free_fn);
+	if (!extra->joiner_tbl) {
+		return -1;
 	}
 
-
 	ret = form_joiner_tbl(rfnd->prsn_tbl, &rfnd->host_blk->prsn,
-			      &rfnd->join_scrn_blk->slot_tbl,
-			      &extra->joiner_tbl);
+			      rfnd->join_scrn_blk->slot_tbl,
+			      extra->joiner_tbl);
 	if (0 != ret) {
 		return ret;
 	}
 
 	/* sort joiner table */
-	tbl_sort(&extra->joiner_tbl, joiner_cmp_fn);
+	tbl_sort(extra->joiner_tbl, joiner_cmp_fn);
 
 	/* allocate chat list structures */
 	ret = list_alloc(&extra->chat_ls);
@@ -1395,7 +1387,7 @@ int process_stream(strm_t *strm, rfnd_t *rfnd, const unsigned build)
 
 	/* read sequence of various blocks */
 	ret = save_dyn_blk_seq(strm, extra->action_ls, extra->chat_ls,
-			       &extra->joiner_tbl, build);
+			       extra->joiner_tbl, build);
 	if (0 != ret) {
 		return ret;
 	}

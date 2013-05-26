@@ -11,7 +11,7 @@
 
 extern int strm_prep(strm_t *strm, const size_t len);
 extern void strm_empty(strm_t *strm);
-extern size_t strm_len(const sgmt_tbl_t *tbl);
+extern size_t strm_len(const struct tbl *sgmt_tbl);
 
 extern void sgmt_free_fn(void *p);
 extern int sgmt_data_prep(char **ecd_data, unsigned data_size);

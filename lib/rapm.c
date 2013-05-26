@@ -53,15 +53,13 @@ int apm_wc3_operate(apm_t *apm, apm_wc3_attr_t *attr)
 	if (attr->task & APM_TASK_ADDTL) {
 
 		body_alloc(&apm->body);
-
-		/* prepare segment table */
-		ret = tbl_prep(&apm->body->sgmt_tbl, apm->main_hdr.ecd_sgmt_cnt,
-			       sgmt_free_fn);
-		if (0 != ret) {
-			return ret;
+		apm->body->sgmt_tbl = tbl_alloc(apm->main_hdr.ecd_sgmt_cnt,
+						sgmt_free_fn);
+		if (!apm->body->sgmt_tbl) {
+			return -1;
 		}
 
-		ret = read_rep_body(&apm->body->sgmt_tbl, &apm->core.buff,
+		ret = read_rep_body(apm->body->sgmt_tbl, &apm->core.buff,
 				    apm->core.fp);
 		if (0 != ret) {
 			return ret;
@@ -73,19 +71,20 @@ int apm_wc3_operate(apm_t *apm, apm_wc3_attr_t *attr)
 
 		/* prepare stream for decoded data */
 		ret = strm_prep(&apm->body->strm,
-				strm_len(&apm->body->sgmt_tbl));
+				strm_len(apm->body->sgmt_tbl));
 		if (0 != ret) {
 			return ret;
 		}
 
 		/* decode all segments using zlib */
-		ret = decode_sgmts(&apm->body->sgmt_tbl, &apm->body->strm);
+		ret = decode_sgmts(apm->body->sgmt_tbl, &apm->body->strm);
 		if (0 != ret) {
 			return ret;
 		}
 
 		/* free segment table resources */
-		tbl_empty(&apm->body->sgmt_tbl);
+		tbl_dealloc(apm->body->sgmt_tbl);
+		apm->body->sgmt_tbl = NULL;
 
 		/* typically there are trailing zeroes at the end of stream,
 		 * so set lim right at the end of valid characters */
@@ -112,7 +111,7 @@ int apm_wc3_operate(apm_t *apm, apm_wc3_attr_t *attr)
 	if (attr->task & APM_TASK_APM) {
 
 		/* compute apm base on player's leave time */
-		eval_apm(&apm->rfnd->extra.joiner_tbl);
+		eval_apm(apm->rfnd->extra.joiner_tbl);
 	}
 	return 0;
 }
@@ -185,7 +184,7 @@ unsigned apm_wc3_getjoinercnt(apm_t *apm)
 {
 	assert(apm->core.task & APM_TASK_ADDTL);
 
-	return apm->rfnd->extra.joiner_tbl.cnt;
+	return apm->rfnd->extra.joiner_tbl->cnt;
 }
 
 /**
@@ -193,8 +192,7 @@ unsigned apm_wc3_getjoinercnt(apm_t *apm)
  */
 joiner_t *apm_wc3_getjoiner(apm_t *apm, const unsigned no)
 {
-
-	return (joiner_t *)apm->rfnd->extra.joiner_tbl.arr[no];
+	return (joiner_t *)apm->rfnd->extra.joiner_tbl->arr[no];
 }
 
 /**
