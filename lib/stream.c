@@ -515,182 +515,182 @@ out:
 /**
  * @brief
  */
-void prep_action_ptrs(arr_t *fn_arr, const unsigned build)
+void prep_action_ptrs(struct arr *fn_arr, const unsigned build)
 {
 	assert(NULL != fn_arr);
-	assert(0x76 == fn_arr->cnt);
+	assert(0x76 == fn_arr->len);
 
 	fnbox_t fnbox;
 
 	fnbox.fn = action_pause;
-	arr_add_item(fn_arr, 0x01, &fnbox);
+	arr_add(fn_arr, 0x01, &fnbox);
 
 	fnbox.fn = action_resume;
-	arr_add_item(fn_arr, 0x02, &fnbox);
+	arr_add(fn_arr, 0x02, &fnbox);
 
 	fnbox.fn = action_set_speed;
-	arr_add_item(fn_arr, 0x03, &fnbox);
+	arr_add(fn_arr, 0x03, &fnbox);
 
 	fnbox.fn = action_inc_speed;
-	arr_add_item(fn_arr, 0x04, &fnbox);
+	arr_add(fn_arr, 0x04, &fnbox);
 
 	fnbox.fn = action_dec_speed;
-	arr_add_item(fn_arr, 0x05, &fnbox);
+	arr_add(fn_arr, 0x05, &fnbox);
 
 	fnbox.fn = action_save;
-	arr_add_item(fn_arr, 0x06, &fnbox);
+	arr_add(fn_arr, 0x06, &fnbox);
 
 	fnbox.fn = action_saving_done;
-	arr_add_item(fn_arr, 0x07, &fnbox);
+	arr_add(fn_arr, 0x07, &fnbox);
 
 	fnbox.fn = action_change_selection;
-	arr_add_item(fn_arr, 0x16, &fnbox);
+	arr_add(fn_arr, 0x16, &fnbox);
 
 	fnbox.fn = action_assign_group_hotkey;
-	arr_add_item(fn_arr, 0x17, &fnbox);
+	arr_add(fn_arr, 0x17, &fnbox);
 
 	fnbox.fn = action_select_group_hotkey;
-	arr_add_item(fn_arr, 0x18, &fnbox);
+	arr_add(fn_arr, 0x18, &fnbox);
 
 	fnbox.fn = action_cheat_TheDudeAbides;
-	arr_add_item(fn_arr, 0x20, &fnbox);
+	arr_add(fn_arr, 0x20, &fnbox);
 
 	fnbox.fn = action_cheat_SomebodySetUpUsTheBomb;
-	arr_add_item(fn_arr, 0x22, &fnbox);
+	arr_add(fn_arr, 0x22, &fnbox);
 
 	fnbox.fn = action_cheat_WarpTen;
-	arr_add_item(fn_arr, 0x23, &fnbox);
+	arr_add(fn_arr, 0x23, &fnbox);
 
 	fnbox.fn = action_cheat_IocainePowder;
-	arr_add_item(fn_arr, 0x24, &fnbox);
+	arr_add(fn_arr, 0x24, &fnbox);
 
 	fnbox.fn = action_cheat_PointBreak;
-	arr_add_item(fn_arr, 0x25, &fnbox);
+	arr_add(fn_arr, 0x25, &fnbox);
 
 	fnbox.fn = action_cheat_WhosYourDaddy;
-	arr_add_item(fn_arr, 0x26, &fnbox);
+	arr_add(fn_arr, 0x26, &fnbox);
 
 	fnbox.fn = action_cheat_KeyserSoze;
-	arr_add_item(fn_arr, 0x27, &fnbox);
+	arr_add(fn_arr, 0x27, &fnbox);
 
 	fnbox.fn = action_cheat_LeafitToMe;
-	arr_add_item(fn_arr, 0x28, &fnbox);
+	arr_add(fn_arr, 0x28, &fnbox);
 
 	fnbox.fn = action_cheat_ThereIsNoSpoon;
-	arr_add_item(fn_arr, 0x29, &fnbox);
+	arr_add(fn_arr, 0x29, &fnbox);
 
 	fnbox.fn = action_cheat_StrengthAndHonor;
-	arr_add_item(fn_arr, 0x2A, &fnbox);
+	arr_add(fn_arr, 0x2A, &fnbox);
 
 	fnbox.fn = action_cheat_itvexesme;
-	arr_add_item(fn_arr, 0x2B, &fnbox);
+	arr_add(fn_arr, 0x2B, &fnbox);
 
 	fnbox.fn = action_cheat_WhoIsJohnGalt;
-	arr_add_item(fn_arr, 0x2C, &fnbox);
+	arr_add(fn_arr, 0x2C, &fnbox);
 
 	fnbox.fn = action_cheat_GreedIsGood;
-	arr_add_item(fn_arr, 0x2D, &fnbox);
+	arr_add(fn_arr, 0x2D, &fnbox);
 
 	fnbox.fn = action_cheat_DayLightSavings;
-	arr_add_item(fn_arr, 0x2E, &fnbox);
+	arr_add(fn_arr, 0x2E, &fnbox);
 
 	fnbox.fn = action_cheat_ISeeDeadPeople;
-	arr_add_item(fn_arr, 0x2F, &fnbox);
+	arr_add(fn_arr, 0x2F, &fnbox);
 
 	fnbox.fn = action_cheat_Synergy;
-	arr_add_item(fn_arr, 0x30, &fnbox);
+	arr_add(fn_arr, 0x30, &fnbox);
 
 	fnbox.fn = action_cheat_SharpAndShiny;
-	arr_add_item(fn_arr, 0x31, &fnbox);
+	arr_add(fn_arr, 0x31, &fnbox);
 
 	fnbox.fn = action_cheat_AllYourBaseAreBelongToUs;
-	arr_add_item(fn_arr, 0x32, &fnbox);
+	arr_add(fn_arr, 0x32, &fnbox);
 
 	fnbox.fn = action_change_ally_opts;
-	arr_add_item(fn_arr, 0x50, &fnbox);
+	arr_add(fn_arr, 0x50, &fnbox);
 
 	fnbox.fn = action_transfer_resources;
-	arr_add_item(fn_arr, 0x51, &fnbox);
+	arr_add(fn_arr, 0x51, &fnbox);
 
 	fnbox.fn = action_map_trigger_chat_command;
-	arr_add_item(fn_arr, 0x60, &fnbox);
+	arr_add(fn_arr, 0x60, &fnbox);
 
 	fnbox.fn = action_esc_keystroke;
-	arr_add_item(fn_arr, 0x61, &fnbox);
+	arr_add(fn_arr, 0x61, &fnbox);
 
 	fnbox.fn = action_scenario_trigger;
-	arr_add_item(fn_arr, 0x62, &fnbox);
+	arr_add(fn_arr, 0x62, &fnbox);
 
 	fnbox.fn =  action_0x75_unknown;
-	arr_add_item(fn_arr, 0x75, &fnbox);
+	arr_add(fn_arr, 0x75, &fnbox);
 
 	/* if  */
 	if (build < 6031) {
 
 		fnbox.fn = action_ability_0_lt_107;
-		arr_add_item(fn_arr, 0x10, &fnbox);
+		arr_add(fn_arr, 0x10, &fnbox);
 
 		fnbox.fn = action_ability_1_lt_107;
-		arr_add_item(fn_arr, 0x11, &fnbox);
+		arr_add(fn_arr, 0x11, &fnbox);
 
 		fnbox.fn = action_ability_2_lt_107;
-		arr_add_item(fn_arr, 0x12, &fnbox);
+		arr_add(fn_arr, 0x12, &fnbox);
 
 		fnbox.fn = action_move_item_lt_107;
-		arr_add_item(fn_arr, 0x13, &fnbox);
+		arr_add(fn_arr, 0x13, &fnbox);
 
 		fnbox.fn = action_choose_ability_lt_107;
-		arr_add_item(fn_arr, 0x14, &fnbox);
+		arr_add(fn_arr, 0x14, &fnbox);
 
 		fnbox.fn = action_hero_skill_submenu;
-		arr_add_item(fn_arr, 0x65, &fnbox);
+		arr_add(fn_arr, 0x65, &fnbox);
 
 		fnbox.fn = action_worker_building_submenu;
-		arr_add_item(fn_arr, 0x66, &fnbox);
+		arr_add(fn_arr, 0x66, &fnbox);
 
 		fnbox.fn = action_minimap_signal;
-		arr_add_item(fn_arr, 0x67, &fnbox);
+		arr_add(fn_arr, 0x67, &fnbox);
 
 		fnbox.fn = action_continue_game_1;
-		arr_add_item(fn_arr, 0x68, &fnbox);
+		arr_add(fn_arr, 0x68, &fnbox);
 
 		fnbox.fn = action_continue_game_0;
-		arr_add_item(fn_arr, 0x69, &fnbox);
+		arr_add(fn_arr, 0x69, &fnbox);
 
 	} else if (build < 6037) {
 
 		fnbox.fn = action_ability_0_ge_107_lt_113;
-		arr_add_item(fn_arr, 0x10, &fnbox);
+		arr_add(fn_arr, 0x10, &fnbox);
 
 		fnbox.fn = action_ability_1_ge_107_lt_113;
-		arr_add_item(fn_arr, 0x11, &fnbox);
+		arr_add(fn_arr, 0x11, &fnbox);
 
 		fnbox.fn = action_ability_2_ge_107_lt_113;
-		arr_add_item(fn_arr, 0x12, &fnbox);
+		arr_add(fn_arr, 0x12, &fnbox);
 
 		fnbox.fn = action_move_item_ge_107_lt_113;
-		arr_add_item(fn_arr, 0x13, &fnbox);
+		arr_add(fn_arr, 0x13, &fnbox);
 
 		fnbox.fn = action_choose_ability_ge_107_lt_113;
-		arr_add_item(fn_arr, 0x14, &fnbox);
+		arr_add(fn_arr, 0x14, &fnbox);
 
 	} /* build >= 6037 */
 	else {
 
 		fnbox.fn = action_ability_0_ge_113;
-		arr_add_item(fn_arr, 0x10, &fnbox);
+		arr_add(fn_arr, 0x10, &fnbox);
 
 		fnbox.fn = action_ability_1_ge_113;
-		arr_add_item(fn_arr, 0x11, &fnbox);
+		arr_add(fn_arr, 0x11, &fnbox);
 
 		fnbox.fn = action_ability_2_ge_113;
-		arr_add_item(fn_arr, 0x12, &fnbox);
+		arr_add(fn_arr, 0x12, &fnbox);
 
 		fnbox.fn = action_move_item_ge_113;
-		arr_add_item(fn_arr, 0x13, &fnbox);
+		arr_add(fn_arr, 0x13, &fnbox);
 
 		fnbox.fn = action_choose_ability_ge_113;
-		arr_add_item(fn_arr, 0x14, &fnbox);
+		arr_add(fn_arr, 0x14, &fnbox);
 	}
 
 
@@ -698,19 +698,19 @@ void prep_action_ptrs(arr_t *fn_arr, const unsigned build)
 	if (build >= 6031) {
 
 		fnbox.fn = action_hero_skill_submenu;
-		arr_add_item(fn_arr, 0x66, &fnbox);
+		arr_add(fn_arr, 0x66, &fnbox);
 
 		fnbox.fn = action_worker_building_submenu;
-		arr_add_item(fn_arr, 0x67, &fnbox);
+		arr_add(fn_arr, 0x67, &fnbox);
 
 		fnbox.fn = action_minimap_signal;
-		arr_add_item(fn_arr, 0x68, &fnbox);
+		arr_add(fn_arr, 0x68, &fnbox);
 
 		fnbox.fn = action_continue_game_1;
-		arr_add_item(fn_arr, 0x69, &fnbox);
+		arr_add(fn_arr, 0x69, &fnbox);
 
 		fnbox.fn = action_continue_game_0;
-		arr_add_item(fn_arr, 0x6A, &fnbox);
+		arr_add(fn_arr, 0x6A, &fnbox);
 	}
 
 
@@ -718,51 +718,51 @@ void prep_action_ptrs(arr_t *fn_arr, const unsigned build)
 	if (build < 6040) {
 
 		fnbox.fn = action_select_subgroup_lt_114b;
-		arr_add_item(fn_arr, 0x19, &fnbox);
+		arr_add(fn_arr, 0x19, &fnbox);
 	} /* build >= 6040 */
 	else {
 		fnbox.fn = action_select_subgroup_ge_114b;
-		arr_add_item(fn_arr, 0x19, &fnbox);
+		arr_add(fn_arr, 0x19, &fnbox);
 	}
 
 	/* if ver < 1.15 */
 	if (build < 6043) {
 
 		fnbox.fn = action_0x1A_0x1B_unknown;
-		arr_add_item(fn_arr, 0x1A, &fnbox);
+		arr_add(fn_arr, 0x1A, &fnbox);
 
 		fnbox.fn = action_select_ground_item;
-		arr_add_item(fn_arr, 0x1B, &fnbox);
+		arr_add(fn_arr, 0x1B, &fnbox);
 
 		fnbox.fn = action_cancel_hero_revival;
-		arr_add_item(fn_arr, 0x1C, &fnbox);
+		arr_add(fn_arr, 0x1C, &fnbox);
 
 		fnbox.fn = action_reduce_building_queue;
-		arr_add_item(fn_arr, 0x1D, &fnbox);
+		arr_add(fn_arr, 0x1D, &fnbox);
 	} /* build >= 6043 */
 	else {
 
 		fnbox.fn = action_pre_subselection;
-		arr_add_item(fn_arr, 0x1A, &fnbox);
+		arr_add(fn_arr, 0x1A, &fnbox);
 
 		fnbox.fn = action_0x1A_0x1B_unknown;
-		arr_add_item(fn_arr, 0x1B, &fnbox);
+		arr_add(fn_arr, 0x1B, &fnbox);
 
 		fnbox.fn = action_select_ground_item;
-		arr_add_item(fn_arr, 0x1C, &fnbox);
+		arr_add(fn_arr, 0x1C, &fnbox);
 
 		fnbox.fn = action_cancel_hero_revival;
-		arr_add_item(fn_arr, 0x1D, &fnbox);
+		arr_add(fn_arr, 0x1D, &fnbox);
 
 		fnbox.fn = action_reduce_building_queue;
-		arr_add_item(fn_arr, 0x1E, &fnbox);
+		arr_add(fn_arr, 0x1E, &fnbox);
 	}
 }
 
 /**
  * @brief 
  */
-int process_action_field(strm_t *strm, action_ls_t *ls, arr_t *fn_arr,
+int process_action_field(strm_t *strm, action_ls_t *ls, struct arr *fn_arr,
 			 joiner_t *joiner, state_t *state, mmt_t *mmt,
 			 unsigned len)
 {
@@ -791,11 +791,11 @@ int process_action_field(strm_t *strm, action_ls_t *ls, arr_t *fn_arr,
 			return ret;
 		}
 
-		if (action_id < 1  ||  action_id >= fn_arr->cnt) {
+		if (action_id < 1  ||  action_id >= fn_arr->len) {
 			return -1;
 		}
 
-		fnbox_t *fnbox = arr_get_item(fn_arr, action_id);
+		fnbox_t *fnbox = arr_get(fn_arr, action_id);
 		if (NULL == fnbox->fn) {
 			return -1;
 		} else if (action_change_selection != fnbox->fn) {
@@ -819,7 +819,7 @@ int process_action_field(strm_t *strm, action_ls_t *ls, arr_t *fn_arr,
 /**
  * @brief
  */
-int save_time_blk(strm_t *strm, action_ls_t *ls, arr_t *fn_arr,
+int save_time_blk(strm_t *strm, action_ls_t *ls, struct arr *fn_arr,
 		  joiner_tbl_t *joiner_tbl, state_t *state, mmt_t *mmt)
 {
 	int ret;
@@ -1070,17 +1070,13 @@ int save_dyn_blk_seq(strm_t *strm, action_ls_t *action_ls, chat_ls_t *chat_ls,
 	/* last leaver */
 	joiner_t *last = NULL;
 
-	arr_t *fn_arr = NULL;
-	ret = arr_alloc(&fn_arr);
-	if (0 != ret) {
-		return ret;
-	}
+	struct arr *fn_arr = NULL;
 
-	ret = arr_prep(fn_arr, 0x76, sizeof(fnbox_t));
-	if (0 != ret) {
-		goto cleanup;
+	fn_arr = arr_alloc(0x76, sizeof(fnbox_t));
+	if (!fn_arr) {
+		ret = -1;
+		goto out;
 	}
-
 	prep_action_ptrs(fn_arr, build);
 
 	mmt_t mmt;
@@ -1189,10 +1185,8 @@ int save_dyn_blk_seq(strm_t *strm, action_ls_t *action_ls, chat_ls_t *chat_ls,
 			break;
 		}
 	}
-
-cleanup:
-	arr_dealloc(&fn_arr);
-
+out:
+	arr_dealloc(fn_arr);
 	return ret;
 }
 
