@@ -22,7 +22,7 @@
  * @param idx index
  * @param data
  */
-void arr_add_item(arr_t *arr, size_t idx, void *data)
+void arr_add_item(struct arr *arr, size_t idx, void *data)
 {
 	assert(idx < arr->cnt);
 
@@ -36,7 +36,7 @@ void arr_add_item(arr_t *arr, size_t idx, void *data)
  * @param idx index <0, arr->cnt)
  * @return NULL if idx is unused or out of range
  */
-void *arr_get_item(arr_t *arr, size_t idx)
+void *arr_get_item(struct arr *arr, size_t idx)
 {
 	if (idx >= arr->cnt) {
 		return NULL;
@@ -50,7 +50,7 @@ void *arr_get_item(arr_t *arr, size_t idx)
  *
  * @param arr array
  */
-void arr_zero(arr_t *arr)
+void arr_zero(struct arr *arr)
 {
 	arr->ptr = NULL;
 	arr->cnt = 0;
@@ -66,7 +66,7 @@ void arr_zero(arr_t *arr)
  * @param item_size size every item takes
  * @return 0 on success, 1 on memory failure
  */
-int arr_prep(arr_t *arr, size_t cnt, size_t item_size)
+int arr_prep(struct arr *arr, size_t cnt, size_t item_size)
 {
 	assert(NULL == arr->ptr);
 	assert(0 == arr->cnt);
@@ -75,7 +75,7 @@ int arr_prep(arr_t *arr, size_t cnt, size_t item_size)
 	assert(cnt > 0);
 	assert(item_size > 0);
 
-	arr->ptr = (arr_t *)calloc(cnt, item_size);
+	arr->ptr = (struct arr *)calloc(cnt, item_size);
 	if (NULL == arr->ptr) {
 		return 1;
 	}
@@ -90,7 +90,7 @@ int arr_prep(arr_t *arr, size_t cnt, size_t item_size)
  *
  * @param arr array
  */
-void arr_empty(arr_t *arr)
+void arr_empty(struct arr *arr)
 {
 	free(arr->ptr);
 
@@ -98,16 +98,16 @@ void arr_empty(arr_t *arr)
 }
 
 /**
- * @brief Allocate arr_t structure.
+ * @brief Allocate arr structure.
  *
  * @param arr double pointer to array
  * @return 0 on success, 1 on memory failure
  */
-int arr_alloc(arr_t **arr)
+int arr_alloc(struct arr **arr)
 {
 	assert(NULL == *arr);
 
-	*arr = (arr_t *)malloc(sizeof(arr_t));
+	*arr = (struct arr *)malloc(sizeof(struct arr));
 	if (NULL == *arr) {
 		return 1;
 	}
@@ -118,11 +118,11 @@ int arr_alloc(arr_t **arr)
 }
 
 /**
- * @brief Deallocate arr_t structure.
+ * @brief Deallocate arr structure.
  *
  * @param arr double pointer to array
  */
-void arr_dealloc(arr_t **arr)
+void arr_dealloc(struct arr **arr)
 {
 	assert(NULL != *arr);
 
