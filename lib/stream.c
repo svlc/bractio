@@ -22,7 +22,11 @@
 
 #include "stream.h"
 
+typedef int(*fn_t)(ad_t *ad);
 
+typedef struct fn_box_t {
+	fn_t fn;
+} fnbox_t;
 
 /**
  * @brief Copy some slot data into joiner.

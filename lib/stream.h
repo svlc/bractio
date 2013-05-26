@@ -22,18 +22,6 @@ typedef struct blk_nfo_t {
 
 } blk_nfo_t;
 
-
-typedef int(*fn_t)(ad_t *ad);
-
-
-typedef struct fn_box_t {
-
-	fn_t fn;
-
-} fnbox_t;
-
-
-
 extern int process_stream(strm_t *strm, rfnd_t *rfnd, const unsigned patch_ver);
 extern void eval_apm(struct tbl *joiner_tbl);
 
