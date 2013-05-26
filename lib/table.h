@@ -8,26 +8,22 @@
 #ifndef APM_TABLE_H
 #define APM_TABLE_H
 
-typedef void (*tbl_free_data_fn_t)(void *p);
-typedef int (*tbl_cmp_fn_t)(void *p1, void *p2);
+typedef void (*free_data_fn_t)(void *p);
+typedef int (*cmp_fn_t)(void *p1, void *p2);
+typedef void (*print_fn_t) (size_t idx, void *p);
 
-typedef struct tbl_t {
-
+struct tbl {
 	void **arr;
 	size_t len;
+	/* current item count */
 	size_t cnt;
+	free_data_fn_t free_data_fn;
+};
 
-	tbl_free_data_fn_t tbl_free_data_fn;
-
-} tbl_t;
-
-
-extern void tbl_sort(tbl_t *tbl, tbl_cmp_fn_t fn);
-extern int tbl_add_item(tbl_t *tbl, void *data);
-extern void tbl_zero(tbl_t *tbl);
-extern int tbl_prep(tbl_t *tbl, size_t len, tbl_free_data_fn_t fn);
-extern void tbl_empty(tbl_t *tbl);
-extern int tbl_alloc(tbl_t **tbl);
-extern void tbl_dealloc(tbl_t **tbl);
+void tbl_sort(struct tbl *t, cmp_fn_t cmp_fn);
+int tbl_push(struct tbl *t, void *data);
+struct tbl *tbl_alloc(size_t len, free_data_fn_t fn);
+void tbl_dealloc(void *p);
+void tbl_print(struct tbl *t, print_fn_t print_fn);
 
 #endif /* APM_TABLE_H */

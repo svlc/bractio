@@ -6,66 +6,32 @@
  */
 
 #include <stdlib.h>		/* NULL, {m,c}alloc(3), free(3) */
-#include <errno.h>		/* errno */
 #include <stdbool.h>
 #include <assert.h>
-#include <stdio.h>
-
 
 #include "table.h"
 
-/* int tbl_gap(tbl_t *tbl, etc) */
-
-
-/**
- * @brief Swap two pointers.
- *
- * @param p1
- * @param p2
- */
-void _swap(void **p1, void **p2)
-{
-	void *aux;
-
-	aux = *p1;
-	*p1 = *p2;
-	*p2 = aux;
-}
+#define DEFAULT_TBL_SIZE 10
 
 /**
- * @brief Sort table items using "selection sort".
- *
- * @param tbl table
- * @param fn pointer to comparison function
+ * @brief Sort table using "insertion sort".
  */
-void tbl_sort(tbl_t *tbl, tbl_cmp_fn_t fn)
+void tbl_sort(struct tbl *t, cmp_fn_t cmp_fn)
 {
+	void **first = t->arr;
+	void **brk = t->arr + t->cnt;
+	/* pointer for outer loop */
+	void **o;
 
-	/* outer count */
-	size_t o_cnt = tbl->cnt;
-	/* inner count */
-	size_t i_cnt;
+	for (o = first + 1;  o < brk;  ++o) {
+		/* pointer for inner loop */
+		void **i;
+		void *tmp = *o;
 
-	void **min;
-
-	for (void **o_item = tbl->arr;	o_cnt--;  ++o_item) {
-
-		min = o_item;
-
-		/* notice postfix decr in outer loop condition */
-		i_cnt = o_cnt;
-
-		for (void **i_item = o_item + 1;  i_cnt--;  ++i_item) {
-
-			/* if "*i_item" item is lower */
-			if (fn(*i_item, *min) < 0) {
-				min = i_item;
-			}
+		for (i = o - 1;  cmp_fn(*i, tmp) > 0 && i >= first; --i) {
+			*(i + 1) = *i;
 		}
-		/* to not swap two same pointers */
-		if (o_item != min) {
-			_swap(min, o_item);
-		}
+		*(i + 1) = tmp;
 	}
 }
 
@@ -75,146 +41,113 @@ void tbl_sort(tbl_t *tbl, tbl_cmp_fn_t fn)
  * @param tbl table
  * @return 0 on success, 1 on memory failure
  */
-static int _tbl_expand(tbl_t *tbl)
+static int tbl_expand(struct tbl *t)
 {
-#define TBL_SIZE 10
-
 	void **tmp_arr;
 	size_t tmp_len;
+	int ret;
 
 	/* if this is initial allocation */
-	if (0 == tbl->cnt) {
-		tmp_len = TBL_SIZE;
-	}
-	/* if this is capacity expansion */
-	else {
-		tmp_len = 2 * tbl->cnt;
-	}
+	if (0 == t->cnt)
+		tmp_len = DEFAULT_TBL_SIZE;
+	else
+		tmp_len = 2 * t->cnt;
 
-	/* try to extend table capacity */
-	tmp_arr = (void **)realloc(tbl->arr, tmp_len * sizeof(void *));
-	if (NULL == tmp_arr) {
-		return 1;
+	tmp_arr = (void **)realloc(t->arr, tmp_len * sizeof(void *));
+	if (!tmp_arr) {
+		ret = -1;
+		goto out;
 	}
-
-	tbl->arr = tmp_arr;
-	tbl->len = tmp_len;
-	
-	return 0;
-#undef TBL_SIZE
+	t->arr = tmp_arr;
+	t->len = tmp_len;
+	ret = 0;
+out:
+	return ret;
 }
 
 /**
- * @brief Add exactly one data item to table.
+ * @brief Push data at first empty slot.
  *
- * @param tbl table
- * @param data data pointer
+ * @param t table
+ * @param data
  * @return 0 on success
  */
-int tbl_add_item(tbl_t *tbl, void *data)
+int tbl_push(struct tbl *t, void *data)
 {
 	int ret;
 
-	if (tbl->cnt >= tbl->len) {
-		ret = _tbl_expand(tbl);
+	if (t->cnt >= t->len) {
+		ret = tbl_expand(t);
 		if (0 != ret) {
-			return ret;
+			ret = -1;
+			goto out;
 		}
 	}
-
-	/* save data pointer to first unused index */
-	tbl->arr[tbl->cnt] = data;
-	++tbl->cnt;
-
-	return 0;
+	/* save data pointer at first unused slot */
+	t->arr[t->cnt++] = data;
+	ret = 0;
+out:
+	return ret;
 }
 
 /**
- * @brief Zero table variables.
- *
- * @param tbl table
+ * @brief Allocate "tbl" structure.
+ * @param len length of array, 0 is accepted
+ * @param fn
  */
-void tbl_zero(tbl_t *tbl)
+struct tbl *tbl_alloc(size_t len, free_data_fn_t fn)
 {
-	tbl->arr = NULL;
-	tbl->len = 0;
-	tbl->cnt = 0;
-}
+	struct tbl *t;
 
-/**
- * @brief Prepare table of required length.
- *
- * @param tbl table
- * @param len required table capacity
- * @param fn function to be used for table emptying (@see tbl_empty function)
- * @return 0 on success, 1 on memory failure
- */
-int tbl_prep(tbl_t *tbl, size_t len, tbl_free_data_fn_t fn)
-{
-	tbl_zero(tbl);
-
+	t = (struct tbl *)malloc(sizeof(*t));
+	if (!t)
+		goto err;
 	if (len > 0) {
-		tbl->arr = (void **)malloc(len * sizeof(void *));
-		/* if allocation failed */
-		if (NULL == tbl->arr) {
-			return 1;
+		t->arr = (void **)malloc(len * sizeof(void *));
+		if (!t->arr) {
+			goto err;
 		}
-		tbl->len = len;
+	} else {
+		t->arr = NULL;
 	}
-	/* save pointer to data deallocation */
-	tbl->tbl_free_data_fn = fn;
-
-	return 0;
+	t->len = len;
+	t->cnt = 0;
+	t->free_data_fn = fn;
+	return t;
+err:
+	tbl_dealloc(t);
+	return t;
 }
 
 /**
- * @brief Free all table resources except table structure.
- * 
- * @param tbl table
+ * @brief Deallocate "tbl" structure.
  */
-void tbl_empty(tbl_t *tbl)
+void tbl_dealloc(void *p)
 {
-	/* while there are still items */
-	while (tbl->cnt--) {
-		/* free item data */
-		tbl->tbl_free_data_fn(tbl->arr[tbl->cnt]);
-	}
+	struct tbl *t = (struct tbl *)p;
 
-	free(tbl->arr);
-	/* zero all table variables */
-	tbl_zero(tbl);
+	if (!t)
+		return;
+
+	/* if we have valid function pointer */
+	if (t->free_data_fn) {
+		while (t->cnt)
+			t->free_data_fn(t->arr[--t->cnt]);
+	}
+	free(t->arr);
+	free(t);
 }
 
 /**
- * @brief Allocate tbl_t structure.
- * 
- * @param tbl double pointer to table
- * @return 0 on success, 1 on memory allocation failure
+ * @brief Print all items.
+ * @note Not very efficient, meant just for debugging.
  */
-int tbl_alloc(tbl_t **tbl)
+void tbl_print(struct tbl *t, print_fn_t print_fn)
 {
-	assert(NULL == *tbl);
+	void **cur = t->arr;
+	void **brk = t->arr + t->cnt;
+	size_t idx = 0;
 
-	*tbl = (tbl_t *)malloc(sizeof(tbl_t));
-	if (NULL == *tbl) {
-		return 1;
-	}
-
-	tbl_zero(*tbl);
-
-	return 0;
-}
-
-/**
- * @brief Deallocate tbl_t structure.
- *
- * @param tbl double pointer to table
- */
-void tbl_dealloc(tbl_t **tbl)
-{
-	assert(NULL != *tbl);
-
-	tbl_empty(*tbl);
-	free(*tbl);
-	*tbl = NULL;
+	while (cur < brk)
+		print_fn(idx++, cur++);
 }
