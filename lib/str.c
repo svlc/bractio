@@ -5,7 +5,6 @@
  * @copyright GPLv2
  */
 
-
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
@@ -16,7 +15,6 @@
 
 #include "rapm.h"
 #include "debug.h"
-
 
 /**
  * @brief Determine if position equals limit.
@@ -161,7 +159,6 @@ int safe_mem_read(char **pos, const char *lim, aux_t *aux_arr, const size_t cnt)
 	int ret;
 
 	for (size_t idx = 0;  idx < cnt;  ++idx) {
-
 		ret = inspect_item_size(*pos, lim, &aux_arr[idx]);
 		if (0 != ret) {
 			return ret;
@@ -191,7 +188,6 @@ int safe_mem_read(char **pos, const char *lim, aux_t *aux_arr, const size_t cnt)
 					= **(uint16_t **)pos;
 			}
 		}
-
 		/* shift buffer offset */
 		*pos += aux_arr[idx].size;
 	}

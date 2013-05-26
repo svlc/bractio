@@ -8,7 +8,6 @@
 #ifndef APM_DEBUG_H
 #define APM_DEBUG_H
 
-
 /* verbose guard, adds {file,function,...} info */
 #define VGUARD(COND, ACTION)						\
 	if ((COND)) {							\

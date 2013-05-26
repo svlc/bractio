@@ -13,7 +13,6 @@
 #include <stdbool.h>
 #include <assert.h>
 
-
 #include "rapm.h"
 #include "debug.h"
 #include "init_deinit.h"
@@ -24,7 +23,6 @@
 #include "usage.h"
 
 #include "read.h"
-
 
 /**
  * @brief Save sub header (v0) data from file into memory.
@@ -50,7 +48,6 @@ static int read_rep_sub_hdr_v0(sub_hdr_t *sub_hdr, buff_t *buff, FILE *fp)
 	unsigned unknown;
 	
 	aux_t aux_arr[SUB_HDR_MEMB_CNT] = {
-
 		{ &unknown, APM_UINT, 2 },
 		{ &patch_ver, APM_UINT, 2 },
 		{ &sub_hdr->build, APM_UINT, 2 },
@@ -91,7 +88,6 @@ static int read_rep_sub_hdr_v1(sub_hdr_t *sub_hdr, buff_t *buff, FILE *fp)
 
 	/* auxiliary struct array */
 	aux_t aux_arr[SUB_HDR_MEMB_CNT] = {
-
 		{ rls_seq, APM_UCHAR, 4 },
 		{ &sub_hdr->patch_ver, APM_UINT, 4 },
 		{ &sub_hdr->build, APM_UINT, 2 },
@@ -149,7 +145,6 @@ int read_rep_main_hdr(main_hdr_t *m_hdr, buff_t *buff, FILE *fp)
 
 	/* auxiliary struct array */
 	aux_t aux_arr[MAIN_HDR_MEMB_CNT] = {
-
 		{  magic_id,			APM_UCHAR,	28 },
 		{ &m_hdr->strm_offset,		APM_UINT,	4  },
 		{ &m_hdr->total_file_size,	APM_UINT,	4  },
@@ -223,7 +218,6 @@ int read_sgmt_body(sgmt_t *sgmt, FILE *fp)
 	if (ret != sgmt->ecd_size) {
 		return APM_E_FILE_READING;
 	}
-
 	return 0;
 }
 
@@ -249,9 +243,7 @@ int read_sgmt_hdr(sgmt_t *sgmt, buff_t *buff, FILE *fp)
 		return 1;
 	}
 
-
 	aux_t aux_arr[SGMT_MEMB_CNT] = {
-
 		{ &sgmt->ecd_size,	APM_UINT, 2 },
 		{ &sgmt->dcd_size,	APM_UINT, 2 },
 		{ &sgmt->unknown,	APM_UINT, 4 }

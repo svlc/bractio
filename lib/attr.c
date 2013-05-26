@@ -32,7 +32,6 @@ void apm_wc3_attr_settask(apm_wc3_attr_t *attr, task_t task)
 void apm_wc3_attr_init(apm_wc3_attr_t *attr)
 {
 	attr->path = NULL;
-
 	attr->task = APM_TASK_NOTHING;
 }
 
@@ -42,6 +41,5 @@ void apm_wc3_attr_init(apm_wc3_attr_t *attr)
 void apm_wc3_attr_deinit(apm_wc3_attr_t *attr)
 {
 	attr = attr;
-
 	return;
 }

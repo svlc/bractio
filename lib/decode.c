@@ -27,12 +27,10 @@ int decode_sgmts(struct tbl *sgmt_tbl, strm_t *strm)
 
 	int ret;
 	z_stream z_strm;
-
 	/* NULL is voluntary */
 	sgmt_t *sgmt = NULL;
 
 	for (size_t idx = 0;  idx < sgmt_tbl->cnt;  ++idx) {
-
 		z_strm.zalloc = Z_NULL;
 		z_strm.zfree = Z_NULL;
 		z_strm.opaque = Z_NULL;
@@ -56,7 +54,6 @@ int decode_sgmts(struct tbl *sgmt_tbl, strm_t *strm)
 
 		z_strm.next_out = (unsigned char *)strm->arr + strm->cnt;
 
-
 		/* from "next_in" to "next_out" */
 		ret = inflate(&z_strm, Z_NO_FLUSH);
 
@@ -71,12 +68,9 @@ int decode_sgmts(struct tbl *sgmt_tbl, strm_t *strm)
 		assert(0 == z_strm.avail_out);
 		assert(Z_STREAM_END != ret);
 
-
 		switch (ret) {
-
 		case Z_NEED_DICT:
 			ret = Z_DATA_ERROR;
-
 			/* if stream is corrupt/unrecognized by zlib */
 		case Z_DATA_ERROR:
 			/* if not enough memory */
@@ -84,12 +78,9 @@ int decode_sgmts(struct tbl *sgmt_tbl, strm_t *strm)
 			inflateEnd(&z_strm);
 			return 1;
 		}
-
 		strm->cnt += sgmt->dcd_size;
-
 		inflateEnd(&z_strm);
 	}
-
 	return 0;
 }
 
@@ -105,12 +96,10 @@ void decode_opts_map_creator_str(char *ecd_str_pos, char *dcd_str_pos)
 
 	/* iterate until '\0' is found */
 	while (*ecd_str_pos) {
-
 		/* if this is key-bit */
 		if (0 == bit) {
 			/* save it */
 			key = *ecd_str_pos;
-
 			/* 0000 0010 */
 			bit = (1 << 1);
 		} else {

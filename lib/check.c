@@ -10,7 +10,6 @@
 
 #include "check.h"
 
-
 /**
  * @brief Check if there is no 0-bit with lower significancy than "MS1-bit".
  * @note Also detects if all 1-bits correspond to valid tasks (@see task_t).
@@ -28,7 +27,6 @@ int check_task(task_t task)
 
 	/* while there are just 1-bits */
 	while (mask == (mask & task)) {
-
 		if (bit_sig > GREATEST_TASK_BIT) {
 			return 1;
 		}
@@ -44,7 +42,6 @@ int check_task(task_t task)
 		/* there is some remaining 1-bit to the left */
 		return 1;
 	}
-
 	return 0;
 
 #undef GREATEST_TASK_BIT
@@ -68,7 +65,6 @@ static int range_magic_id(const char *magic_id)
  */
 static int range_strm_offset(const unsigned sub_hdr_ver, const unsigned strm_offset)
 {
-
 	if (sub_hdr_ver == 0  &&  strm_offset != 0x40) {
 		return 1;
 	} else if (strm_offset != 0x44) {

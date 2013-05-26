@@ -8,12 +8,10 @@
 #ifndef APM_ATTR_H
 #define APM_ATTR_H
 
-
 /**
  * @brief task bitmap: what data should be collected out of replay
  */
 typedef enum task_t {
-
 	/* default request state */
 	APM_TASK_NOTHING = 0,
 
@@ -24,21 +22,16 @@ typedef enum task_t {
 
 	/* actions per minute */
 	APM_TASK_APM = (1 << 2)
-
 } task_t;
-
 
 /**
  * @brief 
  */
 typedef struct apm_wc3_attr_t {
-
 	char *path;
 
 	task_t task;
-
 } apm_wc3_attr_t;
-
 
 extern void apm_wc3_attr_setfilepath(apm_wc3_attr_t *attr, char *path);
 extern void apm_wc3_attr_settask(apm_wc3_attr_t *attr, task_t task);

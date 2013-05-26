@@ -53,7 +53,6 @@ void export_slot_to_joiner(slot_t *slot, joiner_t *joiner)
 void export_prsn_to_joiner(prsn_t *prsn, joiner_t *joiner)
 {
 	joiner->host = prsn->host;
-
 	joiner->name = prsn->name;
 	/* to avoid failure when deallocating resources */
 	prsn->name = NULL;
@@ -72,7 +71,6 @@ int complete_joiner(joiner_t *j)
 
 	/* "+ 1" because of '\0' */
 	len = (int)strlen("unknown_??") + 1;
-
 	j->name = (char *)malloc(len);
 	if (!j->name) {
 		ret = APM_E_NO_MEM;
@@ -141,22 +139,16 @@ int form_joiner_tbl(struct tbl *prsn_tbl, prsn_t *host,
 	assert(0 == joiner_tbl->cnt);
 
 	int ret;
-
 	size_t slot_cnt = slot_tbl->cnt;
 	size_t joiner_cnt;
-
 	slot_t **slot = (slot_t **)slot_tbl->arr;
 	joiner_t **joiner;
 	joiner_t *j_item;
-
 	prsn_t *prsn;
-
 
 	/* if slot table is not empty */
 	if (0 != slot_tbl->cnt) {
-
 		while (slot_cnt--) {
-
 			/* if slot is used */
 			if (0x02 == (*slot)->slot_status) {
 				j_item = (joiner_t *)malloc(sizeof(*j_item));
@@ -174,12 +166,10 @@ int form_joiner_tbl(struct tbl *prsn_tbl, prsn_t *host,
 			}
 			++slot;
 		}
-
 		joiner_cnt = joiner_tbl->cnt;
 		joiner = (joiner_t **)joiner_tbl->arr;
 
 		while (joiner_cnt--) {
-
 			prsn = seek_prsn(prsn_tbl, (*joiner)->id);
 			if (NULL == prsn) {
 				if ((*joiner)->id == host->id) {
@@ -217,7 +207,6 @@ int save_prsn_rec(prsn_t *prsn, strm_t *strm)
 {
 	int ret;
 	unsigned rest_size;
-
 	/* empty size means 'to be computed' */
 	aux_t aux_arr[] = {
 
@@ -228,7 +217,6 @@ int save_prsn_rec(prsn_t *prsn, strm_t *strm)
 		{ &prsn->uptime, APM_ULONG, 4 },
 		{ &prsn->player_race, APM_ULONG, 4 },
 	};
-
 
 	ret = safe_mem_read(&strm->pos, strm->lim, aux_arr, 3);
 	if (0 != ret) {
@@ -251,7 +239,6 @@ int save_prsn_rec(prsn_t *prsn, strm_t *strm)
 	else {
 		return 1;
 	}
-
 	return 0;
 }
 
@@ -260,7 +247,6 @@ int save_prsn_rec(prsn_t *prsn, strm_t *strm)
  */
 static int save_game_opts(game_opts_t *opts, char **dcd_str_pos)
 {
-
 	/* NOT SAFE, PASS STRING LIM ALSO */
 
 	/* {0,1}-th bit = 2^0 + 2^1 */
@@ -301,10 +287,8 @@ static int save_slot(strm_t *strm, slot_t *slot,
 		     const unsigned valid_memb_cnt)
 {
 	int ret;
-
 	/* empty size means 'to be computed' */
 	aux_t aux_arr[] = {
-
 		{ &slot->id,		APM_UINT, 1 },
 		{ &slot->map_dl,	APM_UINT, 1 },
 		{ &slot->slot_status,	APM_UINT, 1 },
@@ -357,9 +341,7 @@ int save_slot_seq(strm_t *strm, struct tbl *slot_tbl,
 			goto error;
 		}
 	}
-
 	return 0;
-
 error:
 	free(slot);
 	return ret;
@@ -376,7 +358,6 @@ int save_guest_blk(strm_t *strm, prsn_t *prsn)
 	if (0 != ret) {
 		return ret;
 	}
-	
 	return 0;
 }
 
@@ -391,7 +372,6 @@ int save_0x1A_blk(strm_t *strm)
 	if (0 != ret) {
 		return ret;
 	}
-
 	return 0;
 }
 
@@ -406,7 +386,6 @@ int save_0x1B_blk(strm_t *strm)
 	if (0 != ret) {
 		return ret;
 	}
-
 	return 0;
 }
 
@@ -421,7 +400,6 @@ int save_0x1C_blk(strm_t *strm)
 	if (0 != ret) {
 		return ret;
 	}
-
 	return 0;
 }
 
@@ -436,7 +414,6 @@ int save_0x22_blk(strm_t *strm)
 	if (0 != ret) {
 		return ret;
 	}
-
 	return 0;
 }
 
@@ -453,7 +430,6 @@ int save_0x23_blk(strm_t *strm)
 	if (0 != ret) {
 		return ret;
 	}
-
 	return 0;
 }
 
@@ -468,7 +444,6 @@ int save_countdown_blk(strm_t *strm)
 	if (0 != ret) {
 		return ret;
 	}
-
 	return 0;
 }
 
@@ -487,9 +462,7 @@ int save_chatmsg_blk(strm_t *strm, struct ulist *chat_ls, mmt_t *curr_mmt)
 	}
 
 	unsigned rest_size;
-
 	aux_t aux_arr[] = {
-
 		{ &msgbox->joiner_id, APM_UINT, 1 },
 		{ &rest_size, APM_UINT, 2 },
 		{ &msgbox->flags, APM_UCHAR, 1 },
@@ -501,9 +474,7 @@ int save_chatmsg_blk(strm_t *strm, struct ulist *chat_ls, mmt_t *curr_mmt)
 	if (0 != ret) {
 		return 0;
 	}
-
 	msgbox->mmt = *curr_mmt;
-
 	msgbox->no = chat_ls->cnt;
 
 	ret = ulist_append(chat_ls, msgbox);
@@ -630,7 +601,6 @@ void prep_action_ptrs(struct arr *fn_arr, const unsigned build)
 
 	/* if  */
 	if (build < 6031) {
-
 		fnbox.fn = action_ability_0_lt_107;
 		arr_add(fn_arr, 0x10, &fnbox);
 
@@ -660,9 +630,8 @@ void prep_action_ptrs(struct arr *fn_arr, const unsigned build)
 
 		fnbox.fn = action_continue_game_0;
 		arr_add(fn_arr, 0x69, &fnbox);
-
-	} else if (build < 6037) {
-
+	}
+	else if (build < 6037) {
 		fnbox.fn = action_ability_0_ge_107_lt_113;
 		arr_add(fn_arr, 0x10, &fnbox);
 
@@ -677,10 +646,8 @@ void prep_action_ptrs(struct arr *fn_arr, const unsigned build)
 
 		fnbox.fn = action_choose_ability_ge_107_lt_113;
 		arr_add(fn_arr, 0x14, &fnbox);
-
 	} /* build >= 6037 */
 	else {
-
 		fnbox.fn = action_ability_0_ge_113;
 		arr_add(fn_arr, 0x10, &fnbox);
 
@@ -697,10 +664,8 @@ void prep_action_ptrs(struct arr *fn_arr, const unsigned build)
 		arr_add(fn_arr, 0x14, &fnbox);
 	}
 
-
 	/* if ver >= 1.07 */
 	if (build >= 6031) {
-
 		fnbox.fn = action_hero_skill_submenu;
 		arr_add(fn_arr, 0x66, &fnbox);
 
@@ -717,10 +682,8 @@ void prep_action_ptrs(struct arr *fn_arr, const unsigned build)
 		arr_add(fn_arr, 0x6A, &fnbox);
 	}
 
-
 	/* if ver < 1.14b */
 	if (build < 6040) {
-
 		fnbox.fn = action_select_subgroup_lt_114b;
 		arr_add(fn_arr, 0x19, &fnbox);
 	} /* build >= 6040 */
@@ -731,7 +694,6 @@ void prep_action_ptrs(struct arr *fn_arr, const unsigned build)
 
 	/* if ver < 1.15 */
 	if (build < 6043) {
-
 		fnbox.fn = action_0x1A_0x1B_unknown;
 		arr_add(fn_arr, 0x1A, &fnbox);
 
@@ -745,7 +707,6 @@ void prep_action_ptrs(struct arr *fn_arr, const unsigned build)
 		arr_add(fn_arr, 0x1D, &fnbox);
 	} /* build >= 6043 */
 	else {
-
 		fnbox.fn = action_pre_subselection;
 		arr_add(fn_arr, 0x1A, &fnbox);
 
@@ -772,15 +733,11 @@ int process_action_field(strm_t *strm, struct ulist *action_ls, struct arr *fn_a
 {
 	int ret;
 	int cnt;
-
 	unsigned action_id;
-
 	aux_t aux = { &action_id, APM_UINT, 1 };
 	/* action_t *action = NULL; */
-
 	/* action data */
 	ad_t ad = {
-
 		.strm = strm,
 		.state = state,
 		.curr_joiner = joiner,
@@ -789,7 +746,6 @@ int process_action_field(strm_t *strm, struct ulist *action_ls, struct arr *fn_a
 	};
 
 	while (len > 0) {
-
 		ret = safe_mem_read(&strm->pos, strm->lim, &aux, 1);
 		if (0 != ret) {
 			return ret;
@@ -810,13 +766,10 @@ int process_action_field(strm_t *strm, struct ulist *action_ls, struct arr *fn_a
 		if (-1 == cnt) {
 			return -1;
 		}
-
 		--len;
 		len -= cnt;
 	}
-
 	assert(0 == len);
-
 	return 0;
 }
 
@@ -827,12 +780,9 @@ int save_time_blk(strm_t *strm, struct ulist *action_ls, struct arr *fn_arr,
 		  struct tbl *joiner_tbl, state_t *state, mmt_t *mmt)
 {
 	int ret;
-
 	unsigned rest_size;
 	unsigned time_inc;
-
 	aux_t aux_arr[2] = {
-
 		{ &rest_size, APM_UINT, 2 },
 		{ &time_inc, APM_UINT, 2 },
 	};
@@ -849,16 +799,13 @@ int save_time_blk(strm_t *strm, struct ulist *action_ls, struct arr *fn_arr,
 	rest_size -= 2;
 
 	int len, id;
-
 	aux_t aux_arr2[2] = {
-
 		{ &id, APM_UINT, 1 },
 		{ &len, APM_UINT, 2 },
 	};
 
 	/* process "move field" */
 	while (rest_size > 0) {
-
 		ret = safe_mem_read(&strm->pos, strm->lim, aux_arr2, 2);
 		if (0 != ret) {
 			return 1;
@@ -873,12 +820,9 @@ int save_time_blk(strm_t *strm, struct ulist *action_ls, struct arr *fn_arr,
 		if (0 != ret) {
 			return 1;
 		}
-		
 		rest_size -= len + 3;
 	}
-
 	assert(0 == rest_size);
-
 	return 0;
 }
 
@@ -889,20 +833,16 @@ int save_join_scrn_blk(strm_t *strm, join_scrn_blk_t *blk,
 		       const unsigned build)
 {
 	int ret;
-
 	/* size of the rest of record in bytes */
 	unsigned rest_size;
-
 	/* empty size means 'to be computed' */
 	aux_t aux_arr[] = {
-
 		{ &rest_size,		APM_UINT,	2 },
 		{ &blk->slot_cnt,	APM_UINT,	1 },
 		{ &blk->rand_seed,	APM_ULONG,	4 },
 		{ &blk->select_mode,	APM_UCHAR,	1 },
 		{ &blk->start_spot_cnt, APM_UINT,	1 }
 	};
-	
 
 	ret = safe_mem_read(&strm->pos, strm->lim, aux_arr, 2);
 	if (0 != ret) {
@@ -918,7 +858,6 @@ int save_join_scrn_blk(strm_t *strm, join_scrn_blk_t *blk,
 	if (0 != ret) {
 		return ret;
 	}
-
 	return 0;
 }
 
@@ -927,13 +866,10 @@ int save_join_scrn_blk(strm_t *strm, join_scrn_blk_t *blk,
  */
 int save_host_blk(strm_t *strm, host_blk_t *host_blk)
 {
-
 	int ret;
 	/* NULL assignment is required */
 	char *ecd_str = NULL, *dcd_str = NULL;
-
 	aux_t aux_arr[] = {
-
 		{ &host_blk->game_name,			APM_UCHAR, 0 },
 		{ &ecd_str,				APM_UCHAR, 0 },
 		{ (void *)&host_blk->map_path,		APM_UCHAR, 0 },
@@ -945,7 +881,6 @@ int save_host_blk(strm_t *strm, host_blk_t *host_blk)
 	if (0 != ret) {
 		return ret;
 	}
-
 
 	ret = safe_mem_read(&strm->pos, strm->lim, aux_arr, 1);
 	if (0 != ret) {
@@ -979,7 +914,6 @@ int save_host_blk(strm_t *strm, host_blk_t *host_blk)
 		goto cleanup;
 	}
 
-
 	ret = safe_mem_read(&dcd_str_pos, dcd_str_lim, aux_arr + 2, 2);
 	if (0 != ret) {
 		goto cleanup;
@@ -995,11 +929,9 @@ int save_host_blk(strm_t *strm, host_blk_t *host_blk)
 	if (0 != ret) {
 		goto cleanup;
 	}
-
 cleanup:
 	free(ecd_str);
 	free(dcd_str);
-
 	return ret;
 }
 
@@ -1012,9 +944,7 @@ int save_leave_blk(strm_t *strm, struct tbl *joiner_tbl,
 	unsigned id;
 	joiner_t *joiner;
 	int ret;
-
 	aux_t aux[] = {
-
 		{ &id, APM_UINT, 1 }
 	};
 
@@ -1039,9 +969,7 @@ int save_leave_blk(strm_t *strm, struct tbl *joiner_tbl,
 	}
 
 	joiner->leave_mmt = *curr_mmt;
-
 	*last = joiner;
-
 	return 0;
 }
 
@@ -1051,14 +979,12 @@ int save_leave_blk(strm_t *strm, struct tbl *joiner_tbl,
 int get_blk_id(strm_t *strm, unsigned *id)
 {
 	int ret;
-
 	aux_t aux = { id, APM_UINT, 1 };
 
 	ret = safe_mem_read(&strm->pos, strm->lim, &aux, 1);
 	if (0 != ret) {
 		return 1;
 	}
-
 	return 0;
 }
 
@@ -1070,10 +996,8 @@ int save_dyn_blk_seq(strm_t *strm, struct ulist *action_ls, struct ulist *chat_l
 {
 	int ret;
 	unsigned blk_id;
-
 	/* last leaver */
 	joiner_t *last = NULL;
-
 	struct arr *fn_arr = NULL;
 
 	fn_arr = arr_alloc(0x76, sizeof(fnbox_t));
@@ -1089,9 +1013,7 @@ int save_dyn_blk_seq(strm_t *strm, struct ulist *action_ls, struct ulist *chat_l
 	/* init state */
 	state_t state = { false, false };
 
-
 	while (1) {
-
 		ret = get_blk_id(strm, &blk_id);
 		if (0 != ret) {
 			break;
@@ -1112,7 +1034,6 @@ int save_dyn_blk_seq(strm_t *strm, struct ulist *action_ls, struct ulist *chat_l
 				last->saver = true;
 				break;
 			}
-
 		} else if (0x20 == blk_id) {
 			if (build < 6031) {
 				/* this block was introduced in 1.07 */
@@ -1123,44 +1044,37 @@ int save_dyn_blk_seq(strm_t *strm, struct ulist *action_ls, struct ulist *chat_l
 			if (0 != ret) {
 				break;
 			}
-
 		} else if (0x22 == blk_id) {
 			ret = save_0x22_blk(strm);
 			if (0 != ret) {
 				break;
 			}
-
 		} else if (0x23 == blk_id) {
 			ret = save_0x23_blk(strm);
 			if (0 != ret) {
 				break;
 			}
-
 		} else if (0x1A == blk_id) {
 			ret = save_0x1A_blk(strm);
 			if (0 != ret) {
 				break;
 			}
-
 		} else if (0x1B == blk_id) {
 			ret = save_0x1B_blk(strm);
 			if (0 != ret) {
 				break;
 			}
-
 		} else if (0x1C == blk_id) {
 			ret = save_0x1C_blk(strm);
 			if (0 != ret) {
 				break;
 			}
-
 		} else if (0x1E == blk_id) {
 			ret = save_time_blk(strm, action_ls, fn_arr,
 					    joiner_tbl, &state, &mmt);
 			if (0 != ret) {
 				break;
 			}
-
 		} else if (0x1F == blk_id) {
 			if (build < 4531) {
 				/* this block cannot occur in this ver */
@@ -1172,14 +1086,12 @@ int save_dyn_blk_seq(strm_t *strm, struct ulist *action_ls, struct ulist *chat_l
 			if (0 != ret) {
 				break;
 			}
-
 		} else if (0x2F == blk_id) {
 			if (build < 6031) {
 				/* this block was introduced in 1.07 version */
 				ret = 1;
 				break;
 			}
-
 			ret = save_countdown_blk(strm);
 			if (0 != ret) {
 				break;
@@ -1200,16 +1112,13 @@ out:
 int save_static_blk(strm_t *strm, rfnd_t *rfnd,
 		    const unsigned build, const unsigned blk_id)
 {
-
 	int ret;
 	prsn_t *prsn = NULL;
 
 	switch (blk_id) {
-
 	case 0x00:
 		ret = save_host_blk(strm, rfnd->host_blk);
 		break;
-
 	case 0x16:
 		prsn = (prsn_t *)malloc(sizeof(*prsn));
 		if (!prsn) {
@@ -1230,11 +1139,9 @@ int save_static_blk(strm_t *strm, rfnd_t *rfnd,
 
 		ret = safe_pos_fw(&strm->pos, strm->lim, 4);
 		break;
-
 	case 0x19:
 		ret = save_join_scrn_blk(strm, rfnd->join_scrn_blk, build);
 		break;
-
 	default:
 		ret = 1;
 		break;
@@ -1260,9 +1167,7 @@ int save_static_blk_seq(strm_t *strm, rfnd_t *rfnd, const unsigned build,
 	/* pointer to first item behind array */
 	blk_nfo_t *lim = blk_nfo + cnt;
 
-
 	while (blk_nfo < lim) {
-
 		/* read block id */
 		ret = get_blk_id(strm, &blk_id);
 		if (0 != ret) {
@@ -1270,7 +1175,6 @@ int save_static_blk_seq(strm_t *strm, rfnd_t *rfnd, const unsigned build,
 		}
 
 		if (blk_id == blk_nfo->id) {
-
 			ret = save_static_blk(strm, rfnd, build, blk_id);
 			if (0 != ret) {
 				return ret;
@@ -1279,7 +1183,6 @@ int save_static_blk_seq(strm_t *strm, rfnd_t *rfnd, const unsigned build,
 			if (!blk_nfo->repeat) {
 				++blk_nfo;
 			}
-
 		} else {
 			if (blk_nfo->mandatory) {
 				/* id was other than expected */
@@ -1324,10 +1227,8 @@ int process_stream(strm_t *strm, rfnd_t *rfnd, const unsigned build)
 {
 	int ret;
 	unsigned unknown;
-
 	/* auxiliary pointer */
 	extra_t *extra = &rfnd->extra;
-
 	aux_t aux = { &unknown, APM_ULONG, 4 };
 
 	ret = safe_mem_read(&strm->pos, strm->lim, &aux, 1);
@@ -1341,7 +1242,6 @@ int process_stream(strm_t *strm, rfnd_t *rfnd, const unsigned build)
 		{ .id =	 0x19, .repeat = false, .mandatory = true  },
 	};
 
-
 	/* allocate prsn_tbl_t structures */
 	rfnd->prsn_tbl = tbl_alloc(10, prsn_free_fn);
 	if (!rfnd->prsn_tbl) {
@@ -1352,7 +1252,6 @@ int process_stream(strm_t *strm, rfnd_t *rfnd, const unsigned build)
 	if (0 != ret) {
 		return ret;
 	}
-
 
 	/* read all blocks that typically occurs only at the stream beginning */
 	ret = save_static_blk_seq(strm, rfnd, build, nfo_seq, 3);
@@ -1392,6 +1291,5 @@ int process_stream(strm_t *strm, rfnd_t *rfnd, const unsigned build)
 	if (0 != ret) {
 		return ret;
 	}
-
 	return 0;
 }

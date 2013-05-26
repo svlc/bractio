@@ -49,9 +49,7 @@ int apm_wc3_operate(apm_t *apm, apm_wc3_attr_t *attr)
 		return ret;
 	}
 
-
 	if (attr->task & APM_TASK_ADDTL) {
-
 		body_alloc(&apm->body);
 		apm->body->sgmt_tbl = tbl_alloc(apm->main_hdr.ecd_sgmt_cnt,
 						sgmt_free_fn);
@@ -97,7 +95,6 @@ int apm_wc3_operate(apm_t *apm, apm_wc3_attr_t *attr)
 			return ret;
 		}
 
-
 		ret = process_stream(&apm->body->strm, apm->rfnd,
 				     apm->sub_hdr.build);
 		if (0 != ret) {
@@ -109,7 +106,6 @@ int apm_wc3_operate(apm_t *apm, apm_wc3_attr_t *attr)
 	}
 
 	if (attr->task & APM_TASK_APM) {
-
 		/* compute apm base on player's leave time */
 		eval_apm(apm->rfnd->extra.joiner_tbl);
 	}
@@ -211,5 +207,6 @@ unsigned apm_wc3_getmsgcnt(apm_t *apm)
 msgbox_t *apm_wc3_getmsg(apm_t *apm, const unsigned no)
 {
 	assert(apm->core.task & APM_TASK_ADDTL);
+
 	return (struct msgbox_t *)ulist_get(apm->rfnd->extra.chat_ls, no);
 }

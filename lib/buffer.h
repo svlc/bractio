@@ -9,7 +9,6 @@
 #define APM_BUFFER_H
 
 typedef struct buff_t {
-
 	char *arr;
 
 	char *pos;
@@ -17,7 +16,6 @@ typedef struct buff_t {
 	size_t len;
 
 	char *lim;
-
 } buff_t;
 
 int buff_prep(buff_t *buff, const size_t len);

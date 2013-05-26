@@ -58,7 +58,6 @@ int buff_prep(buff_t *buff, const size_t len)
 void buff_empty(buff_t *buff)
 {
 	free(buff->arr);
-
 	buff_zero(buff);
 }
 

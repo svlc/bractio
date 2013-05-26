@@ -8,19 +8,14 @@
 #ifndef APM_ACTION_H
 #define APM_ACTION_H
 
-
 typedef struct state_t {
-
 	/*  */
 	bool paused;
-
 	bool deselect;
-	
 } state_t;
 
 /* action data */
 typedef struct ad_t {
-
 	strm_t *strm;
 
 	struct ulist *action_ls;
@@ -30,9 +25,7 @@ typedef struct ad_t {
 	joiner_t *curr_joiner;
 
 	mmt_t *mmt;
-
 } ad_t;
-
 
 extern int action_pause(ad_t *ad);
 extern int action_resume(ad_t *ad);

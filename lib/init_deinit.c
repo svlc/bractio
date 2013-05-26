@@ -15,8 +15,6 @@
 #include "rapm.h"
 #include "ulist.h"
 
-
-
 /**
  * @brief Inits memory and variables for decoded data stream
  *
@@ -36,13 +34,10 @@ int strm_prep(strm_t *strm, const size_t len)
 		return 1;
 	}
 	strm->len = len;
-
 	/* set position to array start */
 	strm->pos = strm->arr;
-
 	/* set pointer to first 'out of range' char */
 	strm->lim = strm->arr + len;
-
 	return 0;
 }
 
@@ -60,7 +55,6 @@ static void strm_zero(strm_t *strm)
 void strm_empty(strm_t *strm)
 {
 	free(strm->arr);
-
 	strm_zero(strm);
 }
 
@@ -75,7 +69,6 @@ size_t strm_len(const struct tbl *sgmt_tbl)
 	for (size_t idx = 0;  idx < sgmt_tbl->cnt;  ++idx) {
 		strm_len += (*(sgmt_t *)sgmt_tbl->arr[idx]).dcd_size;
 	}
-
 	return strm_len;
 }
 
@@ -85,7 +78,6 @@ size_t strm_len(const struct tbl *sgmt_tbl)
 void sgmt_free_fn(void *p)
 {
 	free(((sgmt_t *)p)->ecd_data);
-
 	free(p);
 }
 
@@ -152,7 +144,6 @@ static void join_scrn_blk_dealloc(join_scrn_blk_t **blk)
 void joiner_free_fn(void *p)
 {
 	free(((joiner_t *)p)->name);
-
 	free(p);
 }
 
@@ -178,7 +169,6 @@ void joiner_zero(joiner_t *joiner)
 void msgbox_free_fn(void *p)
 {
 	free(((msgbox_t *)p)->msg);
-
 	free(p);
 }
 
@@ -197,7 +187,6 @@ int host_blk_alloc(host_blk_t **blk)
 
 	/* set indication this person is game host */
 	(*blk)->prsn.host = true;
-
 	return 0;
 }
 
@@ -242,13 +231,10 @@ int rfnd_alloc(rfnd_t **rfnd)
 
 	host_blk_alloc(&(*rfnd)->host_blk);
 
-	
-
 	(*rfnd)->join_scrn_blk = NULL;
 	(*rfnd)->prsn_tbl = NULL;
 
 	extra_prep(&(*rfnd)->extra);
-
 	return 0;
 }
 
@@ -258,7 +244,6 @@ int rfnd_alloc(rfnd_t **rfnd)
 void prsn_free_fn(void *p)
 {
 	free(((prsn_t *)p)->name);
-
 	free(p);
 }
 
@@ -284,7 +269,6 @@ int body_alloc(body_t **body)
 	(*body)->sgmt_tbl = NULL;
 	/* zero strm_t */
 	memset(&(*body)->strm, 0, sizeof(strm_t));
-
 	return 0;
 }
 
@@ -311,14 +295,12 @@ void *apm_wc3_init(void)
 		free(apm);
 		return NULL;
 	}
-
 	/* init file pointer */
 	apm->core.fp = NULL;
-
 	apm->body = NULL;
 	apm->rfnd = NULL;
-
 	return (void *)apm;
+
 #undef BUFF_SIZE
 }
 
@@ -334,20 +316,16 @@ void apm_wc3_deinit(apm_t *apm)
 	rfnd_t *rfnd = apm->rfnd;
 	extra_t *extra = &rfnd->extra;
 
-
 	if (NULL == apm) {
 		return;
 	}
-
 	/* if fp is valid (fclose(NULL) is deadly) */
 	if (apm->core.fp) {
 		fclose(apm->core.fp);
 	}
-
 	if (apm->core.buff.arr) {
 		buff_empty(&apm->core.buff);
 	}
-
 	if (apm->body) {
 		tbl_dealloc(apm->body->sgmt_tbl);
 
@@ -356,16 +334,13 @@ void apm_wc3_deinit(apm_t *apm)
 		}
 		free(apm->body);
 	}
-
 	if (rfnd) {
 		if (rfnd->host_blk) {
 			host_blk_dealloc(&rfnd->host_blk);
 		}
-
 		if (rfnd->join_scrn_blk) {
 			join_scrn_blk_dealloc(&rfnd->join_scrn_blk);
 		}
-
 		if (rfnd->prsn_tbl) {
 			tbl_dealloc(rfnd->prsn_tbl);
 		}
@@ -376,9 +351,7 @@ void apm_wc3_deinit(apm_t *apm)
 		if (extra->action_ls) {
 			ulist_dealloc(extra->action_ls);
 		}
-
 		free(rfnd);
 	}
-
 	free(apm);
 }

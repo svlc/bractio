@@ -18,7 +18,6 @@
 #include "attr.h"
 #include "mmt.h"
 
-
 enum err_code {
 	APM_E_FILE_READING = 1,
 	APM_E_FILE_OPENING,
@@ -28,7 +27,6 @@ enum err_code {
 	APM_E_OFC_REP,
 	APM_E_TASK
 };
-
 
 /**
  * @brief main header
@@ -51,7 +49,6 @@ typedef struct main_hdr_t {
 	unsigned ecd_sgmt_cnt;
 
 } main_hdr_t;
-
 
 /**
  * @brief Subheader: two versions (ver <= 1.06, ver >= 1.07).
@@ -77,7 +74,6 @@ typedef struct sub_hdr_t {
 	unsigned long hdr_CRC32;
 
 } sub_hdr_t;
-
 
 /**
  * @brief Segment.
@@ -110,7 +106,6 @@ typedef struct core_t {
 
 } core_t;
 
-
 /**
  * @brief Decoded data stream.
  */
@@ -130,7 +125,6 @@ typedef struct strm_t {
 	char *lim;
 
 } strm_t;
-
 
 /**
  *@brief Person record.
@@ -156,12 +150,10 @@ typedef struct prsn_t {
 
 } prsn_t;
 
-
 /**
  *@brief 
  */
 typedef struct game_opts_t {
-
 	int speed;
 	int visibility;
 	int observer;
@@ -170,9 +162,7 @@ typedef struct game_opts_t {
 	bool full_shared_unit_ctrl;
 	bool random_hero;
 	bool random_races;
-
 } game_opts_t;
-
 
 /**
  *@brief 
@@ -215,7 +205,6 @@ typedef struct join_scrn_blk_t {
 	unsigned start_spot_cnt;
 
 } join_scrn_blk_t;
-
 
 /**
  *@brief 
@@ -301,7 +290,6 @@ typedef struct extra_t {
 
 } extra_t;
 
-
 /**
  *@brief Structure to save replay body.
  */
@@ -314,7 +302,6 @@ typedef struct body_t {
 	strm_t strm;
 
 } body_t;
-
 
 /**
  *@brief 
@@ -354,7 +341,6 @@ typedef struct rfnd_t {
 
 } rfnd_t;
 
-
 /**
  * @brief The most superior data structure.
  */
@@ -372,7 +358,6 @@ typedef struct apm_t {
 	rfnd_t *rfnd;
 
 } apm_t;
-
 
 /* API */
 

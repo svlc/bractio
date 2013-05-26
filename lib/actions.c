@@ -6,7 +6,6 @@
  */
 
 #include <stdlib.h>
-
 #include "rapm.h"
 #include "str.h"
 #include "check.h"
@@ -43,7 +42,6 @@ out:
 int action_pause(ad_t *ad)
 {
 	ad->state->paused = true;
-
 	return 0;
 }
 
@@ -53,7 +51,6 @@ int action_pause(ad_t *ad)
 int action_resume(ad_t *ad)
 {
 	ad->state->paused = false;
-
 	return 0;
 }
 
@@ -130,7 +127,6 @@ int action_ability_0_lt_107(ad_t *ad)
 	int ret;
 	int len = 5;
 
-
 	ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
 	++ad->curr_joiner->apm;
 
@@ -150,7 +146,6 @@ int action_ability_0_ge_107_lt_113(ad_t *ad)
 	int len = 13;
 
 	++ad->curr_joiner->apm;
-
 	ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, len);
@@ -194,11 +189,9 @@ int action_ability_0_ge_113(ad_t *ad)
 int action_ability_1_lt_107(ad_t *ad)
 {
 	int ret;
-
 	int len = 13;
 
 	++ad->curr_joiner->apm;
-
 	ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, len);
@@ -214,7 +207,6 @@ int action_ability_1_lt_107(ad_t *ad)
 int action_ability_1_ge_107_lt_113(ad_t *ad)
 {
 	int ret;
-
 	int len = 21;
 
 	ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
@@ -264,9 +256,7 @@ int action_ability_2_lt_107(ad_t *ad)
 	int ret;
 	int len = 21;
 
-
 	ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
-
 	++ad->curr_joiner->apm;
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, len);
@@ -285,9 +275,7 @@ int action_ability_2_ge_107_lt_113(ad_t *ad)
 	int len = 29;
 
 	++ad->curr_joiner->apm;
-
 	ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
-
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, len);
 	if(0 != ret) {
@@ -305,7 +293,6 @@ int action_ability_2_ge_113(ad_t *ad)
 	int len = 30;
 
 	++ad->curr_joiner->apm;
-
 	ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, len);
@@ -322,11 +309,9 @@ int action_move_item_lt_107(ad_t *ad)
 {
 
 	int ret;
-
 	int len = 29;
 
 	++ad->curr_joiner->apm;
-
 	ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, len);
@@ -343,11 +328,9 @@ int action_move_item_ge_107_lt_113(ad_t *ad)
 {
 
 	int ret;
-
 	int len = 37;
 
 	++ad->curr_joiner->apm;
-
 	ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, len);
@@ -367,7 +350,6 @@ int action_move_item_ge_113(ad_t *ad)
 	int len = 38;
 
 	++ad->curr_joiner->apm;
-
 	ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, len);
@@ -387,7 +369,6 @@ int action_choose_ability_lt_107(ad_t *ad)
 	int len = 34;
 
 	++ad->curr_joiner->apm;
-
 	ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, len);
@@ -407,7 +388,6 @@ int action_choose_ability_ge_107_lt_113(ad_t *ad)
 	int len = 42;
 
 	++ad->curr_joiner->apm;
-
 	ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, len);
@@ -426,7 +406,6 @@ int action_choose_ability_ge_113(ad_t *ad)
 	int len = 43;
 
 	++ad->curr_joiner->apm;
-
 	ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, len);
@@ -442,10 +421,8 @@ int action_choose_ability_ge_113(ad_t *ad)
 int action_change_selection(ad_t *ad)
 {
 	int ret;
-
 	unsigned mode;
 	unsigned cnt;
-
 	aux_t aux_arr[2] = {
 
 		{ &mode, APM_UINT, 1 },
@@ -472,14 +449,11 @@ int action_change_selection(ad_t *ad)
 		}
 		/* in some cases causes no change, but better then condition */
 		ad->state->deselect = false;
-
 	}
 	/* this must be "deselect" -- @see check_action_change_selection() */
 	else {
 		ad->state->deselect = true;
-
 		++ad->curr_joiner->apm;
-
 		ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
 	}
 
@@ -499,12 +473,9 @@ int action_assign_group_hotkey(ad_t *ad)
 {
 
 	int ret;
-
 	unsigned grp_no;
 	unsigned cnt;
-
 	aux_t aux_arr[2] = {
-
 		{ &grp_no, APM_UINT, 1 },
 		{ &cnt, APM_UINT, 2 }
 	};
@@ -521,9 +492,7 @@ int action_assign_group_hotkey(ad_t *ad)
 		return -1;
 	}
 	++ad->curr_joiner->apm;
-
 	ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
-
 	return 3 + shift;
 }
 
@@ -540,7 +509,6 @@ int action_select_group_hotkey(ad_t *ad)
 	}
 	++ad->curr_joiner->apm;
 	ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
-
 	return 2;
 }
 
@@ -564,7 +532,6 @@ int action_select_subgroup_lt_114b(ad_t *ad)
 		ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
 
 	}
-
 	return 1;
 }
 
@@ -620,7 +587,6 @@ int action_select_ground_item(ad_t *ad)
 	}
 	++ad->curr_joiner->apm;
 	ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
-
 	return 9;
 }
 
@@ -638,7 +604,6 @@ int action_cancel_hero_revival(ad_t *ad)
 	}
 	++ad->curr_joiner->apm;
 	ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
-
 	return 8;
 }
 
@@ -655,7 +620,6 @@ int action_reduce_building_queue(ad_t *ad)
 	}
 	++ad->curr_joiner->apm;
 	ret = add_action(ad->action_ls, ad->curr_joiner, ad->mmt);
-
 	return 5;
 }
 
@@ -889,9 +853,7 @@ int action_transfer_resources(ad_t *ad)
 int action_map_trigger_chat_command(ad_t *ad)
 {
 	int ret;
-
 	char *str;
-
 	aux_t aux = { (void *)&str, APM_UCHAR, 0 };
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, 8);

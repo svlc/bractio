@@ -8,7 +8,6 @@
 #ifndef APM_INIT_DEINIT_H
 #define APM_INIT_DEINIT_H
 
-
 extern int strm_prep(strm_t *strm, const size_t len);
 extern void strm_empty(strm_t *strm);
 extern size_t strm_len(const struct tbl *sgmt_tbl);
@@ -36,6 +35,5 @@ extern int body_alloc(body_t **body);
 
 extern void *apm_wc3_init(void);
 extern void apm_wc3_deinit(apm_t *apm);
-
 
 #endif /* APM_INIT_DEINIT_H */

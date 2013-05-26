@@ -11,13 +11,10 @@
 
 #include "mmt.h"
 
-
 typedef struct unit_t {
-
 	unsigned *ptr;
 	unsigned max;
 } unit_t;
-
 
 /**
  * @brief Zero mmt_t variables.
@@ -28,7 +25,6 @@ void moment_zero(mmt_t *mmt)
 {
 	memset(mmt, 0, sizeof(*mmt));
 }
-
 
 /**
  * @brief Get moment in minutes.
@@ -45,7 +41,6 @@ double moment_min(mmt_t *mmt)
 #undef MS_IN_MINUTE
 }
 
-
 /**
  * @brief Increment total_time and update hour/min/sec/ms accordingly.
  *
@@ -53,7 +48,6 @@ double moment_min(mmt_t *mmt)
  */
 void moment_inc(mmt_t *mmt, unsigned long time_inc)
 {
-
 	/* auxiliary array */
 	unit_t unit_arr[4] = {
 		{ &mmt->ms, 1000 },
@@ -62,10 +56,8 @@ void moment_inc(mmt_t *mmt, unsigned long time_inc)
 		{ &mmt->hour, 1000000 }
 	};
 
-
 	div_t dd;
 	size_t idx = 0;
-
 	unsigned long cnt = time_inc;
 
 	mmt->total_ms += time_inc;
@@ -74,10 +66,8 @@ void moment_inc(mmt_t *mmt, unsigned long time_inc)
 		cnt += *unit_arr[idx].ptr;
 		
 		if (cnt >= unit_arr[idx].max) {
-
 			dd = div(cnt, unit_arr[idx].max);
 			*unit_arr[idx].ptr = dd.rem;
-
 			cnt = dd.quot;
 		} else {
 			*unit_arr[idx].ptr = cnt;
@@ -85,7 +75,5 @@ void moment_inc(mmt_t *mmt, unsigned long time_inc)
 			break;
 		}
 		++idx;
-
 	} while (dd.quot && idx < 4);
 }
-
