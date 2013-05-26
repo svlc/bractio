@@ -9,118 +9,69 @@
 
 #include <stdlib.h>		/* NULL, {m,c,re}alloc(3), free(3) */
 #include <errno.h>
-#include <stdbool.h>
 #include <assert.h>
 #include <string.h>
 
 #include "arr.h"
 
 /**
- * @brief Add some data to some index.
+ * @brief Add some data at specified index.
  * 
- * @param arr array
+ * @param a array
  * @param idx index
  * @param data
  */
-void arr_add_item(struct arr *arr, size_t idx, void *data)
+void arr_add(struct arr *a, size_t idx, void *data)
 {
-	assert(idx < arr->cnt);
-	memcpy((char *)arr->ptr + (idx * arr->item_size), data, arr->item_size);
+	assert(idx < a->len);
+	memcpy((char *)a->ptr + idx * a->item_size, data, a->item_size);
 }
 
 /**
  * @brief Get the pointer to item.
  *
- * @param arr array
- * @param idx index <0, arr->cnt)
+ * @param a array
+ * @param idx index <0, arr->len)
  * @return NULL if idx is unused or out of range
  */
-void *arr_get_item(struct arr *arr, size_t idx)
+void *arr_get(struct arr *a, size_t idx)
 {
-	if (idx >= arr->cnt) {
-		return NULL;
-	}
-	return (char *)arr->ptr + (idx * arr->item_size);
+	assert(idx < a->len);
+	return (char *)a->ptr + (idx * a->item_size);
 }
 
 /**
- * @brief Zero all array variables.
- *
- * @param arr array
+ * @brief Allocate "arr" struct.
  */
-void arr_zero(struct arr *arr)
+struct arr *arr_alloc(size_t len, size_t item_size)
 {
-	arr->ptr = NULL;
-	arr->cnt = 0;
-	arr->item_size = 0;
+	struct arr *a;
+	assert(len > 0);
+
+	a = (struct arr *)malloc(sizeof(*a));
+	if (!a)
+		goto err;
+	a->ptr = malloc(len * item_size);
+	if (!a->ptr)
+		goto err;
+	a->len = len;
+	a->item_size = item_size;
+	return a;
+err:
+	arr_dealloc(a);
+	return NULL;
 }
 
 /**
- * @brief Prepare array of some length.
- * @note Calloc(3) is required since NULL is flag for "unused index".
- *
- * @param arr array
- * @param cnt required number of items
- * @param item_size size every item takes
- * @return 0 on success, 1 on memory failure
+ * @brief Deallocate "arr" struct.
  */
-int arr_prep(struct arr *arr, size_t cnt, size_t item_size)
+void arr_dealloc(void *p)
 {
-	assert(NULL == arr->ptr);
-	assert(0 == arr->cnt);
-	assert(0 == arr->item_size);
+	struct arr *a = (struct arr *)p;
 
-	assert(cnt > 0);
-	assert(item_size > 0);
+	if (!a)
+		return;
 
-	arr->ptr = (struct arr *)calloc(cnt, item_size);
-	if (NULL == arr->ptr) {
-		return 1;
-	}
-	arr->cnt = cnt;
-	arr->item_size = item_size;
-	return 0;
-}
-
-/**
- * @brief Empty array variables.
- *
- * @param arr array
- */
-void arr_empty(struct arr *arr)
-{
-	free(arr->ptr);
-	arr_zero(arr);
-}
-
-/**
- * @brief Allocate arr structure.
- *
- * @param arr double pointer to array
- * @return 0 on success, 1 on memory failure
- */
-int arr_alloc(struct arr **arr)
-{
-	assert(NULL == *arr);
-
-	*arr = (struct arr *)malloc(sizeof(struct arr));
-	if (NULL == *arr) {
-		return 1;
-	}
-	arr_zero(*arr);
-	return 0;
-}
-
-/**
- * @brief Deallocate arr structure.
- *
- * @param arr double pointer to array
- */
-void arr_dealloc(struct arr **arr)
-{
-	assert(NULL != *arr);
-
-	arr_empty(*arr);
-	free(*arr);
-	*arr = NULL;
+	free(a->ptr);
+	free(a);	
 }
