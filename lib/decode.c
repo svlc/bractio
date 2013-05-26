@@ -16,7 +16,6 @@
 #include "rapm.h"
 #include "debug.h"
 
-
 /**
  * @brief
  */
@@ -93,7 +92,6 @@ int decode_sgmts(sgmt_tbl_t *tbl, strm_t *strm)
 
 	return 0;
 }
-
 
 /**
  *@brief

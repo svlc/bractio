@@ -50,7 +50,6 @@ int check_task(task_t task)
 #undef GREATEST_TASK_BIT
 }
 
-
 /**
  * @brief 
  */
@@ -63,7 +62,6 @@ static int range_magic_id(const char *magic_id)
 	}
 	return 0;
 }
-
 
 /**
  * @brief 
@@ -79,7 +77,6 @@ static int range_strm_offset(const unsigned sub_hdr_ver, const unsigned strm_off
 	return 0;
 }
 
-
 /**
  * @brief 
  */
@@ -90,7 +87,6 @@ static int range_sub_hdr_ver(const unsigned sub_hdr_ver)
 	}
 	return 0;
 }
-
 
 /**
  * @brief 
@@ -113,7 +109,6 @@ int check_rep_main_hdr(char *magic_id, main_hdr_t *m_hdr)
 	return 0;
 }
 
-
 /**
  * @brief
  */
@@ -130,7 +125,6 @@ static int range_rls(char *rls_seq)
 #undef RLS_SEQ_LEN
 }
 
-
 /**
  * @brief 
  */
@@ -143,7 +137,6 @@ static int range_patch_ver(unsigned patch_ver)
 	return 0;
 }
 
-
 /**
  * @brief 
  */
@@ -154,7 +147,6 @@ static int range_player_mode(unsigned player_mode)
 	}
 	return 0;
 }
-
 
 /**
  * @brief
@@ -174,7 +166,6 @@ int check_rep_sub_hdr(sub_hdr_t *s_hdr, char *rls_seq)
 
 	return 0;
 }
-
 
 int check_action_change_selection(unsigned mode)
 {

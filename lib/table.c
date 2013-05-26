@@ -32,7 +32,6 @@ void _swap(void **p1, void **p2)
 	*p2 = aux;
 }
 
-
 /**
  * @brief Sort table items using "selection sort".
  *
@@ -70,7 +69,6 @@ void tbl_sort(tbl_t *tbl, tbl_cmp_fn_t fn)
 	}
 }
 
-
 /**
  * @brief Extend table capacity.
  *
@@ -106,7 +104,6 @@ static int _tbl_expand(tbl_t *tbl)
 #undef TBL_SIZE
 }
 
-
 /**
  * @brief Add exactly one data item to table.
  *
@@ -132,7 +129,6 @@ int tbl_add_item(tbl_t *tbl, void *data)
 	return 0;
 }
 
-
 /**
  * @brief Zero table variables.
  *
@@ -144,7 +140,6 @@ void tbl_zero(tbl_t *tbl)
 	tbl->len = 0;
 	tbl->cnt = 0;
 }
-
 
 /**
  * @brief Prepare table of required length.
@@ -172,7 +167,6 @@ int tbl_prep(tbl_t *tbl, size_t len, tbl_free_data_fn_t fn)
 	return 0;
 }
 
-
 /**
  * @brief Free all table resources except table structure.
  * 
@@ -190,7 +184,6 @@ void tbl_empty(tbl_t *tbl)
 	/* zero all table variables */
 	tbl_zero(tbl);
 }
-
 
 /**
  * @brief Allocate tbl_t structure.
@@ -211,7 +204,6 @@ int tbl_alloc(tbl_t **tbl)
 
 	return 0;
 }
-
 
 /**
  * @brief Deallocate tbl_t structure.

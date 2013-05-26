@@ -19,7 +19,6 @@
 #include "stream.h"
 #include "usage.h"
 
-
 /**
  * @brief Processes replay file and prepares data that was asked by user.
  *
@@ -118,7 +117,6 @@ int apm_wc3_operate(apm_t *apm, apm_wc3_attr_t *attr)
 	return 0;
 }
 
-
 /**
  * @brief 
  */
@@ -128,7 +126,6 @@ unsigned apm_wc3_getrlsver(apm_t *apm)
 
 	return apm->sub_hdr.rls;
 }
-
 
 /**
  * @brief 
@@ -140,7 +137,6 @@ unsigned apm_wc3_getpatchver(apm_t *apm)
 	return (unsigned)apm->sub_hdr.patch_ver;
 }
 
-
 /**
  * @brief 
  */
@@ -150,8 +146,6 @@ unsigned apm_wc3_getbuild(apm_t *apm)
 
 	return (unsigned)apm->sub_hdr.build;
 }
-
-
 
 /**
  *@brief
@@ -163,7 +157,6 @@ unsigned apm_wc3_getreplen(apm_t *apm)
 	return apm->sub_hdr.rep_len_ms;
 }
 
-
 /**
  * @brief 
  */
@@ -173,7 +166,6 @@ char *apm_wc3_getmappath(apm_t *apm)
 
 	return apm->rfnd->host_blk->map_path;
 }
-
 
 /**
  * @brief 
@@ -186,7 +178,6 @@ unsigned apm_wc3_getmapposcnt(apm_t *apm)
 
 }
 
-
 /**
  * @brief 
  */
@@ -197,7 +188,6 @@ unsigned apm_wc3_getjoinercnt(apm_t *apm)
 	return apm->rfnd->extra.joiner_tbl.cnt;
 }
 
-
 /**
  * @brief 
  */
@@ -206,7 +196,6 @@ joiner_t *apm_wc3_getjoiner(apm_t *apm, const unsigned no)
 
 	return (joiner_t *)apm->rfnd->extra.joiner_tbl.arr[no];
 }
-
 
 /**
  * @brief 
@@ -233,7 +222,6 @@ static int seek_ls_item(chat_ls_t *ls, const unsigned no)
 	return 0;
 }
 
-
 /**
  * @brief 
  */
@@ -243,7 +231,6 @@ unsigned apm_wc3_getmsgcnt(apm_t *apm)
 
 	return apm->rfnd->extra.chat_ls->cnt;
 }
-
 
 /**
  * @brief 

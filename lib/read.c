@@ -72,7 +72,6 @@ static int read_rep_sub_hdr_v0(sub_hdr_t *sub_hdr, buff_t *buff, FILE *fp)
 	return 0;
 }
 
-
 /**
  * @brief Save sub header (v1) data from file into memory.
  */
@@ -124,7 +123,6 @@ static int read_rep_sub_hdr_v1(sub_hdr_t *sub_hdr, buff_t *buff, FILE *fp)
 #undef SUB_HDR_MEMB_CNT
 }
 
-
 /**
  * @brief Save main header data from file into memory.
  *
@@ -174,7 +172,6 @@ int read_rep_main_hdr(main_hdr_t *m_hdr, buff_t *buff, FILE *fp)
 #undef MAIN_HDR_MEMB_CNT
 }
 
-
 /**
  * @brief Read main header and subheader.
  *
@@ -213,7 +210,6 @@ int read_rep_hdr(main_hdr_t *main_hdr, sub_hdr_t *sub_hdr,
 	 */
 	return 0;
 }
-
 	
 /**
  * @brief Save encoded "segment" body from file.
@@ -230,7 +226,6 @@ int read_sgmt_body(sgmt_t *sgmt, FILE *fp)
 
 	return 0;
 }
-
 
 /**
  * @brief Save "segment" header from file to memory.
@@ -270,7 +265,6 @@ int read_sgmt_hdr(sgmt_t *sgmt, buff_t *buff, FILE *fp)
 
 #undef SGMT_MEMB_CNT
 }
-
 
 /**
  * @brief Read replay body -- pile of encoded segments.

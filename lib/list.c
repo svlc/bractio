@@ -34,7 +34,6 @@ static item_t *_list_alloc_item(void *data)
 	return item;
 }
 
-
 /**
  * @brief Add item to end of list.
  *
@@ -63,7 +62,6 @@ int list_add_item(list_t *ls, void *data)
 	return 0;
 }
 
-
 /**
  * @brief Zero list variables.
  *
@@ -80,7 +78,6 @@ void list_zero(list_t *ls)
 	ls->list_free_data_fn = NULL;
 }
 
-
 /**
  * @brief Prepare empty list.
  *
@@ -93,7 +90,6 @@ void list_prep(list_t *ls, list_free_data_fn_t fn)
 	/* the most basic deallocation way is to pass data to free(3) */
 	ls->list_free_data_fn = fn;
 }
-
 
 /**
  * @brief Set list to empty state.
@@ -122,7 +118,6 @@ void list_empty(list_t *ls)
 	list_zero(ls);
 }
 
-
 /**
  * @brief Allocate list with no items.
  * 
@@ -142,7 +137,6 @@ int list_alloc(list_t **ls)
 
 	return 0;
 }
-
 
 /**
  * @brief Deallocate list_t structure.

@@ -30,4 +30,3 @@ void rep_err(char *fmt, ...)
 
 #undef STR_LEN
 }
-

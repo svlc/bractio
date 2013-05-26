@@ -11,7 +11,6 @@
 #include <assert.h>
 #include <stdio.h>
 
-
 #include "buffer.h"
 
 /**
@@ -26,7 +25,6 @@ static void buff_zero(buff_t *buff)
 	buff->len = 0;
 	buff->lim = NULL;
 }
-
 
 /**
  * @brief Prepare all resouces.
@@ -52,7 +50,6 @@ int buff_prep(buff_t *buff, const size_t len)
 	return 0;
 }
 
-
 /**
  * @brief Free all resources, zero buffer.
  * 
@@ -64,7 +61,6 @@ void buff_empty(buff_t *buff)
 
 	buff_zero(buff);
 }
-
 
 /**
  * @brief Set position to the beginning of buffer array.

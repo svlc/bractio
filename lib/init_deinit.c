@@ -46,7 +46,6 @@ int strm_prep(strm_t *strm, const size_t len)
 	return 0;
 }
 
-
 /**
  * @brief 
  */
@@ -54,7 +53,6 @@ static void strm_zero(strm_t *strm)
 {
 	memset(strm, 0, sizeof(strm_t));
 }
-
 
 /**
  * @brief 
@@ -65,7 +63,6 @@ void strm_empty(strm_t *strm)
 
 	strm_zero(strm);
 }
-
 
 /**
  * @brief Compute stream length, including trailing zeroes.
@@ -82,7 +79,6 @@ size_t strm_len(const sgmt_tbl_t *tbl)
 	return strm_len;
 }
 
-
 /**
  * @brief 
  */
@@ -92,7 +88,6 @@ void sgmt_free_fn(void *p)
 
 	free(p);
 }
-
 
 /**
  * @brief Allocate memory chunk for segment.
@@ -108,7 +103,6 @@ int sgmt_data_prep(char **ecd_data, unsigned data_size)
 	return 0;
 }
 
-
 /**
  * @brief
  */
@@ -116,7 +110,6 @@ void sgmt_zero(sgmt_t *sgmt)
 {
 	memset(sgmt, 0, sizeof(sgmt_t));
 }
-
 
 /**
  * @brief
@@ -134,7 +127,6 @@ int join_scrn_blk_alloc(join_scrn_blk_t **blk)
 	return 0;
 }
 
-
 /**
  * @brief
  */
@@ -149,7 +141,6 @@ static void join_scrn_blk_dealloc(join_scrn_blk_t **blk)
 	*blk = NULL;
 }
 
-
 /**
  * @brief 
  */
@@ -160,7 +151,6 @@ void joiner_free_fn(void *p)
 	free(p);
 }
 
-
 /**
  * @brief 
  */
@@ -169,7 +159,6 @@ int joiner_cmp_fn(void *p1, void *p2)
 	return (int)(((joiner_t *)p1)->id) - (int)(((joiner_t *)p2)->id);
 }
 
-
 /**
  * @brief 
  */
@@ -177,7 +166,6 @@ void joiner_zero(joiner_t *joiner)
 {
 	memset(joiner, 0, sizeof(joiner_t));
 }
-
 
 /**
  * @brief 
@@ -188,7 +176,6 @@ void msgbox_free_fn(void *p)
 
 	free(p);
 }
-
 
 /**
  * @brief Allocate "host_blk_t" structure.
@@ -209,7 +196,6 @@ int host_blk_alloc(host_blk_t **blk)
 	return 0;
 }
 
-
 /**
  * @brief 
  */
@@ -226,7 +212,6 @@ static void host_blk_dealloc(host_blk_t **blk)
 	*blk = NULL;
 }
 
-
 /**
  * @brief Prepare "extra" structure.
  */
@@ -237,7 +222,6 @@ static void extra_prep(extra_t *extra)
 	extra->chat_ls = NULL;
 	extra->action_ls = NULL;
 }
-
 
 /**
  * @brief Allocate rfnd_t structures.
@@ -264,7 +248,6 @@ int rfnd_alloc(rfnd_t **rfnd)
 	return 0;
 }
 
-
 /**
  * @brief Function to be passed to tbl_prep().
  */
@@ -275,7 +258,6 @@ void prsn_free_fn(void *p)
 	free(p);
 }
 
-
 /**
  * @brief Zero person item.
  */
@@ -283,7 +265,6 @@ void prsn_zero(prsn_t *p)
 {
 	memset(p, 0, sizeof(prsn_t));
 }
-
 
 /**
  * @brief Allocate body structures.
@@ -304,7 +285,6 @@ int body_alloc(body_t **body)
 
 	return 0;
 }
-
 
 /**
  * @brief Allocate the most essential structures.
@@ -339,7 +319,6 @@ void *apm_wc3_init(void)
 	return (void *)apm;
 #undef BUFF_SIZE
 }
-
 
 /**
  * @brief Close the file, free all resources.

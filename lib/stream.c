@@ -40,7 +40,6 @@ void export_slot_to_joiner(slot_t *slot, joiner_t *joiner)
 	joiner->hp_handicap = slot->hp_handicap;
 }
 
-
 /**
  * @brief Copy some person data into joiner.
  *
@@ -55,7 +54,6 @@ void export_prsn_to_joiner(prsn_t *prsn, joiner_t *joiner)
 	/* to avoid failure when deallocating resources */
 	prsn->name = NULL;
 }
-
 
 /**
  * @brief Complete joiner's name.
@@ -87,7 +85,6 @@ out:
 	return ret;
 }
 
-
 /**
  * @brief Find person with particular id.
  *
@@ -110,7 +107,6 @@ prsn_t *seek_prsn(prsn_tbl_t *tbl, const unsigned id)
 	return NULL;
 }
 
-
 /**
  * @brief
  *
@@ -129,7 +125,6 @@ joiner_t *seek_joiner(joiner_tbl_t *tbl, unsigned id)
 	}
 	return NULL;
 }
-
 
 /**
  * @brief Form joiner table based on person table and slot table.
@@ -207,7 +202,6 @@ int form_joiner_tbl(prsn_tbl_t *prsn_tbl, prsn_t *host,
 	return 0;
 }
 
-
 /**
  * @brief
  *
@@ -257,7 +251,6 @@ int save_prsn_rec(prsn_t *prsn, strm_t *strm)
 	return 0;
 }
 
-
 /**
  * @brief
  */
@@ -295,7 +288,6 @@ static int save_game_opts(game_opts_t *opts, char **dcd_str_pos)
 	return 0;
 }
 
-
 /**
  * @brief
  * @note "valid_memb_cnt" is not computed in this function to avoid wasting
@@ -326,7 +318,6 @@ static int save_slot(strm_t *strm, slot_t *slot,
 	}
 	return 0;
 }
-
 
 /**
  * @brief
@@ -370,7 +361,6 @@ error:
 	return ret;
 }
 
-
 /**
  * @brief
  */
@@ -385,7 +375,6 @@ int save_guest_blk(strm_t *strm, prsn_t *prsn)
 	
 	return 0;
 }
-
 
 /**
  * @brief
@@ -402,7 +391,6 @@ int save_0x1A_blk(strm_t *strm)
 	return 0;
 }
 
-
 /**
  * @brief
  */
@@ -417,7 +405,6 @@ int save_0x1B_blk(strm_t *strm)
 
 	return 0;
 }
-
 
 /**
  * @brief 
@@ -434,7 +421,6 @@ int save_0x1C_blk(strm_t *strm)
 	return 0;
 }
 
-
 /**
  * @brief Unknown1 block
  */
@@ -449,7 +435,6 @@ int save_0x22_blk(strm_t *strm)
 
 	return 0;
 }
-
 
 /**
  * @brief Unknown2 block
@@ -468,7 +453,6 @@ int save_0x23_blk(strm_t *strm)
 	return 0;
 }
 
-
 /**
  * @brief
  */
@@ -483,7 +467,6 @@ int save_countdown_blk(strm_t *strm)
 
 	return 0;
 }
-
 
 /**
  * @brief ChatMessage block
@@ -528,7 +511,6 @@ int save_chatmsg_blk(strm_t *strm, chat_ls_t *chat_ls, mmt_t *curr_mmt)
 out:
 	return ret;
 }
-
 
 /**
  * @brief
@@ -777,7 +759,6 @@ void prep_action_ptrs(arr_t *fn_arr, const unsigned build)
 	}
 }
 
-
 /**
  * @brief 
  */
@@ -834,7 +815,6 @@ int process_action_field(strm_t *strm, action_ls_t *ls, arr_t *fn_arr,
 
 	return 0;
 }
-
 
 /**
  * @brief
@@ -898,7 +878,6 @@ int save_time_blk(strm_t *strm, action_ls_t *ls, arr_t *fn_arr,
 	return 0;
 }
 
-
 /**
  * @brief
  */
@@ -938,7 +917,6 @@ int save_join_scrn_blk(strm_t *strm, join_scrn_blk_t *blk,
 
 	return 0;
 }
-
 
 /**
  * @brief
@@ -1021,7 +999,6 @@ cleanup:
 	return ret;
 }
 
-
 /**
  * @brief
  */
@@ -1064,7 +1041,6 @@ int save_leave_blk(strm_t *strm, joiner_tbl_t *joiner_tbl,
 	return 0;
 }
 
-
 /**
  * @brief
  */
@@ -1081,7 +1057,6 @@ int get_blk_id(strm_t *strm, unsigned *id)
 
 	return 0;
 }
-
 
 /**
  * @brief
@@ -1221,7 +1196,6 @@ cleanup:
 	return ret;
 }
 
-
 /**
  * @brief Read concrete static block.
  */
@@ -1269,7 +1243,6 @@ int save_static_blk(strm_t *strm, rfnd_t *rfnd,
 	}
 	return ret;
 }
-
 
 /**
  * @brief Read sequence of static blocks.
@@ -1322,7 +1295,6 @@ int save_static_blk_seq(strm_t *strm, rfnd_t *rfnd, const unsigned build,
 	return 0;
 }
 
-
 /**
  * @brief Evaluate APM of all players.
  *
@@ -1341,7 +1313,6 @@ void eval_apm(joiner_tbl_t *tbl)
 		++joiner;
 	}
 }
-
 
 /**
  * @brief Process the stream -- sequence of various blocks.

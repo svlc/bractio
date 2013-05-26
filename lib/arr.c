@@ -7,7 +7,6 @@
  * @copyright GPLv2
  */
 
-
 #include <stdlib.h>		/* NULL, {m,c,re}alloc(3), free(3) */
 #include <errno.h>
 #include <stdbool.h>
@@ -15,7 +14,6 @@
 #include <string.h>
 
 #include "arr.h"
-
 
 /**
  * @brief Add some data to some index.
@@ -30,7 +28,6 @@ void arr_add_item(arr_t *arr, size_t idx, void *data)
 
 	memcpy((char *)arr->ptr + (idx * arr->item_size), data, arr->item_size);
 }
-
 
 /**
  * @brief Get the pointer to item.
@@ -48,8 +45,6 @@ void *arr_get_item(arr_t *arr, size_t idx)
 	return (char *)arr->ptr + (idx * arr->item_size);
 }
 
-
-
 /**
  * @brief Zero all array variables.
  *
@@ -61,7 +56,6 @@ void arr_zero(arr_t *arr)
 	arr->cnt = 0;
 	arr->item_size = 0;
 }
-
 
 /**
  * @brief Prepare array of some length.
@@ -91,7 +85,6 @@ int arr_prep(arr_t *arr, size_t cnt, size_t item_size)
 	return 0;
 }
 
-
 /**
  * @brief Empty array variables.
  *
@@ -103,7 +96,6 @@ void arr_empty(arr_t *arr)
 
 	arr_zero(arr);
 }
-
 
 /**
  * @brief Allocate arr_t structure.
@@ -124,7 +116,6 @@ int arr_alloc(arr_t **arr)
 
 	return 0;
 }
-
 
 /**
  * @brief Deallocate arr_t structure.

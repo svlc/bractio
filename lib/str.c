@@ -32,7 +32,6 @@ bool pos_eq_lim(const char *pos, const char *lim)
 	return pos == lim;
 }
 
-
 /**
  * @brief Determine if position is greater than limit.
  *
@@ -45,7 +44,6 @@ static inline bool pos_gt_lim(const char *pos, const char *lim)
 	/* if position is out of array range */
 	return pos > lim;
 }
-
 
 /**
  * @brief Get length of string excluding '\0' char.
@@ -75,7 +73,6 @@ static int safe_str_len(const char *start, const char *lim)
 	return cnt;
 }
 
-
 /**
  * @brief Safe position shift forward.
  * @note We do not want this function to act like fread(3). Either pos
@@ -97,7 +94,6 @@ int safe_pos_fw(char **pos, char *lim, const size_t size)
 	return 0;
 }
 
-
 /**
  * @brief Unsafe position shift backward.
  *
@@ -108,7 +104,6 @@ void unsafe_pos_bw(char **pos, const size_t size)
 {
 	*pos -= size;
 }
-
 
 /**
  * @brief Possibly inspect item size (if size is 0), also check array limits.
@@ -150,7 +145,6 @@ static int inspect_item_size(char *start, const char *lim, aux_t *item)
 out:
 	return ret;
 }
-
 
 /**
  * @brief
