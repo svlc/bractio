@@ -32,6 +32,9 @@ LTARG = build/lib$(LIBNAME).a
 # program target
 PTARG = bin/prog
 
+RST_FILES = $(wildcard *.rst)
+HTML_FILES = $(patsubst %.rst,%.html,$(RST_FILES))
+PDF_FILES = $(patsubst %.rst,%.pdf,$(RST_FILES))
 
 VERSION = alfa
 DISTDIR = librapm-$(VERSION)
@@ -74,11 +77,21 @@ dist: $(DISTDIR)
 	tar -czf $(DISTDIR).tar.gz $(DISTDIR)
 	@rm -rf $(DISTDIR)
 
+html:	$(HTML_FILES)
+
+pdf:	$(PDF_FILES)
+
+%.pdf: %.rst
+	rst2pdf $(<)
+
+%.html: %.rst
+	rst2html2 --report=3 $(<) > $(@)
 
 .PHONY: clean
 clean :
 	rm -rf obj/ bin/ build/
 	rm -f src/main.o
 	rm -f $(DISTDIR).tar.gz
+	rm -f $(HTML_FILES) $(PDF_FILES)
 	# delete all regular files ending in "~"
 	find . -name "*~" -type f -print0 | xargs -0 /bin/rm -f
