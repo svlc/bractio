@@ -1,6 +1,6 @@
 /**
  * @file read.c
- * @brief Pile of function that saves replay data into memory.
+ * @brief Pile of functions that save replay data into memory.
  * @athor Slavomir Vlcek
  * @copyright GPLv2
  */

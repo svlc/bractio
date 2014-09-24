@@ -27,7 +27,7 @@ static void buff_zero(buff_t *buff)
 }
 
 /**
- * @brief Prepare all resouces.
+ * @brief Prepare all resources.
  * 
  * @param buff
  * @param len wanted length of buffer
