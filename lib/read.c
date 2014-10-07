@@ -106,10 +106,10 @@ static int read_rep_sub_hdr_v1(sub_hdr_t *sub_hdr, buff_t *buff, FILE *fp)
 		return ret;
 	}
 
-	if (0 == memcmp("WAR3", rls_seq, RLS_SEQ_LEN)) {
+	if (0 == memcmp("3RAW", rls_seq, RLS_SEQ_LEN)) {
 		sub_hdr->rls = 0;
 	}
-	/* else it must be "W3XP" */
+	/* else it must be "PX3W" */
 	else {
 		sub_hdr->rls = 1;
 	}
