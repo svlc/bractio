@@ -35,13 +35,13 @@ and a few replays placed in the ``samples/`` directory.
 .. code:: bash
 
   # print length of the replay
-  $ ./prog -l ../samples/C-1@Grubby@feRfe.w3g
+  $ ./prog -l ../samples/tft_grubby_vs_ferfe.w3g
   +replay_length (ms): 819625
 
 .. code:: bash
 
   # print information about game's participants
-  $ ./prog -j ../samples/C-1@Grubby@feRfe.w3g
+  $ ./prog -j ../samples/tft_grubby_vs_ferfe.w3g
   ---->JOINERS
   joiner: EG.Grubby (id: 1, team: 1)
   host: 1, saver: 1, HP: 100, apm 267, leave_time : 00:13:39
@@ -62,7 +62,7 @@ and a few replays placed in the ``samples/`` directory.
 .. code:: bash
 
   # print chat
-  $./prog -c ../samples/B-1@XtC.Revenant@Huang_feng.w3g
+  $./prog -c ../samples/tft_revenant_vs_huang_feng.w3g
   ---->CHAT MESSAGES
   msg #: 0, from joiner #: 2, at 00:00:48
    gl hf sir
