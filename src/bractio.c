@@ -12,7 +12,7 @@
 #include <ctype.h>
 #include <unistd.h>		/* getopt() */
 
-#include "../lib/bract.h"
+#include "../libbract/bract.h"
 
 
 typedef enum {

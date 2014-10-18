@@ -17,9 +17,9 @@ $(OPTCFLAGS)# -DNDEBUG
 override CFLAGS += -std=c99 -lz
 
 # library {source,header,object} files
-LSRC = $(wildcard lib/*.c)
-LHDR = $(wildcard lib/*.h)
-LOBJ = $(patsubst lib/%.c,obj/%.o,$(LSRC))
+LSRC = $(wildcard libbract/*.c)
+LHDR = $(wildcard libbract/*.h)
+LOBJ = $(patsubst libbract/%.c,obj/%.o,$(LSRC))
 
 # program source
 PSRC = $(wildcard src/*.c)
@@ -41,7 +41,7 @@ PDF_FILES = $(patsubst %.rst,%.pdf,$(RST_FILES))
 VERSION = 0.1
 DISTDIR = bract-$(VERSION)
 # all files important for distribution
-DISTFILES = lib/ LICENCE Makefile README.rst samples/ src/ TODO
+DISTFILES = libbract/ LICENCE Makefile README.rst samples/ src/ TODO
 
 .PHONY: all
 all   : $(PTARG)
@@ -63,7 +63,7 @@ $(LTARG): build $(LOBJ)
 # This way every source file depends on all header files
 # (there is more proper, but quite annoying solution:
 # gnu.org/software/make/manual/html_node/Automatic-Prerequisites.html)
-obj/%.o: lib/%.c $(LHDR) | obj
+obj/%.o: libbract/%.c $(LHDR) | obj
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 
