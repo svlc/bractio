@@ -5,8 +5,8 @@
  *@copyright GPLv2
  */
 
-#ifndef APM_INIT_DEINIT_H
-#define APM_INIT_DEINIT_H
+#ifndef BRACT_INIT_DEINIT_H
+#define BRACT_INIT_DEINIT_H
 
 extern int strm_prep(strm_t *strm, const size_t len);
 extern void strm_empty(strm_t *strm);
@@ -33,7 +33,7 @@ void prsn_zero(prsn_t *p);
 
 extern int body_alloc(body_t **body);
 
-extern void *apm_wc3_init(void);
-extern void apm_wc3_deinit(apm_t *apm);
+extern void *bract_wc3_init(void);
+extern void bract_wc3_deinit(bract_t *bract);
 
-#endif /* APM_INIT_DEINIT_H */
+#endif /* BRACT_INIT_DEINIT_H */

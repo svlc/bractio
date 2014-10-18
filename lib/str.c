@@ -13,7 +13,7 @@
 
 #include "str.h"
 
-#include "rapm.h"
+#include "bract.h"
 #include "debug.h"
 
 /**
@@ -127,7 +127,7 @@ static int inspect_item_size(char *start, const char *lim, aux_t *item)
 		}
 		*((char **)item->dest) = (char *)malloc(ret + 1);
 		if (!*((char **)item->dest)) {
-			ret = APM_E_NO_MEM;
+			ret = BRACT_E_NO_MEM;
 			goto out;
 		}
 		item->dest = *((char **)item->dest);
@@ -163,10 +163,10 @@ int safe_mem_read(char **pos, const char *lim, aux_t *aux_arr, const size_t cnt)
 		if (0 != ret) {
 			return ret;
 		}
-		if (APM_UCHAR == aux_arr[idx].type) {
+		if (BRACT_UCHAR == aux_arr[idx].type) {
 			memcpy(aux_arr[idx].dest, *pos, aux_arr[idx].size);
 		}
-		else if (APM_UINT == aux_arr[idx].type) {
+		else if (BRACT_UINT == aux_arr[idx].type) {
 			if (aux_arr[idx].size == 4) {
 				*(unsigned *)aux_arr[idx].dest
 					= **(uint32_t **)pos;
@@ -178,7 +178,7 @@ int safe_mem_read(char **pos, const char *lim, aux_t *aux_arr, const size_t cnt)
 					= **(uint8_t **)pos;
 			}
 		}
-		else if (APM_ULONG == aux_arr[idx].type) {
+		else if (BRACT_ULONG == aux_arr[idx].type) {
 
 			if (4 == aux_arr[idx].size) {
 				*(unsigned long *)aux_arr[idx].dest

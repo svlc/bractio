@@ -5,7 +5,7 @@
  *@copyright GPLv2
  */
 
-#include "rapm.h"
+#include "bract.h"
 #include "debug.h"
 
 /**
@@ -13,7 +13,7 @@
  *
  * @param path file path
  */
-void apm_wc3_attr_setfilepath(apm_wc3_attr_t *attr, char *path)
+void bract_wc3_attr_setfilepath(bract_wc3_attr_t *attr, char *path)
 {
 	attr->path = path;
 }
@@ -21,7 +21,7 @@ void apm_wc3_attr_setfilepath(apm_wc3_attr_t *attr, char *path)
 /**
  * @brief 
  */
-void apm_wc3_attr_settask(apm_wc3_attr_t *attr, task_t task)
+void bract_wc3_attr_settask(bract_wc3_attr_t *attr, task_t task)
 {
 	attr->task = task;
 }
@@ -29,16 +29,16 @@ void apm_wc3_attr_settask(apm_wc3_attr_t *attr, task_t task)
 /**
  * @brief 
  */
-void apm_wc3_attr_init(apm_wc3_attr_t *attr)
+void bract_wc3_attr_init(bract_wc3_attr_t *attr)
 {
 	attr->path = NULL;
-	attr->task = APM_TASK_NOTHING;
+	attr->task = BRACT_TASK_NOTHING;
 }
 
 /**
  * @brief currently NOOP
  */
-void apm_wc3_attr_deinit(apm_wc3_attr_t *attr)
+void bract_wc3_attr_deinit(bract_wc3_attr_t *attr)
 {
 	attr = attr;
 	return;

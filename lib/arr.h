@@ -5,8 +5,8 @@
  * @copyright GPLv2
  */
 
-#ifndef APM_ARR_H
-#define APM_ARR_H
+#ifndef BRACT_ARR_H
+#define BRACT_ARR_H
 
 struct arr {
 	void *ptr;
@@ -19,5 +19,5 @@ void *arr_get(struct arr *a, size_t idx);
 struct arr *arr_alloc(size_t len, size_t item_size);
 void arr_dealloc(void *p);
 
-#endif /* APM_ARR_H */
+#endif /* BRACT_ARR_H */
 

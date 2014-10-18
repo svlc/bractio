@@ -5,8 +5,8 @@
  *@copyright GPLv2
  */
 
-#ifndef APM_ACTION_H
-#define APM_ACTION_H
+#ifndef BRACT_ACTION_H
+#define BRACT_ACTION_H
 
 typedef struct state_t {
 	/*  */
@@ -90,4 +90,4 @@ extern int action_continue_game_0(ad_t *ad);
 extern int action_continue_game_1(ad_t *ad);
 extern int action_0x75_unknown(ad_t *ad);
 
-#endif /* APM_ACTIONS_H */
+#endif /* BRACT_ACTIONS_H */

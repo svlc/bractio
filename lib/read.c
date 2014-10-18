@@ -13,7 +13,7 @@
 #include <stdbool.h>
 #include <assert.h>
 
-#include "rapm.h"
+#include "bract.h"
 #include "debug.h"
 #include "init_deinit.h"
 #include "decode.h"
@@ -39,7 +39,7 @@ static int read_rep_sub_hdr_v0(sub_hdr_t *sub_hdr, buff_t *buff, FILE *fp)
 
 	ret = fread(buff->pos, 1, 0x10, fp);
 	VGUARD(0x10 != ret, rep_err("Just %i byte(s) of sub header were read.",
-				    ret); return APM_E_FILE_READING);
+				    ret); return BRACT_E_FILE_READING);
 
 	/* v0 has different size of "patch_ver" */
 	unsigned patch_ver;
@@ -48,12 +48,12 @@ static int read_rep_sub_hdr_v0(sub_hdr_t *sub_hdr, buff_t *buff, FILE *fp)
 	unsigned unknown;
 	
 	aux_t aux_arr[SUB_HDR_MEMB_CNT] = {
-		{ &unknown, APM_UINT, 2 },
-		{ &patch_ver, APM_UINT, 2 },
-		{ &sub_hdr->build, APM_UINT, 2 },
-		{ &sub_hdr->player_mode, APM_UINT, 2 },
-		{ &sub_hdr->rep_len_ms, APM_ULONG, 4 },
-		{ &sub_hdr->hdr_CRC32, APM_ULONG, 4 }
+		{ &unknown, BRACT_UINT, 2 },
+		{ &patch_ver, BRACT_UINT, 2 },
+		{ &sub_hdr->build, BRACT_UINT, 2 },
+		{ &sub_hdr->player_mode, BRACT_UINT, 2 },
+		{ &sub_hdr->rep_len_ms, BRACT_ULONG, 4 },
+		{ &sub_hdr->hdr_CRC32, BRACT_ULONG, 4 }
 	};
 
 	ret = safe_mem_read(&buff->pos, buff->lim, aux_arr, SUB_HDR_MEMB_CNT);
@@ -84,16 +84,16 @@ static int read_rep_sub_hdr_v1(sub_hdr_t *sub_hdr, buff_t *buff, FILE *fp)
 	/* read 0x14 bytes */
 	ret = fread(buff->pos, 1, 0x14, fp);
 	VGUARD(0x14 != ret, rep_err("Just %i byte(s) of sub header were read.",
-				    ret); return APM_E_FILE_READING);
+				    ret); return BRACT_E_FILE_READING);
 
 	/* auxiliary struct array */
 	aux_t aux_arr[SUB_HDR_MEMB_CNT] = {
-		{ rls_seq, APM_UCHAR, 4 },
-		{ &sub_hdr->patch_ver, APM_UINT, 4 },
-		{ &sub_hdr->build, APM_UINT, 2 },
-		{ &sub_hdr->player_mode, APM_UINT, 2 },
-		{ &sub_hdr->rep_len_ms, APM_ULONG, 4 },
-		{ &sub_hdr->hdr_CRC32, APM_ULONG, 4 }
+		{ rls_seq, BRACT_UCHAR, 4 },
+		{ &sub_hdr->patch_ver, BRACT_UINT, 4 },
+		{ &sub_hdr->build, BRACT_UINT, 2 },
+		{ &sub_hdr->player_mode, BRACT_UINT, 2 },
+		{ &sub_hdr->rep_len_ms, BRACT_ULONG, 4 },
+		{ &sub_hdr->hdr_CRC32, BRACT_ULONG, 4 }
 	};
 
 	ret = safe_mem_read(&buff->pos, buff->lim, aux_arr, SUB_HDR_MEMB_CNT);
@@ -141,16 +141,16 @@ int read_rep_main_hdr(main_hdr_t *m_hdr, buff_t *buff, FILE *fp)
 	/* read 0x30 bytes */
 	ret = fread(buff->pos, 1, 0x30, fp);
 	VGUARD(0x30 != ret, rep_err("Just %i byte(s) of main header were read.",
-				    ret); return APM_E_FILE_READING);
+				    ret); return BRACT_E_FILE_READING);
 
 	/* auxiliary struct array */
 	aux_t aux_arr[MAIN_HDR_MEMB_CNT] = {
-		{  magic_id,			APM_UCHAR,	28 },
-		{ &m_hdr->strm_offset,		APM_UINT,	4  },
-		{ &m_hdr->total_file_size,	APM_UINT,	4  },
-		{ &m_hdr->sub_hdr_ver,		APM_UINT,	4  },
-		{ &m_hdr->dcd_data_size,	APM_UINT,	4  },
-		{ &m_hdr->ecd_sgmt_cnt,		APM_UINT,	4  }
+		{  magic_id,			BRACT_UCHAR,	28 },
+		{ &m_hdr->strm_offset,		BRACT_UINT,	4  },
+		{ &m_hdr->total_file_size,	BRACT_UINT,	4  },
+		{ &m_hdr->sub_hdr_ver,		BRACT_UINT,	4  },
+		{ &m_hdr->dcd_data_size,	BRACT_UINT,	4  },
+		{ &m_hdr->ecd_sgmt_cnt,		BRACT_UINT,	4  }
 	};
 
 	ret = safe_mem_read(&buff->pos, buff->lim, aux_arr, MAIN_HDR_MEMB_CNT);
@@ -216,7 +216,7 @@ int read_sgmt_body(sgmt_t *sgmt, FILE *fp)
 	/* save encoded chunk from file into memory */
 	ret = fread(sgmt->ecd_data, 1, sgmt->ecd_size, fp);
 	if (ret != sgmt->ecd_size) {
-		return APM_E_FILE_READING;
+		return BRACT_E_FILE_READING;
 	}
 	return 0;
 }
@@ -244,9 +244,9 @@ int read_sgmt_hdr(sgmt_t *sgmt, buff_t *buff, FILE *fp)
 	}
 
 	aux_t aux_arr[SGMT_MEMB_CNT] = {
-		{ &sgmt->ecd_size,	APM_UINT, 2 },
-		{ &sgmt->dcd_size,	APM_UINT, 2 },
-		{ &sgmt->unknown,	APM_UINT, 4 }
+		{ &sgmt->ecd_size,	BRACT_UINT, 2 },
+		{ &sgmt->dcd_size,	BRACT_UINT, 2 },
+		{ &sgmt->unknown,	BRACT_UINT, 4 }
 	};
 
 	ret = safe_mem_read(&buff->pos, buff->lim, aux_arr, SGMT_MEMB_CNT);
@@ -278,7 +278,7 @@ int read_rep_body(struct tbl *sgmt_tbl, buff_t *buff, FILE *fp)
 		/* allocate segment structure */
 		sgmt = (sgmt_t *)malloc(sizeof(*sgmt));
 		if (!sgmt) {
-			ret = APM_E_NO_MEM;
+			ret = BRACT_E_NO_MEM;
 			goto out;
 		}
 		sgmt_zero(sgmt);

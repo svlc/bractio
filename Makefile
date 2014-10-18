@@ -26,20 +26,22 @@ PSRC = $(wildcard src/*.c)
 POBJ = $(patsubst %.c,%.o,$(PSRC))
 
 
-LIBNAME = rapm
+LIBNAME = bract
 # library target
 LTARG = build/lib$(LIBNAME).a
+# program name
+PNAME = bractio
 # program target
-PTARG = bin/prog
+PTARG = bin/$(PNAME)
 
 RST_FILES = $(wildcard *.rst)
 HTML_FILES = $(patsubst %.rst,%.html,$(RST_FILES))
 PDF_FILES = $(patsubst %.rst,%.pdf,$(RST_FILES))
 
-VERSION = alfa
-DISTDIR = librapm-$(VERSION)
+VERSION = 0.1
+DISTDIR = bract-$(VERSION)
 # all files important for distribution
-DISTFILES = lib/ LICENCE Makefile README samples/ src/ TODO
+DISTFILES = lib/ LICENCE Makefile README.rst samples/ src/ TODO
 
 .PHONY: all
 all   : $(PTARG)
@@ -90,7 +92,7 @@ pdf:	$(PDF_FILES)
 .PHONY: clean
 clean :
 	rm -rf obj/ bin/ build/
-	rm -f src/main.o
+	rm -f src/$(PNAME).o
 	rm -f $(DISTDIR).tar.gz
 	rm -f $(HTML_FILES) $(PDF_FILES)
 	# delete all regular files ending in "~"

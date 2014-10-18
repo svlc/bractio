@@ -6,7 +6,7 @@
  */
 
 #include <string.h>
-#include "rapm.h"
+#include "bract.h"
 
 #include "check.h"
 
@@ -90,17 +90,17 @@ static int range_sub_hdr_ver(const unsigned sub_hdr_ver)
 int check_rep_main_hdr(char *magic_id, main_hdr_t *m_hdr)
 {
 	if (0 != range_magic_id(magic_id))
-		return APM_E_RANGE;
+		return BRACT_E_RANGE;
 
 	if (0 != range_sub_hdr_ver(m_hdr->sub_hdr_ver))
-		return APM_E_RANGE;
+		return BRACT_E_RANGE;
 
 	/*
 	 * this is done later than sub_hdr_ver because
 	 * we need to pass variable "sub_hdr_ver" already checked
 	 */
 	if (0 != range_strm_offset(m_hdr->sub_hdr_ver, m_hdr->strm_offset))
-		return APM_E_RANGE;
+		return BRACT_E_RANGE;
 
 	return 0;
 }
@@ -153,12 +153,12 @@ int check_rep_sub_hdr(sub_hdr_t *s_hdr, char *rls_seq)
 {
 	if (rls_seq) {
 		if (range_rls(rls_seq))
-			return APM_E_RANGE;
+			return BRACT_E_RANGE;
 	}
 	if (0 != range_patch_ver(s_hdr->patch_ver))
-		return APM_E_RANGE;
+		return BRACT_E_RANGE;
 	if (0 != range_player_mode(s_hdr->player_mode))
-		return APM_E_RANGE;
+		return BRACT_E_RANGE;
 
 	return 0;
 }
@@ -166,7 +166,7 @@ int check_rep_sub_hdr(sub_hdr_t *s_hdr, char *rls_seq)
 int check_action_change_selection(unsigned mode)
 {
 	if (mode != 0x01  &&  mode != 0x02) {
-		return APM_E_RANGE;
+		return BRACT_E_RANGE;
 	}
 	return 0;
 }

@@ -5,8 +5,8 @@
  * @copyright GPLv2
  */
 
-#ifndef APM_DEBUG_H
-#define APM_DEBUG_H
+#ifndef BRACT_DEBUG_H
+#define BRACT_DEBUG_H
 
 /* verbose guard, adds {file,function,...} info */
 #define VGUARD(COND, ACTION)						\
@@ -15,4 +15,4 @@
 		ACTION;							\
 	}
 
-#endif /* APM_DEBUG_H */
+#endif /* BRACT_DEBUG_H */

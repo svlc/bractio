@@ -1,12 +1,12 @@
 /**
- *@file rapm.h
+ *@file libbract.h
  *@brief
  *@athor Slavomir Vlcek
  *@copyright GPLv2
  */
 
-#ifndef APM_APM_H
-#define APM_APM_H
+#ifndef BRACT_BRACT_H
+#define BRACT_BRACT_H
 
 #include <stdio.h>
 #include <inttypes.h>
@@ -19,13 +19,13 @@
 #include "mmt.h"
 
 enum err_code {
-	APM_E_FILE_READING = 1,
-	APM_E_FILE_OPENING,
-	APM_E_REP_VER,
-	APM_E_NO_MEM,
-	APM_E_RANGE,
-	APM_E_OFC_REP,
-	APM_E_TASK
+	BRACT_E_FILE_READING = 1,
+	BRACT_E_FILE_OPENING,
+	BRACT_E_REP_VER,
+	BRACT_E_NO_MEM,
+	BRACT_E_RANGE,
+	BRACT_E_OFC_REP,
+	BRACT_E_TASK
 };
 
 /**
@@ -344,7 +344,7 @@ typedef struct rfnd_t {
 /**
  * @brief The most superior data structure.
  */
-typedef struct apm_t {
+typedef struct bract_t {
 
 	core_t core;
 	
@@ -357,34 +357,34 @@ typedef struct apm_t {
 	/* refined data, derived from stream */
 	rfnd_t *rfnd;
 
-} apm_t;
+} bract_t;
 
 /* API */
 
-extern void apm_wc3_attrinit(apm_wc3_attr_t *attr);
-extern void apm_wc3_attr_deinit(apm_wc3_attr_t *attr);
+extern void bract_wc3_attrinit(bract_wc3_attr_t *attr);
+extern void bract_wc3_attr_deinit(bract_wc3_attr_t *attr);
 
-extern void *apm_wc3_init(void);
+extern void *bract_wc3_init(void);
 
-extern int apm_wc3_operate(apm_t *p, apm_wc3_attr_t *attr);
+extern int bract_wc3_operate(bract_t *p, bract_wc3_attr_t *attr);
  
-extern void apm_wc3_deinit(apm_t *p);
+extern void bract_wc3_deinit(bract_t *p);
 
-extern unsigned apm_wc3_getrlsver(apm_t *apm);
+extern unsigned bract_wc3_getrlsver(bract_t *bract);
 
-extern unsigned apm_wc3_getpatchver(apm_t *apm);
+extern unsigned bract_wc3_getpatchver(bract_t *bract);
 
-extern unsigned apm_wc3_getbuild(apm_t *apm);
+extern unsigned bract_wc3_getbuild(bract_t *bract);
 
-extern unsigned apm_wc3_getreplen(apm_t *apm);
+extern unsigned bract_wc3_getreplen(bract_t *bract);
 
-extern char *apm_wc3_getmappath(apm_t *apm);
-extern unsigned apm_wc3_getmapposcnt(apm_t *apm);
+extern char *bract_wc3_getmappath(bract_t *bract);
+extern unsigned bract_wc3_getmapposcnt(bract_t *bract);
 
-unsigned apm_wc3_getjoinercnt(apm_t *apm);
-joiner_t *apm_wc3_getjoiner(apm_t *apm, const unsigned no);
+unsigned bract_wc3_getjoinercnt(bract_t *bract);
+joiner_t *bract_wc3_getjoiner(bract_t *bract, const unsigned no);
 
-extern unsigned apm_wc3_getmsgcnt(apm_t *apm);
-extern msgbox_t *apm_wc3_getmsg(apm_t *apm, const unsigned no);
+extern unsigned bract_wc3_getmsgcnt(bract_t *bract);
+extern msgbox_t *bract_wc3_getmsg(bract_t *bract, const unsigned no);
 
-#endif /* APM_APM_H */
+#endif /* BRACT_BRACT_H */

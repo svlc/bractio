@@ -6,7 +6,7 @@
  */
 
 #include <stdlib.h>
-#include "rapm.h"
+#include "bract.h"
 #include "str.h"
 #include "check.h"
 
@@ -97,7 +97,7 @@ int action_save(ad_t *ad)
 	int ret;
 	char *str = NULL;
 
-	aux_t aux = { &str, APM_UCHAR, 0 };
+	aux_t aux = { &str, BRACT_UCHAR, 0 };
 
 	ret = safe_mem_read(&ad->strm->pos, ad->strm->lim, &aux, 1);
 	if(0 != ret) {
@@ -425,8 +425,8 @@ int action_change_selection(ad_t *ad)
 	unsigned cnt;
 	aux_t aux_arr[2] = {
 
-		{ &mode, APM_UINT, 1 },
-		{ &cnt, APM_UINT, 2 }
+		{ &mode, BRACT_UINT, 1 },
+		{ &cnt, BRACT_UINT, 2 }
 	};
 
 	ret = safe_mem_read(&ad->strm->pos, ad->strm->lim, aux_arr, 2);
@@ -476,8 +476,8 @@ int action_assign_group_hotkey(ad_t *ad)
 	unsigned grp_no;
 	unsigned cnt;
 	aux_t aux_arr[2] = {
-		{ &grp_no, APM_UINT, 1 },
-		{ &cnt, APM_UINT, 2 }
+		{ &grp_no, BRACT_UINT, 1 },
+		{ &cnt, BRACT_UINT, 2 }
 	};
 
 	ret = safe_mem_read(&ad->strm->pos, ad->strm->lim, aux_arr, 2);
@@ -521,7 +521,7 @@ int action_select_subgroup_lt_114b(ad_t *ad)
 	int ret;
 	unsigned subgrp_no;
 
-	aux_t aux = { &subgrp_no, APM_UINT, 1 };
+	aux_t aux = { &subgrp_no, BRACT_UINT, 1 };
 
 	ret = safe_mem_read(&ad->strm->pos, ad->strm->lim, &aux, 1);
 	if(0 != ret) {
@@ -854,7 +854,7 @@ int action_map_trigger_chat_command(ad_t *ad)
 {
 	int ret;
 	char *str;
-	aux_t aux = { (void *)&str, APM_UCHAR, 0 };
+	aux_t aux = { (void *)&str, BRACT_UCHAR, 0 };
 
 	ret = safe_pos_fw(&ad->strm->pos, ad->strm->lim, 8);
 	if(0 != ret) {

@@ -5,8 +5,8 @@
  * @copyright GPLv2
  */
 
-#ifndef APM_BUFFER_H
-#define APM_BUFFER_H
+#ifndef BRACT_BUFFER_H
+#define BRACT_BUFFER_H
 
 typedef struct buff_t {
 	char *arr;
@@ -23,4 +23,4 @@ int buff_prep(buff_t *buff, const size_t len);
 void buff_empty(buff_t *buff);
 void buff_pos_reset(buff_t *buff);
 
-#endif /* APM_BUFFER_H */
+#endif /* BRACT_BUFFER_H */

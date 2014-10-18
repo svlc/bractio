@@ -5,16 +5,16 @@
  *@copyright GPLv2
  */
 
-#ifndef APM_STR_H
-#define APM_STR_H
+#ifndef BRACT_STR_H
+#define BRACT_STR_H
 
 /**
  * @brief various data types
  */
 typedef enum datatype_t {
-	APM_UCHAR,
-	APM_UINT,
-	APM_ULONG
+	BRACT_UCHAR,
+	BRACT_UINT,
+	BRACT_ULONG
 } datatype_t;
 
 /**
@@ -34,4 +34,4 @@ extern void unsafe_pos_bw(char **pos, const size_t size);
 extern int safe_mem_read(char **pos, const char *lim,
 			 aux_t *aux_arr, const size_t cnt);
 
-#endif /* APM_STR_H */
+#endif /* BRACT_STR_H */

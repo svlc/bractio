@@ -12,14 +12,14 @@
 #include <stdbool.h>
 #include <assert.h>
 
-#include "rapm.h"
+#include "bract.h"
 #include "ulist.h"
 
 /**
  * @brief Inits memory and variables for decoded data stream
  *
  * @todo Consider whether we should compute the total stream length here
- * or use "apm->main_hder.dcd_data_size" instead (but remember
+ * or use "bract->main_hder.dcd_data_size" instead (but remember
  * that "dcd_data_size" has no zero padding in the last block)
  */
 int strm_prep(strm_t *strm, const size_t len)
@@ -277,29 +277,29 @@ int body_alloc(body_t **body)
  *
  * @return opaque pointer, NULL on failure
  */
-void *apm_wc3_init(void)
+void *bract_wc3_init(void)
 {
 /* bigger size boosts nothing */
 #define BUFF_SIZE	128
 
 	int ret;
-	apm_t *apm;
+	bract_t *bract;
 
-	apm = (apm_t *)malloc(sizeof(*apm));
-	if (!apm) {
+	bract = (bract_t *)malloc(sizeof(*bract));
+	if (!bract) {
 		return NULL;
 	}
 	/* allocate "BUFF_SIZE" bytes for buffer */
-	ret = buff_prep(&apm->core.buff, BUFF_SIZE);
+	ret = buff_prep(&bract->core.buff, BUFF_SIZE);
 	if (0 != ret) {
-		free(apm);
+		free(bract);
 		return NULL;
 	}
 	/* init file pointer */
-	apm->core.fp = NULL;
-	apm->body = NULL;
-	apm->rfnd = NULL;
-	return (void *)apm;
+	bract->core.fp = NULL;
+	bract->body = NULL;
+	bract->rfnd = NULL;
+	return (void *)bract;
 
 #undef BUFF_SIZE
 }
@@ -307,32 +307,32 @@ void *apm_wc3_init(void)
 /**
  * @brief Close the file, free all resources.
  *
- * @note whole "apm_t" structure will be freed
+ * @note whole "bract_t" structure will be freed
  * so it is meaningless to reset any variables to NULL
  */
-void apm_wc3_deinit(apm_t *apm)
+void bract_wc3_deinit(bract_t *bract)
 {
 	/* auxiliary pointers */
-	rfnd_t *rfnd = apm->rfnd;
+	rfnd_t *rfnd = bract->rfnd;
 	extra_t *extra = &rfnd->extra;
 
-	if (NULL == apm) {
+	if (NULL == bract) {
 		return;
 	}
 	/* if fp is valid (fclose(NULL) is deadly) */
-	if (apm->core.fp) {
-		fclose(apm->core.fp);
+	if (bract->core.fp) {
+		fclose(bract->core.fp);
 	}
-	if (apm->core.buff.arr) {
-		buff_empty(&apm->core.buff);
+	if (bract->core.buff.arr) {
+		buff_empty(&bract->core.buff);
 	}
-	if (apm->body) {
-		tbl_dealloc(apm->body->sgmt_tbl);
+	if (bract->body) {
+		tbl_dealloc(bract->body->sgmt_tbl);
 
-		if (apm->body->strm.arr) {
-			strm_empty(&apm->body->strm);
+		if (bract->body->strm.arr) {
+			strm_empty(&bract->body->strm);
 		}
-		free(apm->body);
+		free(bract->body);
 	}
 	if (rfnd) {
 		if (rfnd->host_blk) {
@@ -353,5 +353,5 @@ void apm_wc3_deinit(apm_t *apm)
 		}
 		free(rfnd);
 	}
-	free(apm);
+	free(bract);
 }

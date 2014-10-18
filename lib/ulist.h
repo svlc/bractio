@@ -5,8 +5,8 @@
  * @copyright GPLv2
  */
 
-#ifndef APM_ULIST_H
-#define APM_ULIST_H
+#ifndef BRACT_ULIST_H
+#define BRACT_ULIST_H
 
 typedef void (*ulist_free_data_fn_t)(void *p);
 
@@ -36,4 +36,4 @@ struct ulist *ulist_alloc(size_t arr_size, ulist_free_data_fn_t free_data_fn);
 void *ulist_get(struct ulist *u, size_t idx);
 int ulist_append(struct ulist *u, void *data);
 
-#endif /* APM_ULIST_H */
+#endif /* BRACT_ULIST_H */

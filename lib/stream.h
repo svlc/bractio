@@ -7,8 +7,8 @@
 
 #include "actions.h"
 
-#ifndef APM_STREAM_H
-#define APM_STREAM_H
+#ifndef BRACT_STREAM_H
+#define BRACT_STREAM_H
 
 typedef struct blk_nfo_t {
 	unsigned id;
@@ -23,4 +23,4 @@ typedef struct blk_nfo_t {
 extern int process_stream(strm_t *strm, rfnd_t *rfnd, const unsigned patch_ver);
 extern void eval_apm(struct tbl *joiner_tbl);
 
-#endif /* APM_STREAM_H */
+#endif /* BRACT_STREAM_H */

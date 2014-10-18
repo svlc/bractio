@@ -5,8 +5,8 @@
  *@copyright GPLv2
  */
 
-#ifndef APM_MMT_H
-#define APM_MMT_H
+#ifndef BRACT_MMT_H
+#define BRACT_MMT_H
 
 /**
  *@brief time moment info
@@ -26,4 +26,4 @@ extern void moment_zero(mmt_t *mmt);
 extern double moment_min(mmt_t *mmt);
 extern void moment_inc(mmt_t *mmt, unsigned long time_inc);
 
-#endif /* APM_MMT_H */
+#endif /* BRACT_MMT_H */

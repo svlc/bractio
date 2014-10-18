@@ -5,8 +5,8 @@
  * @copyright GPLv2
  */
 
-#ifndef APM_TABLE_H
-#define APM_TABLE_H
+#ifndef BRACT_TABLE_H
+#define BRACT_TABLE_H
 
 typedef void (*free_data_fn_t)(void *p);
 typedef int (*cmp_fn_t)(void *p1, void *p2);
@@ -26,4 +26,4 @@ struct tbl *tbl_alloc(size_t len, free_data_fn_t fn);
 void tbl_dealloc(void *p);
 void tbl_print(struct tbl *t, print_fn_t print_fn);
 
-#endif /* APM_TABLE_H */
+#endif /* BRACT_TABLE_H */

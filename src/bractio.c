@@ -12,7 +12,7 @@
 #include <ctype.h>
 #include <unistd.h>		/* getopt() */
 
-#include "../lib/rapm.h"
+#include "../lib/bract.h"
 
 
 typedef enum {
@@ -66,25 +66,25 @@ char *get_mmt_str(mmt_t *mmt)
 int demo_lib(req_t req, char *file_path)
 {
 	int ret = 0;
-	apm_wc3_attr_t attr;
+	bract_wc3_attr_t attr;
 
-	apm_wc3_attr_init(&attr);
-	apm_wc3_attr_setfilepath(&attr, file_path);
+	bract_wc3_attr_init(&attr);
+	bract_wc3_attr_setfilepath(&attr, file_path);
 
 	/*
 	 * notice that by using all 3 enum values, we always process all info
 	 * out of replay, but this is just demonstration program
 	 */
-	apm_wc3_attr_settask(&attr,
-			     APM_TASK_BASIC | APM_TASK_ADDTL | APM_TASK_APM);
+	bract_wc3_attr_settask(&attr,
+			     BRACT_TASK_BASIC | BRACT_TASK_ADDTL | BRACT_TASK_APM);
 
-	apm_t *apm = apm_wc3_init();
-	if (NULL == apm) {
+	bract_t *bract = bract_wc3_init();
+	if (NULL == bract) {
 		ret = 1;
 		goto cleanup;
 	}
 
-	ret = apm_wc3_operate(apm, &attr);
+	ret = bract_wc3_operate(bract, &attr);
 	if (0 != ret) {
 		goto cleanup;
 	}
@@ -93,39 +93,39 @@ int demo_lib(req_t req, char *file_path)
 	char rls[][30] = { "Reign Of Chaos", "Frozen Throne"};
 
 	if (req & RELEASE) {
-		printf("+release: %s\n", rls[ apm_wc3_getrlsver(apm) ]);
+		printf("+release: %s\n", rls[ bract_wc3_getrlsver(bract) ]);
 	}
 
 	if (req & PATCH) {
-		printf("+patch_version: %u\n", apm_wc3_getpatchver(apm));
+		printf("+patch_version: %u\n", bract_wc3_getpatchver(bract));
 	}
 
 	if (req & BUILD) {
-		printf("+build: %u\n", apm_wc3_getbuild(apm));
+		printf("+build: %u\n", bract_wc3_getbuild(bract));
 	}
 
 	if (req & LENGTH) {
-		printf("+replay_length (ms): %u\n", apm_wc3_getreplen(apm));
+		printf("+replay_length (ms): %u\n", bract_wc3_getreplen(bract));
 	}
 
 	if (req & MAP_PATH) {
-		printf("+map_path: %s\n", apm_wc3_getmappath(apm) );
+		printf("+map_path: %s\n", bract_wc3_getmappath(bract) );
 	}
 
 	if (req & NO_OF_MAP_POSITIONS) {
-		printf("+map_positions: %u\n", apm_wc3_getmapposcnt(apm) );
+		printf("+map_positions: %u\n", bract_wc3_getmapposcnt(bract) );
 	}
 
 
 	if (req & CHAT) {
-		unsigned cnt = apm_wc3_getmsgcnt(apm);
+		unsigned cnt = bract_wc3_getmsgcnt(bract);
 		msgbox_t *box;
 
 		printf("---->CHAT MESSAGES\n");
 
 		for (size_t i = 0;  i < cnt;  ++i) {
 
-			box = apm_wc3_getmsg(apm, i);
+			box = bract_wc3_getmsg(bract, i);
 			printf("msg #: %u, from joiner #: %u, at %s\n %s\n",
 			       box->no, box->joiner_id, get_mmt_str(&box->mmt),
 			       box->msg);
@@ -139,11 +139,11 @@ int demo_lib(req_t req, char *file_path)
 		joiner_t *j;
 		unsigned cnt;
 
-		cnt = apm_wc3_getjoinercnt(apm);
+		cnt = bract_wc3_getjoinercnt(bract);
 
 		for (size_t i = 0;  i < cnt;  ++i) {
 
-			j = apm_wc3_getjoiner(apm, i);
+			j = bract_wc3_getjoiner(bract, i);
 			printf("joiner: %s (id: %u, team: %u)\n",
 			       j->name, j->id, j->team_no);
 			printf("host: %u, saver: %u, HP: %u, apm %lu,"\
@@ -155,8 +155,8 @@ int demo_lib(req_t req, char *file_path)
 		}
 	}
 cleanup:
-	apm_wc3_deinit(apm);
-	apm_wc3_attr_deinit(&attr);
+	bract_wc3_deinit(bract);
+	bract_wc3_attr_deinit(&attr);
 
 	return ret;
 }

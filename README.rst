@@ -1,6 +1,6 @@
-*********************************************
-librapm, *Replay-Actions-Per-Minute Library*
-*********************************************
+********************************************************
+*bractio* - program for obtaining data from replay files
+********************************************************
 
 .. contents:: `Table Of Contents`
     :depth: 2
@@ -8,15 +8,16 @@ librapm, *Replay-Actions-Per-Minute Library*
 Intro
 -----
 
-*librapm* is a static library written in C language that can inspect replays
-of some strategic games (just WarCraft III for the moment)
-and obtain all useful information such as:
+*bractio* is a non-graphical program for inspecting replay files of some videogames.
+It can obtain various data such as:
 
 * game's release version
 * replay length
 * game joiners
 * chat between players
 * actions per minute of all players
+
+It is the official front-end for the *libbract* library. It is written in C language.
 
 Replay
 ++++++
@@ -25,23 +26,21 @@ with a proprietary format.
 
 License
 -------
-The library is licensed under *GPLv2*.
+*bractio* is licensed under *GPLv2*.
 
-Demonstration
--------------
-The library is distributed with a demonstrational program named ``prog``
-and a few replays placed in the ``samples/`` directory.
+Examples
+--------
 
 .. code:: bash
 
   # print length of the replay
-  $ ./prog -l ../samples/tft_grubby_vs_ferfe.w3g
+  $ ./bractio -l ../samples/tft_grubby_vs_ferfe.w3g
   +replay_length (ms): 819625
 
 .. code:: bash
 
   # print information about game's participants
-  $ ./prog -j ../samples/tft_grubby_vs_ferfe.w3g
+  $ ./bractio -j ../samples/tft_grubby_vs_ferfe.w3g
   ---->JOINERS
   joiner: EG.Grubby (id: 1, team: 1)
   host: 1, saver: 1, HP: 100, apm 267, leave_time : 00:13:39
@@ -62,7 +61,7 @@ and a few replays placed in the ``samples/`` directory.
 .. code:: bash
 
   # print chat
-  $./prog -c ../samples/tft_revenant_vs_huang_feng.w3g
+  $./bractio -c ../samples/tft_revenant_vs_huang_feng.w3g
   ---->CHAT MESSAGES
   msg #: 0, from joiner #: 2, at 00:00:48
    gl hf sir
@@ -82,7 +81,7 @@ and a few replays placed in the ``samples/`` directory.
 
 Status
 ------
-The library is still in development and its API is going to change in the future.
+The program is still in a development stage.
 
 Supported games
 ---------------
@@ -91,7 +90,4 @@ Supported games
 Dependencies
 ------------
 * zlib
-
-Acknowledgement
----------------
-* the library is based on information found in `WarCraft III replay file format description <http://w3g.deepnode.de/>`_
+* libbract (static library, part of the project)

@@ -10,7 +10,7 @@
 #include <stdbool.h>
 #include <assert.h>
 
-#include "rapm.h"
+#include "bract.h"
 #include "debug.h"
 #include "str.h"
 #include "init_deinit.h"
@@ -73,7 +73,7 @@ int complete_joiner(joiner_t *j)
 	len = (int)strlen("unknown_??") + 1;
 	j->name = (char *)malloc(len);
 	if (!j->name) {
-		ret = APM_E_NO_MEM;
+		ret = BRACT_E_NO_MEM;
 		goto out;
 	}
 
@@ -191,7 +191,7 @@ int form_joiner_tbl(struct tbl *prsn_tbl, prsn_t *host,
 		 * TODO: inspect some tournament replays
 		 * (could not find any)
 		 */
-		return APM_E_OFC_REP;
+		return BRACT_E_OFC_REP;
 	}
 	return 0;
 }
@@ -210,12 +210,12 @@ int save_prsn_rec(prsn_t *prsn, strm_t *strm)
 	/* empty size means 'to be computed' */
 	aux_t aux_arr[] = {
 
-		{ &prsn->id, APM_UINT, 1 },
+		{ &prsn->id, BRACT_UINT, 1 },
 		/* cast "(char **)" to "(void *)" */
-		{ (void *)&prsn->name, APM_UCHAR, 0 },
-		{ &rest_size, APM_UINT, 1 },
-		{ &prsn->uptime, APM_ULONG, 4 },
-		{ &prsn->player_race, APM_ULONG, 4 },
+		{ (void *)&prsn->name, BRACT_UCHAR, 0 },
+		{ &rest_size, BRACT_UINT, 1 },
+		{ &prsn->uptime, BRACT_ULONG, 4 },
+		{ &prsn->player_race, BRACT_ULONG, 4 },
 	};
 
 	ret = safe_mem_read(&strm->pos, strm->lim, aux_arr, 3);
@@ -289,15 +289,15 @@ static int save_slot(strm_t *strm, slot_t *slot,
 	int ret;
 	/* empty size means 'to be computed' */
 	aux_t aux_arr[] = {
-		{ &slot->id,		APM_UINT, 1 },
-		{ &slot->map_dl,	APM_UINT, 1 },
-		{ &slot->slot_status,	APM_UINT, 1 },
-		{ &slot->ai_player,	APM_UINT, 1 },
-		{ &slot->team_no,	APM_UINT, 1 },
-		{ &slot->color_id,	APM_UINT, 1 },
-		{ &slot->race_flags,	APM_UINT, 1 },
-		{ &slot->ai_lvl,	APM_UINT, 1 },
-		{ &slot->hp_handicap,	APM_UINT, 1 },
+		{ &slot->id,		BRACT_UINT, 1 },
+		{ &slot->map_dl,	BRACT_UINT, 1 },
+		{ &slot->slot_status,	BRACT_UINT, 1 },
+		{ &slot->ai_player,	BRACT_UINT, 1 },
+		{ &slot->team_no,	BRACT_UINT, 1 },
+		{ &slot->color_id,	BRACT_UINT, 1 },
+		{ &slot->race_flags,	BRACT_UINT, 1 },
+		{ &slot->ai_lvl,	BRACT_UINT, 1 },
+		{ &slot->hp_handicap,	BRACT_UINT, 1 },
 	};
 
 	ret = safe_mem_read(&strm->pos, strm->lim, aux_arr, valid_memb_cnt);
@@ -329,7 +329,7 @@ int save_slot_seq(strm_t *strm, struct tbl *slot_tbl,
 	while (cnt--) {
 		slot = (slot_t *)malloc(sizeof(*slot));
 		if (!slot) {
-			ret = APM_E_NO_MEM;
+			ret = BRACT_E_NO_MEM;
 			goto error;
 		}
 		ret = save_slot(strm, slot, valid_memb_cnt);
@@ -463,11 +463,11 @@ int save_chatmsg_blk(strm_t *strm, struct ulist *chat_ls, mmt_t *curr_mmt)
 
 	unsigned rest_size;
 	aux_t aux_arr[] = {
-		{ &msgbox->joiner_id, APM_UINT, 1 },
-		{ &rest_size, APM_UINT, 2 },
-		{ &msgbox->flags, APM_UCHAR, 1 },
-		{ &msgbox->chat_mode, APM_ULONG, 4 },
-		{ &msgbox->msg, APM_UCHAR, 0 },
+		{ &msgbox->joiner_id, BRACT_UINT, 1 },
+		{ &rest_size, BRACT_UINT, 2 },
+		{ &msgbox->flags, BRACT_UCHAR, 1 },
+		{ &msgbox->chat_mode, BRACT_ULONG, 4 },
+		{ &msgbox->msg, BRACT_UCHAR, 0 },
 	};
 
 	ret = safe_mem_read(&strm->pos, strm->lim, aux_arr, 5);
@@ -734,7 +734,7 @@ int process_action_field(strm_t *strm, struct ulist *action_ls, struct arr *fn_a
 	int ret;
 	int cnt;
 	unsigned action_id;
-	aux_t aux = { &action_id, APM_UINT, 1 };
+	aux_t aux = { &action_id, BRACT_UINT, 1 };
 	/* action_t *action = NULL; */
 	/* action data */
 	ad_t ad = {
@@ -783,8 +783,8 @@ int save_time_blk(strm_t *strm, struct ulist *action_ls, struct arr *fn_arr,
 	unsigned rest_size;
 	unsigned time_inc;
 	aux_t aux_arr[2] = {
-		{ &rest_size, APM_UINT, 2 },
-		{ &time_inc, APM_UINT, 2 },
+		{ &rest_size, BRACT_UINT, 2 },
+		{ &time_inc, BRACT_UINT, 2 },
 	};
 
 	ret = safe_mem_read(&strm->pos, strm->lim, aux_arr, 2);
@@ -800,8 +800,8 @@ int save_time_blk(strm_t *strm, struct ulist *action_ls, struct arr *fn_arr,
 
 	int len, id;
 	aux_t aux_arr2[2] = {
-		{ &id, APM_UINT, 1 },
-		{ &len, APM_UINT, 2 },
+		{ &id, BRACT_UINT, 1 },
+		{ &len, BRACT_UINT, 2 },
 	};
 
 	/* process "move field" */
@@ -837,11 +837,11 @@ int save_join_scrn_blk(strm_t *strm, join_scrn_blk_t *blk,
 	unsigned rest_size;
 	/* empty size means 'to be computed' */
 	aux_t aux_arr[] = {
-		{ &rest_size,		APM_UINT,	2 },
-		{ &blk->slot_cnt,	APM_UINT,	1 },
-		{ &blk->rand_seed,	APM_ULONG,	4 },
-		{ &blk->select_mode,	APM_UCHAR,	1 },
-		{ &blk->start_spot_cnt, APM_UINT,	1 }
+		{ &rest_size,		BRACT_UINT,	2 },
+		{ &blk->slot_cnt,	BRACT_UINT,	1 },
+		{ &blk->rand_seed,	BRACT_ULONG,	4 },
+		{ &blk->select_mode,	BRACT_UCHAR,	1 },
+		{ &blk->start_spot_cnt, BRACT_UINT,	1 }
 	};
 
 	ret = safe_mem_read(&strm->pos, strm->lim, aux_arr, 2);
@@ -870,11 +870,11 @@ int save_host_blk(strm_t *strm, host_blk_t *host_blk)
 	/* NULL assignment is required */
 	char *ecd_str = NULL, *dcd_str = NULL;
 	aux_t aux_arr[] = {
-		{ &host_blk->game_name,			APM_UCHAR, 0 },
-		{ &ecd_str,				APM_UCHAR, 0 },
-		{ (void *)&host_blk->map_path,		APM_UCHAR, 0 },
-		{ (void *)&host_blk->game_creator,	APM_UCHAR, 0 },
-		{ &host_blk->player_cnt,		APM_UINT,  4 }
+		{ &host_blk->game_name,			BRACT_UCHAR, 0 },
+		{ &ecd_str,				BRACT_UCHAR, 0 },
+		{ (void *)&host_blk->map_path,		BRACT_UCHAR, 0 },
+		{ (void *)&host_blk->game_creator,	BRACT_UCHAR, 0 },
+		{ &host_blk->player_cnt,		BRACT_UINT,  4 }
 	};
 
 	ret = save_prsn_rec(&host_blk->prsn, strm);
@@ -900,7 +900,7 @@ int save_host_blk(strm_t *strm, host_blk_t *host_blk)
 
 	dcd_str = (char *)malloc(aux_arr[1].size);
 	if (!dcd_str) {
-		ret = APM_E_NO_MEM;
+		ret = BRACT_E_NO_MEM;
 		goto cleanup;
 	}
 	decode_opts_map_creator_str(ecd_str, dcd_str);
@@ -945,7 +945,7 @@ int save_leave_blk(strm_t *strm, struct tbl *joiner_tbl,
 	joiner_t *joiner;
 	int ret;
 	aux_t aux[] = {
-		{ &id, APM_UINT, 1 }
+		{ &id, BRACT_UINT, 1 }
 	};
 
 	ret = safe_pos_fw(&strm->pos, strm->lim, 4);
@@ -979,7 +979,7 @@ int save_leave_blk(strm_t *strm, struct tbl *joiner_tbl,
 int get_blk_id(strm_t *strm, unsigned *id)
 {
 	int ret;
-	aux_t aux = { id, APM_UINT, 1 };
+	aux_t aux = { id, BRACT_UINT, 1 };
 
 	ret = safe_mem_read(&strm->pos, strm->lim, &aux, 1);
 	if (0 != ret) {
@@ -1122,7 +1122,7 @@ int save_static_blk(strm_t *strm, rfnd_t *rfnd,
 	case 0x16:
 		prsn = (prsn_t *)malloc(sizeof(*prsn));
 		if (!prsn) {
-			ret = APM_E_NO_MEM;
+			ret = BRACT_E_NO_MEM;
 			break;
 		}
 		prsn_zero(prsn);
@@ -1229,7 +1229,7 @@ int process_stream(strm_t *strm, rfnd_t *rfnd, const unsigned build)
 	unsigned unknown;
 	/* auxiliary pointer */
 	extra_t *extra = &rfnd->extra;
-	aux_t aux = { &unknown, APM_ULONG, 4 };
+	aux_t aux = { &unknown, BRACT_ULONG, 4 };
 
 	ret = safe_mem_read(&strm->pos, strm->lim, &aux, 1);
 	if (0 != ret) {
