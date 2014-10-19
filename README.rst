@@ -34,13 +34,13 @@ Examples
 .. code:: bash
 
   # print length of the replay
-  $ ./bractio -l ../samples/tft_grubby_vs_ferfe.w3g
+  $ bractio -l tft_grubby_vs_ferfe.w3g
   +replay_length (ms): 819625
 
 .. code:: bash
 
   # print information about game's participants
-  $ ./bractio -j ../samples/tft_grubby_vs_ferfe.w3g
+  $ bractio -j tft_grubby_vs_ferfe.w3g
   ---->JOINERS
   joiner: EG.Grubby (id: 1, team: 1)
   host: 1, saver: 1, HP: 100, apm 267, leave_time : 00:13:39
@@ -61,7 +61,7 @@ Examples
 .. code:: bash
 
   # print chat
-  $./bractio -c ../samples/tft_revenant_vs_huang_feng.w3g
+  $bractio -c tft_revenant_vs_huang_feng.w3g
   ---->CHAT MESSAGES
   msg #: 0, from joiner #: 2, at 00:00:48
    gl hf sir
