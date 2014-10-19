@@ -42,7 +42,7 @@ PDF_FILES = $(patsubst %.rst,%.pdf,$(RST_FILES))
 VERSION = 0.1
 DISTDIR = bract-$(VERSION)
 # all files important for distribution
-DISTFILES = libbract/ LICENCE Makefile README.rst samples/ src/ TODO
+DISTFILES = doc/ INSTALL libbract/ LICENCE Makefile README.rst samples/ src/
 MANDIR = /usr/share/man/man1/
 
 .PHONY: all
