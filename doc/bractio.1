@@ -1,0 +1,60 @@
+.TH bractio 1
+
+.SH NAME
+bractio \- query replay file's data
+
+.SH SYNOPSIS
+.B bractio [\fIOPTIONS\fR] \fIFILE\fR
+
+.SH DESCRIPTION
+
+Query data from the replay FILE. Multiple options can be passed.
+
+.PP
+Currently, only WarCraft III: The Reign of Chaos and WarCraft III: The Frozen throne
+is supported.
+
+.SH OPTIONS
+
+.TP
+\-a
+all stuff
+.TP
+\-b
+build version
+.TP
+\-c
+chat messages
+.TP
+\-j
+every joiner info
+.TP
+\-l
+replay length
+.TP
+\-m
+map location path
+.TP
+\-p
+patch version
+.TP
+\-r
+release version
+
+.TP
+\-\-help
+print help and exit
+
+.SH EXAMPLES
+
+.B bractio \-lc replay.w3g
+.fi
+Print replay's length and all chat messages.
+
+.SH AUTHOR
+   Written by S. Vlcek.
+
+.SH COPYRIGHT
+Copyright \(co 2014 S. Vlcek.
+License GPLv2.
+.br
