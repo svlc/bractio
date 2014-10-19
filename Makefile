@@ -6,6 +6,7 @@ SHELL = /bin/sh
 
 CC = gcc
 AR = ar
+INSTALL = install
 
 # OPTCFLAGS is to be passed to make command to add some extra flags
 CFLAGS =-pedantic -Wall -Werror -Wextra -ggdb -D_XOPEN_SOURCE\
@@ -42,6 +43,7 @@ VERSION = 0.1
 DISTDIR = bract-$(VERSION)
 # all files important for distribution
 DISTFILES = libbract/ LICENCE Makefile README.rst samples/ src/ TODO
+MANDIR = /usr/share/man/man1/
 
 .PHONY: all
 all   : $(PTARG)
@@ -78,6 +80,15 @@ dist: $(DISTDIR)
 	@cp -r $(DISTFILES) $(DISTDIR)
 	tar -czf $(DISTDIR).tar.gz $(DISTDIR)
 	@rm -rf $(DISTDIR)
+
+install:
+	$(INSTALL) bin/$(PNAME) $(DESTDIR)/usr/local/bin/
+	$(INSTALL) -m 644 doc/$(PNAME).1 $(DESTDIR)$(MANDIR)
+	gzip $(DESTDIR)$(MANDIR)$(PNAME).1
+
+uninstall:
+	rm $(DESTDIR)/usr/local/bin/$(PNAME)
+	rm $(DESTDIR)$(MANDIR)$(PNAME).1.gz
 
 html:	$(HTML_FILES)
 
