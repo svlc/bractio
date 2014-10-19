@@ -1,8 +1,9 @@
 /**
  * @file main.c
- * @brief 
+ * @brief Very brief example of lib's usage.
+ * @warning Library is not complete yet and API will be changed.
  * @athor Slavomir Vlcek
- * @copyright GPLv2
+ * @copyright none
  */
 
 #include <stdlib.h>
@@ -13,6 +14,26 @@
 
 #include "../libbract/bract.h"
 
+typedef enum opt {
+    FILE,
+    CHAT,
+    JOINERS,
+    LENGTH,
+    MAP_PATH,
+    MAP_POSITIONS_CNT,
+    BUILD,
+    PATCH,
+    RELEASE,
+    RACES,
+} opt_t;
+
+typedef struct req {
+    opt_t opt;
+    char *arg_str;
+    /* pocet vyskytu, cnt > 1 typically means a problem */
+    size_t cnt;
+
+} req_t;
 
 typedef enum {
 
