@@ -55,7 +55,7 @@ bindir = $(exec_prefix)/bin
 mandir = $(datarootdir)/man
 man1dir = $(mandir)/man1
 
-.PHONY: all
+.PHONY: all dist installdirs install uninstall html pdf clean
 all   : $(PTARG)
 
 
@@ -115,7 +115,6 @@ pdf:	$(PDF_FILES)
 %.html: %.rst
 	rst2html2 --report=3 $(<) > $(@)
 
-.PHONY: clean
 clean :
 	rm -rf obj/ bin/ build/
 	rm -f src/$(PNAME).o
