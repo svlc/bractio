@@ -97,7 +97,7 @@ installdirs:
 	mkdir -p $(DESTDIR)$/$(man1dir)
 
 install: installdirs
-	$(INSTALL_PROGRAM) bin/$(PNAME) $(DESTDIR)$/$(bindir)
+	$(INSTALL_PROGRAM) bin/$(PNAME) $(DESTDIR)/$(bindir)
 	-$(INSTALL_DATA) doc/$(PNAME).1 $(DESTDIR)/$(man1dir)
 	-gzip $(DESTDIR)$/$(man1dir)/$(PNAME).1
 
